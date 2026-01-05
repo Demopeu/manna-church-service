@@ -1,7 +1,31 @@
 {
+  // 1. ESLint가 모노레포 구조를 이해하는 설정
   "eslint.workingDirectories": [
-    {
-      "mode": "auto"
-    }
-  ]
+    { "pattern": "./apps/*/" },
+    { "pattern": "./packages/*/" }
+  ],
+  
+  // 2. Prettier 설정
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  
+  // 3. 언어별 포맷터 강제 지정
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // 4. TypeScript 버전 고정
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // 5. 기타 잡다한 파일 제외
+  "search.exclude": {
+    "**/.next": true,
+    "**/.turbo": true,
+    "**/node_modules": true,
+    "**/pnpm-lock.yaml": true
+  }
 }

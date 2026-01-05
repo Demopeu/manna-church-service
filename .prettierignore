@@ -1,0 +1,14 @@
+# 의존성 및 시스템 파일
+node_modules/
+pnpm-lock.yaml
+
+# Next.js & Turborepo 빌드 산출물
+.next/
+.turbo/
+build/
+dist/
+out/
+
+# 기타
+*.min.js
+public/
