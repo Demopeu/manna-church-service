@@ -2,6 +2,11 @@
   "name": "manna-church-service",
   "version": "0.0.0",
   "private": true,
+  "packageManager": "pnpm@10.25.0",
+  "engines": {
+    "node": ">=25.0.0", 
+    "pnpm": ">=10.25.0"
+  },
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
@@ -11,21 +16,17 @@
     "clean": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "check-before-commit": "pnpm lint && pnpm check-types",
+    "check-before-commit": "turbo lint check-types",
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@commitlint/cli": "^20.3.0",
-    "@commitlint/config-conventional": "^20.3.0",
-    "cross-env": "^10.1.0",
-    "husky": "^9.1.7",
-    "prettier": "^3.7.4",
-    "prettier-plugin-tailwindcss": "^0.7.2",
+    "@commitlint/cli": "20.3.0",
+    "@commitlint/config-conventional": "20.3.0",
+    "cross-env": "10.1.0",
+    "husky": "9.1.7",
+    "prettier": "3.7.4",
+    "prettier-plugin-tailwindcss": "0.7.2",
     "turbo": "2.7.2",
     "typescript": "5.9.3"
-  },
-  "packageManager": "pnpm@10.25.0",
-  "engines": {
-    "node": ">=18"
   }
 }
