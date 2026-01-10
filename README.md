@@ -1,135 +1,47 @@
-# Turborepo starter
+## 🛠️ Git Workflow & Convention
 
-This Turborepo starter is maintained by the Turborepo core team.
+이 프로젝트는 빠르고 효율적인 개발을 위해 **GitHub Flow** 전략을 따릅니다.
+Main 브랜치를 항상 배포 가능한 상태로 유지하며, 기능 단위로 브랜치를 관리합니다.
 
-## Using this example
+### 1. Branch Strategy (GitHub Flow)
 
-Run the following command:
+- **main**: 제품으로 출시 가능한 소스 코드를 모아두는 기준 브랜치입니다.
+- **feature**: 기능을 개발하는 브랜치입니다. 이슈 단위로 생성하며 작업 후 `main`에 병합(Squash & Merge)됩니다.
 
-```sh
-npx create-turbo@latest
-```
+### 2. Branch Naming
 
-## What's inside?
+브랜치명은 `타입/기능명-#이슈번호` 형식을 따릅니다. 이슈 추적을 위해 이슈 번호를 반드시 포함합니다.
 
-This Turborepo includes the following packages/apps:
+- 예시: `feature/login-ui-#1`
+- 예시: `fix/login-error-#2`
 
-### Apps and Packages
+### 3. Commit Message Convention
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+협업과 유지보수를 위해 **Conventional Commits** 규칙을 준수합니다.
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+| 타입       | 설명                                           |
+| ---------- | ---------------------------------------------- |
+| `feat`     | 새로운 기능 추가                               |
+| `fix`      | 버그 수정                                      |
+| `design`   | CSS 등 사용자 UI 디자인 변경                   |
+| `refactor` | 코드 리팩토링 (기능 변경 없음)                 |
+| `style`    | 코드 포맷팅, 세미콜론 누락 등 (로직 변경 없음) |
+| `docs`     | 문서 수정 (README 등)                          |
+| `chore`    | 빌드 업무, 패키지 매니저 설정 등               |
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+**작성 예시:**
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+feat: 로그인 유효성 검사 로직 구현
+design: 메인 페이지 배너 스타일 수정
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### 4. Work Process (Issue Driven Development)
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+모든 작업은 이슈 생성부터 시작됩니다.
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+1.  **Issue 생성**: 작업할 내용을 GitHub Issue로 등록합니다.
+2.  **Branch 생성**: `main` 브랜치에서 새로운 기능 브랜치를 생성합니다. (`git checkout -b feature/name-#1`)
+3.  **Code & Commit**: 작업을 진행하고 컨벤션에 맞춰 커밋합니다.
+4.  **Pull Request**: 작업이 완료되면 PR을 생성합니다. 내용에 `Closes #이슈번호`를 기재하여 이슈를 자동으로 종료합니다.
+5.  **Merge**: 코드 리뷰(Self-Review) 후 `main` 브랜치로 병합합니다.
