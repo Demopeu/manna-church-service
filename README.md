@@ -1,3 +1,26 @@
+## 📁 Naming Convention
+
+프로젝트의 가독성과 유지보수성을 위해 파일 및 컴포넌트 명명 규칙을 엄격히 구분하여 적용합니다.
+
+### 1. File & Folder Naming
+
+- **PascalCase**: React 컴포넌트 파일 (`.tsx`)
+  - UI를 렌더링하는 컴포넌트와 파일명을 일치시켜 시각적 인지력을 높입니다.
+  - 예: `LoginForm.tsx`, `AdminInput.tsx`
+- **kebab-case**: 로직, 스키마, 유틸리티, 폴더명 (`.ts`, 폴더)
+  - 순수 로직과 UI 컴포넌트를 명확히 분리하고, OS 간 파일 시스템 호환성을 보장합니다.
+  - 예: `login-schema.ts`, `use-auth.ts`, `auth-feature/`
+
+### 2. 레이어별 적용 예시 (FSD 구조)
+
+```text
+src/features/auth/
+├── model/
+│   └── login-schema.ts   # (Logic) kebab-case
+└── ui/
+    └── LoginForm.tsx     # (UI) PascalCase
+```
+
 ## 🛠️ Git Workflow & Convention
 
 이 프로젝트는 빠르고 효율적인 개발을 위해 **GitHub Flow** 전략을 따릅니다.
@@ -31,7 +54,7 @@ Main 브랜치를 항상 배포 가능한 상태로 유지하며, 기능 단위�
 
 **작성 예시:**
 
-```
+```text
 feat: 로그인 유효성 검사 로직 구현
 design: 메인 페이지 배너 스타일 수정
 ```
