@@ -15,7 +15,7 @@ export function LoginForm() {
         <Label htmlFor="username">아이디</Label>
         <Input
           id="username"
-          placeholder="admin"
+          placeholder="아이디를 입력해주세요."
           variant={errors.username ? 'error' : 'default'}
           {...register('username')}
           disabled={isSubmitting}
@@ -30,7 +30,7 @@ export function LoginForm() {
         <Input
           id="password"
           type="password"
-          placeholder="admin"
+          placeholder="비밀번호를 입력해주세요."
           variant={errors.password ? 'error' : 'default'}
           {...register('password')}
           disabled={isSubmitting}
