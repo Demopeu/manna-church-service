@@ -1,44 +1,34 @@
 'use client';
 
 import { useLoginForm } from '../model/use-login-form';
-import { Button } from '@/shared/Button';
-import { Input } from '@/shared/Input';
-import { Label } from '@/shared/Label';
+import { Button, Input, Label } from '@/shared';
 import { Loader2 } from 'lucide-react';
+import { LOGIN_FORM_FIELDS } from '../config/form-fields';
 
 export function LoginForm() {
   const { register, handleSubmit, errors, isSubmitting } = useLoginForm();
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="username">아이디</Label>
-        <Input
-          id="username"
-          placeholder="아이디를 입력해주세요."
-          variant={errors.username ? 'error' : 'default'}
-          {...register('username')}
-          disabled={isSubmitting}
-        />
-        {errors.username && (
-          <p className="text-destructive text-sm">{errors.username.message}</p>
-        )}
-      </div>
+      {LOGIN_FORM_FIELDS.map((field) => (
+        <div key={field.id} className="space-y-2">
+          <Label htmlFor={field.id}>{field.label}</Label>
+          <Input
+            id={field.id}
+            type={field.type}
+            placeholder={field.placeholder}
+            variant={errors.root ? 'error' : 'default'}
+            {...register(field.id)}
+            disabled={isSubmitting}
+          />
+        </div>
+      ))}
 
-      <div className="space-y-2">
-        <Label htmlFor="password">비밀번호</Label>
-        <Input
-          id="password"
-          type="password"
-          placeholder="비밀번호를 입력해주세요."
-          variant={errors.password ? 'error' : 'default'}
-          {...register('password')}
-          disabled={isSubmitting}
-        />
-        {errors.password && (
-          <p className="text-destructive text-sm">{errors.password.message}</p>
-        )}
-      </div>
+      {errors.root && (
+        <p className="text-destructive text-center text-sm">
+          아이디 또는 비밀번호 오류
+        </p>
+      )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
         {isSubmitting ? (

@@ -20,7 +20,10 @@ export function useLoginForm() {
     if (data.username === 'admin' && data.password === '1234') {
       router.push('/');
     } else {
-      alert('아이디 비번 틀림');
+      form.setError('root', {
+        type: 'manual',
+        message: '아이디 또는 비밀번호가 일치하지 않습니다.',
+      });
     }
   };
 

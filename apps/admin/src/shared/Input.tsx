@@ -2,12 +2,12 @@ import { Input as BaseInput } from '@repo/ui/shadcn';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@repo/ui/lib';
 
-const inputVariants = cva('', {
+const inputVariants = cva('transition-all duration-200', {
   variants: {
     variant: {
       default: '',
       error:
-        'border-destructive ring-destructive focus-visible:ring-destructive placeholder:text-destructive/60 text-destructive', // 에러일 때 빨간맛 추가
+        'border-destructive ring-1 ring-destructive focus-visible:ring-destructive text-destructive placeholder:text-destructive/60',
     },
   },
   defaultVariants: {
@@ -15,12 +15,12 @@ const inputVariants = cva('', {
   },
 });
 
-interface InputProps
+interface Props
   extends
     React.ComponentProps<typeof BaseInput>,
     VariantProps<typeof inputVariants> {}
 
-export function Input({ className, variant, ...props }: InputProps) {
+export function Input({ className, variant, ...props }: Props) {
   return (
     <BaseInput
       className={cn(inputVariants({ variant }), className)}
