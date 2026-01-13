@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { Church } from 'lucide-react';
 import { LoginForm } from '@/features/auth';
 
