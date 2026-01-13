@@ -1,0 +1,18 @@
+import { Avatar, AvatarFallback } from '@/shared/ui';
+
+interface Props {
+  name?: string;
+}
+
+export function HeaderProfile({ name = '관리자' }: Props) {
+  return (
+    <>
+      <Avatar className="h-8 w-8">
+        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+          {name.slice(0, 2)}
+        </AvatarFallback>
+      </Avatar>
+      <span className="hidden text-sm font-medium md:inline">{name}</span>
+    </>
+  );
+}
