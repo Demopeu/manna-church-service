@@ -1,3 +1,10 @@
+import { Date, BulletinTaskCard } from '@/widgets/dashboard';
+
 export default function DashboardPage() {
-  return <p>메인</p>;
+  return (
+    <div className="space-y-6">
+      <Date />
+      <BulletinTaskCard />
+    </div>
+  );
 }
