@@ -1,3 +1,11 @@
+import { AnnouncementsList } from '@/widgets/announcements';
+import { CreateAnnouncementButton } from '@/features/announcement';
+
 export default function AnnouncementsPage() {
-  return <p>공지</p>;
+  return (
+    <div className="space-y-6">
+      <CreateAnnouncementButton />
+      <AnnouncementsList />
+    </div>
+  );
 }

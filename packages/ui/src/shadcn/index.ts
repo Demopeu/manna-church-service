@@ -54,3 +54,6 @@ export {
   AlertDialogAction,
   AlertDialogCancel,
 } from './alert-dialog';
+
+export { Switch } from './switch';
+export { Textarea } from './textarea';

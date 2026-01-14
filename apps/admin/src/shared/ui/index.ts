@@ -7,3 +7,5 @@ export * from './Avatar';
 export * from './Table';
 export * from './EmptyState';
 export * from './DeleteDialog';
+export * from './Switch';
+export * from './Textarea';

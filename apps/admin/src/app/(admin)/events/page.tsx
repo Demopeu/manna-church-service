@@ -1,3 +1,11 @@
+import { EventsList } from '@/widgets/events';
+import { CreateEventButton } from '@/features/event';
+
 export default function EventsPage() {
-  return <p>이벤트</p>;
+  return (
+    <div className="space-y-6">
+      <CreateEventButton />
+      <EventsList />
+    </div>
+  );
 }

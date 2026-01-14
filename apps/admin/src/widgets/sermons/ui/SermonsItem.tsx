@@ -1,5 +1,6 @@
-import { TableRow, TableCell, Button } from '@/shared/ui';
-import { ExternalLink, Pencil, Trash2 } from 'lucide-react';
+import { TableRow, TableCell } from '@/shared/ui';
+import { ExternalLink } from 'lucide-react';
+import { EditSermonButton, DeleteSermonButton } from '@/features/sermon';
 
 interface Props {
   id: string;
@@ -28,12 +29,8 @@ export function SermonsItem({ id, title, preacher, date, youtubeUrl }: Props) {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
-          <Button variant="ghost" size="icon">
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => {}}>
-            <Trash2 className="text-destructive h-4 w-4" />
-          </Button>
+          <EditSermonButton sermonId={id} />
+          <DeleteSermonButton sermonId={id} sermonTitle={title} />
         </div>
       </TableCell>
     </TableRow>
