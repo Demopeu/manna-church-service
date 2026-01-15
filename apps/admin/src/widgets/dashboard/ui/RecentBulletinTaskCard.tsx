@@ -1,8 +1,16 @@
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 import { FileImage, ArrowRight, AlertCircle } from 'lucide-react';
+import { getLatestBulletinStatus } from '@/entities/bulletin';
+import { withAsyncBoundary } from '@/shared/lib';
+import { CardSkeleton } from './CardSkeleton';
+import { CardError } from './CardError';
 
-export function BulletinTaskCard() {
+export async function BulletinTaskCard() {
+  const hasBulletin = await getLatestBulletinStatus();
+  if (hasBulletin) {
+    return null;
+  }
   return (
     <Card className="border-primary/20 bg-primary/5">
       <CardHeader className="pb-3">
@@ -33,3 +41,8 @@ export function BulletinTaskCard() {
     </Card>
   );
 }
+
+export const RecentBulletinTaskCard = withAsyncBoundary(BulletinTaskCard, {
+  loadingFallback: <CardSkeleton title="주보 현황" icon={FileImage} />,
+  errorFallback: <CardError title="주보 현황" />,
+});

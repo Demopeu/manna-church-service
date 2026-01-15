@@ -1,5 +1,5 @@
 export { Date } from './ui/Date';
-export { BulletinTaskCard } from './ui/BulletinTaskCard';
+export { RecentBulletinTaskCard } from './ui/RecentBulletinTaskCard';
 export { RecentAnnouncementsCard } from './ui/RecentAnnouncementsCard';
 export { RecentEventsCard } from './ui/RecentEventsCard';
 export { RecentSermonCard } from './ui/RecentSermonCard';

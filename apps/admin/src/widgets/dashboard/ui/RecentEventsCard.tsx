@@ -1,7 +1,14 @@
 import { Megaphone } from 'lucide-react';
 import { DashboardCardWrapper } from './dashboard-card-wrapper';
+import { getLatestEvent } from '@/entities/event';
+import { EventsItem } from './EventsItem';
+import { withAsyncBoundary } from '@/shared/lib';
+import { CardSkeleton } from './CardSkeleton';
+import { CardError } from './CardError';
 
-export async function RecentEventsCard() {
+async function EventsCard() {
+  const data = await getLatestEvent();
+
   return (
     <DashboardCardWrapper
       title="진행 중인 이벤트"
@@ -9,9 +16,20 @@ export async function RecentEventsCard() {
       href="/events"
     >
       <div className="space-y-2">
-        <h3 className="font-medium">신년 감사 캠페인</h3>
-        <p className="text-muted-foreground text-sm">2024.01.01 ~ 2024.01.31</p>
+        {data.map((item) => (
+          <EventsItem
+            key={item.id}
+            title={item.title}
+            startDate={item.startDate}
+            endDate={item.endDate}
+          />
+        ))}
       </div>
     </DashboardCardWrapper>
   );
 }
+
+export const RecentEventsCard = withAsyncBoundary(EventsCard, {
+  loadingFallback: <CardSkeleton title="진행 중인 이벤트" icon={Megaphone} />,
+  errorFallback: <CardError title="진행 중인 이벤트" />,
+});

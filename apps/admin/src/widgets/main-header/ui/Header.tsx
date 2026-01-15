@@ -28,7 +28,9 @@ export function Header({ pageTitle }: Props) {
         >
           <Menu className="h-5 w-5" />
         </Button>
-        <h1 className="text-foreground text-xl font-semibold">{pageTitle}</h1>
+        <h1 className="text-foreground truncate text-xl font-semibold">
+          {pageTitle}
+        </h1>
       </div>
 
       <DropdownMenu>
