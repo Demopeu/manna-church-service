@@ -1,4 +1,3 @@
-export { CreateSermonButton } from './ui/CreateSermonButton';
-export { DeleteSermonButton } from './ui/DeleteSermonButton';
-export { EditSermonButton } from './ui/EditSermonButton';
-export { extractVideoId } from './lib/extract-video-id';
+export { CreateSermonButton } from './ui/CreateButton';
+export { DeleteSermonButton } from './ui/DeleteButton';
+export { EditSermonButton } from './ui/EditButton';

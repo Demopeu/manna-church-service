@@ -3,24 +3,21 @@
 import { TableRow, TableCell } from '@/shared/ui';
 import { ExternalLink } from 'lucide-react';
 import { EditSermonButton, DeleteSermonButton } from '@/features/sermon';
+import { Sermon } from '@/entities/sermons';
 
 interface Props {
-  id: string;
-  title: string;
-  preacher: string;
-  date: string;
-  youtubeUrl: string;
+  sermon: Sermon;
 }
 
-export function SermonsItem({ id, title, preacher, date, youtubeUrl }: Props) {
+export function SermonsItem({ sermon }: Props) {
   return (
-    <TableRow key={id}>
-      <TableCell className="font-medium">{title}</TableCell>
-      <TableCell>{preacher}</TableCell>
-      <TableCell>{date}</TableCell>
+    <TableRow key={sermon.id}>
+      <TableCell className="font-medium">{sermon.title}</TableCell>
+      <TableCell>{sermon.preacher}</TableCell>
+      <TableCell>{sermon.date}</TableCell>
       <TableCell>
         <a
-          href={youtubeUrl}
+          href={sermon.videoUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary inline-flex items-center hover:underline"
@@ -31,8 +28,8 @@ export function SermonsItem({ id, title, preacher, date, youtubeUrl }: Props) {
       </TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
-          <EditSermonButton sermonId={id} />
-          <DeleteSermonButton sermonId={id} sermonTitle={title} />
+          <EditSermonButton sermon={sermon} />
+          <DeleteSermonButton sermonId={sermon.id} sermonTitle={sermon.title} />
         </div>
       </TableCell>
     </TableRow>

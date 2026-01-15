@@ -5,15 +5,23 @@ import {
   TableHead,
   TableRow,
   EmptyState,
+  SearchInput,
+  SearchInputSkeleton,
+  SectionCard,
+  Pagination,
 } from '@/shared/ui';
 import { Suspense } from 'react';
 import { Video } from 'lucide-react';
-import { mockSermons } from '../config/dummy';
 import { SermonsItem } from './SermonsItem';
-import { SectionCard } from '@/shared/ui/SectionCard';
-import { SearchInput, SearchInputSkeleton } from '@/shared/ui';
+import { Sermon } from '@/entities/sermons';
 
-export function SermonsList() {
+interface Props {
+  sermons: Sermon[];
+  totalPages: number;
+  currentPage: number;
+}
+
+export function SermonsList({ sermons, currentPage, totalPages }: Props) {
   return (
     <SectionCard
       title="설교 목록"
@@ -24,7 +32,7 @@ export function SermonsList() {
         </Suspense>
       }
     >
-      {mockSermons.length === 0 ? (
+      {sermons.length === 0 ? (
         <EmptyState
           icon={Video}
           title="등록된 설교가 없습니다"
@@ -43,13 +51,14 @@ export function SermonsList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockSermons.map((sermon) => (
-                <SermonsItem key={sermon.id} {...sermon} />
+              {sermons.map((sermon) => (
+                <SermonsItem key={sermon.id} sermon={sermon} />
               ))}
             </TableBody>
           </Table>
         </div>
       )}
+      <Pagination totalPages={totalPages} currentPage={currentPage} />
     </SectionCard>
   );
 }

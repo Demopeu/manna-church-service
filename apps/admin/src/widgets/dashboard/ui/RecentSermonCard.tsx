@@ -1,12 +1,22 @@
 import { Video } from 'lucide-react';
 import { DashboardCardWrapper } from './dashboard-card-wrapper';
-import { getLatestSermon } from '@/entities/sermon';
+import { getLatestSermon } from '@/entities/sermons';
 import { withAsyncBoundary } from '@/shared/ui';
 import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
 
 async function SermonCard() {
   const data = await getLatestSermon();
+
+  if (!data) {
+    return (
+      <DashboardCardWrapper title="최근 설교" icon={Video} href="/sermons">
+        <div className="text-muted-foreground flex h-full min-h-[60px] items-center justify-center text-sm">
+          등록된 설교가 없습니다.
+        </div>
+      </DashboardCardWrapper>
+    );
+  }
 
   return (
     <DashboardCardWrapper title="최근 설교" icon={Video} href="/sermons">
