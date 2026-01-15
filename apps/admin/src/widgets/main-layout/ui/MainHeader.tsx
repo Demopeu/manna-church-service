@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/shared/ui';
-import { useSidebar } from '@/widgets/main-sidebar';
+import { useSidebar } from '../model/context';
 import { LogoutDropdownItem } from '@/features/auth';
 import { UserProfile } from '@/entities/user';
 import { usePathname } from 'next/navigation';
@@ -17,7 +17,7 @@ interface Props {
   name: string;
 }
 
-export function Header({ name }: Props) {
+export function MainHeader({ name }: Props) {
   const pathname = usePathname();
   const { open } = useSidebar();
   const route = ADMIN_ROUTES.find((route) => route.href === pathname);

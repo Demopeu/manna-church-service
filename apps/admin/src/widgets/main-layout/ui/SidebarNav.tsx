@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { ADMIN_ROUTES } from '@/shared/config';
 import { cn } from '@repo/ui/lib';
 import { usePathname } from 'next/navigation';
-import { useSidebar } from '@/widgets/main-sidebar';
+import { useSidebar } from '../model/context';
 
-export function Nav() {
+export function SidebarNav() {
   const pathname = usePathname();
   const { close } = useSidebar();
 

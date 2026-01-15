@@ -1,4 +1,4 @@
-import { AlbumsList } from '@/widgets/albums';
+import { AlbumsList } from '@/widgets/gallery';
 import { CreateAlbumButton } from '@/features/album';
 
 export default function GalleryPage() {

@@ -1,10 +1,10 @@
 'use client';
 
 import { cn } from '@repo/ui/lib';
-import Header from './Header';
-import { Nav } from './Nav';
-import { Footer } from './Footer';
-import { useSidebar } from '@/widgets/main-sidebar';
+import { SidebarHeader } from './SidebarHeader';
+import { SidebarNav } from './SidebarNav';
+import { SidebarFooter } from './SidebarFooter';
+import { useSidebar } from '../model/context';
 
 export function Sidebar() {
   const { isOpen, close } = useSidebar();
@@ -24,9 +24,9 @@ export function Sidebar() {
         )}
       >
         <div className="flex h-full flex-col">
-          <Header />
-          <Nav />
-          <Footer />
+          <SidebarHeader />
+          <SidebarNav />
+          <SidebarFooter />
         </div>
       </aside>
     </>

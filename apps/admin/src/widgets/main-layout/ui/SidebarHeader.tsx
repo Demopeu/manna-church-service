@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { Button } from '@/shared/ui';
 import { X } from 'lucide-react';
 import { Church } from 'lucide-react';
-import { useSidebar } from '@/widgets/main-sidebar';
+import { useSidebar } from '../model/context';
 
-export default function Header() {
+export function SidebarHeader() {
   const { close } = useSidebar();
   return (
     <div className="border-sidebar-border flex h-16 items-center justify-between border-b px-4">

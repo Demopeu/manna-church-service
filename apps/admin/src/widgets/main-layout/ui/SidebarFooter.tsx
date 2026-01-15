@@ -1,4 +1,4 @@
-export function Footer() {
+export function SidebarFooter() {
   return (
     <div className="border-sidebar-border border-t p-4">
       <p className="text-muted-foreground text-center text-xs">
