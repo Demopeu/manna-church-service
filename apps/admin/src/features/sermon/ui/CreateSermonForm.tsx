@@ -1,6 +1,5 @@
 'use client';
 
-import type React from 'react';
 import {
   Card,
   CardContent,
@@ -14,11 +13,11 @@ import {
 import { extractVideoId } from '../lib/extract-video-id';
 import { useCreateSermon } from '../model/use-create-sermon';
 
-interface CreateSermonFormProps {
+interface Props {
   onCancel: () => void;
 }
 
-export function CreateSermonForm({ onCancel }: CreateSermonFormProps) {
+export function CreateSermonForm({ onCancel }: Props) {
   const { formData, updateField, handleSubmit } = useCreateSermon(onCancel);
 
   return (

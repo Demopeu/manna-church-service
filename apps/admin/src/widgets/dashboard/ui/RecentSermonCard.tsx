@@ -1,7 +1,7 @@
 import { Video } from 'lucide-react';
 import { DashboardCardWrapper } from './dashboard-card-wrapper';
 import { getLatestSermon } from '@/entities/sermon';
-import { withAsyncBoundary } from '@/shared/lib';
+import { withAsyncBoundary } from '@/shared/ui';
 import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
 

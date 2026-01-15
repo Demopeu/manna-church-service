@@ -1,5 +1,4 @@
-import { Sidebar } from '@/widgets/main-sidebar';
-import { SidebarProvider } from '@/shared/model';
+import { Sidebar, SidebarProvider } from '@/widgets/main-sidebar';
 interface Props {
   children: React.ReactNode;
 }

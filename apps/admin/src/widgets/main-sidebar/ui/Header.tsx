@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/shared/ui';
 import { X } from 'lucide-react';
 import { Church } from 'lucide-react';
-import { useSidebar } from '@/shared/model';
+import { useSidebar } from '@/widgets/main-sidebar';
 
 export default function Header() {
   const { close } = useSidebar();

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
 import { FileImage, ArrowRight, AlertCircle } from 'lucide-react';
 import { getLatestBulletinStatus } from '@/entities/bulletin';
-import { withAsyncBoundary } from '@/shared/lib';
+import { withAsyncBoundary } from '@/shared/ui';
 import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
 

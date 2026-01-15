@@ -2,7 +2,7 @@ import { Megaphone } from 'lucide-react';
 import { DashboardCardWrapper } from './dashboard-card-wrapper';
 import { getLatestEvent } from '@/entities/event';
 import { EventsItem } from './EventsItem';
-import { withAsyncBoundary } from '@/shared/lib';
+import { withAsyncBoundary } from '@/shared/ui';
 import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
 

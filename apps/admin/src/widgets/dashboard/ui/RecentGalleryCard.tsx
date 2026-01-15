@@ -4,7 +4,7 @@ import { getLatestGalleryImages } from '@/entities/gallery';
 import { GalleryItem } from './GalleryItem';
 import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
-import { withAsyncBoundary } from '@/shared/lib';
+import { withAsyncBoundary } from '@/shared/ui';
 
 async function GalleryCard() {
   const galleryItems = await getLatestGalleryImages();

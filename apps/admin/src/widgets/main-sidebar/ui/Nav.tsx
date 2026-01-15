@@ -1,10 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { ADMIN_ROUTES } from '@/shared/config/admin-route';
+import { ADMIN_ROUTES } from '@/shared/config';
 import { cn } from '@repo/ui/lib';
 import { usePathname } from 'next/navigation';
-import { useSidebar } from '@/shared/model';
+import { useSidebar } from '@/widgets/main-sidebar';
 
 export function Nav() {
   const pathname = usePathname();

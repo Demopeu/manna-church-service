@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/shared/ui';
-import { useSidebar } from '@/shared/model';
+import { useSidebar } from '@/widgets/main-sidebar';
 import { LogoutDropdownItem } from '@/features/auth';
 import { HeaderProfile } from '@/entities/user';
 

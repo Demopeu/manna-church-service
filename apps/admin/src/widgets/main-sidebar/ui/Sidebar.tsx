@@ -4,7 +4,7 @@ import { cn } from '@repo/ui/lib';
 import Header from './Header';
 import { Nav } from './Nav';
 import { Footer } from './Footer';
-import { useSidebar } from '@/shared/model';
+import { useSidebar } from '@/widgets/main-sidebar';
 
 export function Sidebar() {
   const { isOpen, close } = useSidebar();
