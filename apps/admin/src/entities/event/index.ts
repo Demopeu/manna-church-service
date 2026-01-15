@@ -1,1 +1,1 @@
-export { getLatestEvent } from './api/event.api';
+export { getLatestEvent } from './api/queries';

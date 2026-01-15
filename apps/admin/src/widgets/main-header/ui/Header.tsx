@@ -9,14 +9,18 @@ import {
 } from '@/shared/ui';
 import { useSidebar } from '@/widgets/main-sidebar';
 import { LogoutDropdownItem } from '@/features/auth';
-import { HeaderProfile } from '@/entities/user';
+import { UserProfile } from '@/entities/user';
+import { usePathname } from 'next/navigation';
+import { ADMIN_ROUTES } from '@/shared/config';
 
 interface Props {
-  pageTitle: string;
+  name: string;
 }
 
-export function Header({ pageTitle }: Props) {
+export function Header({ name }: Props) {
+  const pathname = usePathname();
   const { open } = useSidebar();
+  const route = ADMIN_ROUTES.find((route) => route.href === pathname);
   return (
     <header className="border-border bg-card flex h-16 items-center justify-between border-b px-4 md:px-6">
       <div className="flex items-center gap-4">
@@ -29,7 +33,7 @@ export function Header({ pageTitle }: Props) {
           <Menu className="h-5 w-5" />
         </Button>
         <h1 className="text-foreground truncate text-xl font-semibold">
-          {pageTitle}
+          {route?.label}
         </h1>
       </div>
 
@@ -39,7 +43,7 @@ export function Header({ pageTitle }: Props) {
             variant="ghost"
             className="flex items-center gap-2 focus-visible:ring-0"
           >
-            <HeaderProfile />
+            <UserProfile name={name} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">

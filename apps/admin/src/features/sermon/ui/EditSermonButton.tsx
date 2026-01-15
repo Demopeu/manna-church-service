@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/shared/ui';
 import { Pencil } from 'lucide-react';
 import { useEditSermon } from '../model/use-edit-sermon';

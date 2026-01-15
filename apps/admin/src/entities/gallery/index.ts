@@ -1,1 +1,1 @@
-export { getLatestGalleryImages } from './api/gallery.api';
+export { getLatestGalleryImages } from './api/queries';

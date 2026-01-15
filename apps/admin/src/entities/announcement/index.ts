@@ -1,1 +1,1 @@
-export { getLatestAnnouncement } from './api/announcement.api';
+export { getLatestAnnouncement } from './api/queries';

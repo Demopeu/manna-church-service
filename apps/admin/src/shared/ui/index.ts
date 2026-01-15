@@ -11,6 +11,7 @@ export * from './base/Switch';
 
 // components
 export * from './components/EmptyState';
+export * from './components/SearchInput';
 // utils
 export * from './utils/withAsyncBoundary';
 

@@ -1,1 +1,1 @@
-export { getLatestBulletinStatus } from './api/bulletin.api';
+export { getLatestBulletinStatus } from './api/queries';

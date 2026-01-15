@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback } from '@/shared/ui';
 
 interface Props {
-  name?: string;
+  name: string;
 }
 
-export function HeaderProfile({ name = '관리자' }: Props) {
+export function UserProfile({ name }: Props) {
   return (
     <>
       <Avatar className="h-8 w-8">

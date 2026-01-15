@@ -1,1 +1,1 @@
-export { getLatestSermon } from './api/sermon.api';
+export { getLatestSermon } from './api/queries';
