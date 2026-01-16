@@ -9,7 +9,7 @@ import {
   AlertDialogTrigger,
 } from '@repo/ui/shadcn';
 import { Pencil } from 'lucide-react';
-import { Sermon } from '@/entities/sermons';
+import { Sermon } from '@/entities/sermon';
 import { SermonForm } from './Form';
 
 interface Props {

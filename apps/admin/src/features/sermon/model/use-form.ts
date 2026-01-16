@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { extractVideoId } from '../lib/extract-video-id';
 import { createSermonAction, updateSermonAction } from './actions';
 import { initialState } from './schema';
-import { Sermon } from '@/entities/sermons';
+import { Sermon } from '@/entities/sermon';
 import { getDefaultValues } from '../lib/mapper';
 import { FORM_TEXT } from '../config/form';
 

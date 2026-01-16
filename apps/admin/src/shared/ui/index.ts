@@ -8,11 +8,14 @@ export * from './base/Label';
 export * from './base/Card';
 export * from './base/Table';
 export * from './base/Switch';
+export * from './base/Skeleton';
 
 // components
 export * from './components/EmptyState';
 export * from './components/SearchInput';
 export * from './components/Pagination';
+export * from './components/ListSkeleton';
+
 // utils
 export * from './utils/withAsyncBoundary';
 

@@ -57,3 +57,5 @@ export {
 
 export { Switch } from './switch';
 export { Textarea } from './textarea';
+
+export { Skeleton } from './skeleton';

@@ -11,7 +11,7 @@ import {
   CardDescription,
 } from '@/shared/ui';
 import { useSermonForm } from '../model/use-form';
-import { Sermon } from '@/entities/sermons';
+import { Sermon } from '@/entities/sermon';
 
 interface Props {
   sermon?: Sermon;
@@ -46,6 +46,7 @@ export function SermonForm({
             defaultValue={defaultValues.title}
             required
             className="h-12 text-base"
+            placeholder="설교 제목을 입력해주세요."
           />
           {state.fieldErrors?.title && (
             <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
@@ -59,6 +60,7 @@ export function SermonForm({
             defaultValue={defaultValues.preacher}
             required
             className="h-12 text-base"
+            placeholder="설교자를 입력해주세요."
           />
           {state.fieldErrors?.preacher && (
             <p className="text-sm text-red-500">
@@ -78,6 +80,7 @@ export function SermonForm({
             defaultValue={defaultValues.date}
             required
             className="h-12 text-base"
+            placeholder="설교 날짜를 입력해주세요."
           />
           {state.fieldErrors?.date && (
             <p className="text-sm text-red-500">{state.fieldErrors.date[0]}</p>
@@ -93,6 +96,7 @@ export function SermonForm({
             onChange={(e) => preview.setUrl(e.target.value)}
             required
             className="h-12 text-base"
+            placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
           />
           <p className="text-muted-foreground text-sm">{uiText.youtubeHelp}</p>
           {preview.id && (

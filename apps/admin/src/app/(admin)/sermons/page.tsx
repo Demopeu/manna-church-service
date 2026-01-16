@@ -1,6 +1,7 @@
-import { SermonsList } from '@/widgets/sermons';
+import { SermonsList } from '@/widgets/sermon-list';
 import { CreateSermonButton } from '@/features/sermon';
-import { getSermons } from '@/entities/sermons';
+import { Suspense } from 'react';
+import { ListSkeleton } from '@/shared/ui';
 
 export default async function SermonsPage({
   searchParams,
@@ -12,18 +13,12 @@ export default async function SermonsPage({
   const searchQuery = q || '';
   const currentPage = Math.max(1, Number(page) || 1);
 
-  const { sermons, totalPages } = await getSermons({
-    query: searchQuery,
-    page: currentPage,
-  });
   return (
     <div className="space-y-6">
       <CreateSermonButton />
-      <SermonsList
-        sermons={sermons}
-        currentPage={currentPage}
-        totalPages={totalPages}
-      />
+      <Suspense fallback={<ListSkeleton />}>
+        <SermonsList searchQuery={searchQuery} currentPage={currentPage} />
+      </Suspense>
     </div>
   );
 }

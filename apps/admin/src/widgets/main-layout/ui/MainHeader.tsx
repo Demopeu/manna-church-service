@@ -42,6 +42,7 @@ export function MainHeader({ name }: Props) {
           <Button
             variant="ghost"
             className="flex items-center gap-2 focus-visible:ring-0"
+            suppressHydrationWarning
           >
             <UserProfile name={name} />
           </Button>

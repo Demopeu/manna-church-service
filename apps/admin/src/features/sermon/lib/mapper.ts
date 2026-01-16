@@ -1,4 +1,4 @@
-import { Sermon } from '@/entities/sermons';
+import { Sermon } from '@/entities/sermon';
 
 export const getDefaultValues = (sermon?: Sermon) => ({
   title: sermon?.title ?? '',
