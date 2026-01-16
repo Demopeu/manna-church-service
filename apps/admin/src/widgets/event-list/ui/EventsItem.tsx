@@ -1,32 +1,23 @@
+'use client';
+
 import { TableRow, TableCell } from '@/shared/ui';
 import { EditEventButton, DeleteEventButton } from '@/features/event';
+import { Event } from '@/entities/event';
 import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 interface Props {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  createdAt: string;
-  onEdit: () => void;
+  event: Event;
 }
 
-export function EventsItem({
-  id,
-  title,
-  description,
-  imageUrl,
-  createdAt,
-  onEdit,
-}: Props) {
+export function EventsItem({ event }: Props) {
   return (
-    <TableRow key={id}>
+    <TableRow key={event.id}>
       <TableCell>
-        {imageUrl ? (
+        {event.photoUrl ? (
           <Image
-            src={imageUrl}
-            alt={title}
+            src={event.photoUrl}
+            alt={event.title}
             className="h-16 w-16 rounded-lg object-cover"
             width={64}
             height={64}
@@ -37,15 +28,15 @@ export function EventsItem({
           </div>
         )}
       </TableCell>
-      <TableCell className="font-medium">{title}</TableCell>
+      <TableCell className="font-medium">{event.title}</TableCell>
       <TableCell className="text-muted-foreground">
-        <span className="line-clamp-2">{description}</span>
+        <span className="line-clamp-2">{event.description}</span>
       </TableCell>
-      <TableCell>{createdAt}</TableCell>
+      <TableCell>{event.startDate}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
-          <EditEventButton onEdit={onEdit} />
-          <DeleteEventButton eventId={id} eventTitle={title} />
+          <EditEventButton event={event} />
+          <DeleteEventButton eventId={event.id} eventTitle={event.title} />
         </div>
       </TableCell>
     </TableRow>

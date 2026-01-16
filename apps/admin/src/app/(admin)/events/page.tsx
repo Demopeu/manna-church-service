@@ -1,11 +1,24 @@
-import { EventsList } from '@/widgets/events';
+import { EventsList } from '@/widgets/event-list';
 import { CreateEventButton } from '@/features/event';
+import { Suspense } from 'react';
+import { ListSkeleton } from '@/shared/ui';
 
-export default function EventsPage() {
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q, page } = await searchParams;
+
+  const searchQuery = q || '';
+  const currentPage = Math.max(1, Number(page) || 1);
+
   return (
     <div className="space-y-6">
       <CreateEventButton />
-      <EventsList />
+      <Suspense fallback={<ListSkeleton />}>
+        <EventsList searchQuery={searchQuery} currentPage={currentPage} />
+      </Suspense>
     </div>
   );
 }
