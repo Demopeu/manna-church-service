@@ -1,28 +1,32 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useActionState, useEffect, useState, useCallback } from 'react';
+import { createGalleryAction, updateGalleryAction } from './actions';
+import { initialState } from './schema';
+import { getDefaultValues, GalleryFormImage } from '../lib/mapper';
+import { FORM_TEXT } from '../config/form';
+import { GalleryWithImages } from '@/entities/gallery';
 
-export interface GalleryImage {
-  id: string;
-  url: string;
-  isThumbnail: boolean;
+interface UseGalleryFormProps {
+  gallery?: GalleryWithImages;
+  onSuccess: () => void;
 }
 
-interface AlbumFormData {
-  title: string;
-  date: string;
-}
+export function useGalleryForm({ gallery, onSuccess }: UseGalleryFormProps) {
+  const isEditMode = !!gallery;
+  const action = isEditMode
+    ? updateGalleryAction.bind(null, gallery.id)
+    : createGalleryAction;
 
-export function useAlbumForm(
-  initialData?: AlbumFormData,
-  initialImages?: GalleryImage[],
-  onSuccess?: () => void,
-) {
-  const [formData, setFormData] = useState<AlbumFormData>(
-    initialData || { title: '', date: '' },
-  );
+  const [state, formAction, isPending] = useActionState(action, initialState);
+
+  const defaultValues = getDefaultValues(gallery);
+  const uiText = isEditMode ? FORM_TEXT.EDIT : FORM_TEXT.CREATE;
+
   const [dragActive, setDragActive] = useState(false);
-  const [previews, setPreviews] = useState<GalleryImage[]>(initialImages || []);
+  const [previews, setPreviews] = useState<GalleryFormImage[]>(
+    defaultValues.images,
+  );
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -45,10 +49,11 @@ export function useAlbumForm(
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => {
-        const newImage: GalleryImage = {
+        const newImage: GalleryFormImage = {
           id: Date.now().toString() + Math.random(),
           url: reader.result as string,
           isThumbnail: false,
+          file,
         };
         setPreviews((prev) => {
           if (prev.length === 0) {
@@ -68,10 +73,11 @@ export function useAlbumForm(
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = () => {
-        const newImage: GalleryImage = {
+        const newImage: GalleryFormImage = {
           id: Date.now().toString() + Math.random(),
           url: reader.result as string,
           isThumbnail: false,
+          file,
         };
         setPreviews((prev) => {
           if (prev.length === 0) {
@@ -104,32 +110,24 @@ export function useAlbumForm(
     );
   };
 
-  const updateField = (field: keyof AlbumFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('앨범 생성:', { ...formData, images: previews });
-    onSuccess?.();
-  };
-
-  const resetForm = () => {
-    setFormData({ title: '', date: '' });
-    setPreviews([]);
-  };
+  useEffect(() => {
+    if (state.success) {
+      onSuccess();
+    }
+  }, [state.success, onSuccess]);
 
   return {
-    formData,
+    state,
+    action: formAction,
+    isPending,
+    defaultValues,
+    uiText,
     dragActive,
     previews,
-    updateField,
     handleDrag,
     handleDrop,
     handleFileSelect,
     removePreview,
     setThumbnail,
-    handleSubmit,
-    resetForm,
   };
 }

@@ -214,39 +214,93 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 ### C. 관리자 CMS (`apps/admin`)
 
-- **Page Structure (Routes Definition Only):**
+#### Tech Stack
 
-  > 디자인과 레이아웃(Table vs Grid 등)은 개발자가 자유롭게 구현한다. AI는 아래 URL에 맞는 **폴더 및 파일 구조(`page.tsx`)만 생성**한다.
-  - `/login`: 로그인 페이지.
-  - `/`: 메인 대시보드.
-  - `/sermons`: 설교 관리 (CRUD).
-  - `/gallery`: 갤러리/앨범 관리.
-  - `/bulletin`: 주보 관리.
-  - `/announcements`: 공지사항 관리.
-  - `/events`: 행사 관리.
-  - `/servants`: 섬기는 사람들 관리.
+- **Port:** 3001 (dev & start)
+- **Dependencies:** React Hook Form 7.70.0, Zod 4.3.5, use-debounce 10.1.0, @hookform/resolvers 5.2.2
+- **Config:** React Compiler enabled, transpiles `@repo/ui`
 
-- **Feature: PDF to Image Converter (Strict Rule):**
-  - **Library:** `pdfjs-dist` (Latest Version) 사용.
-  - **Logic:**
-    - 주보 PDF 업로드 시, **반드시 1~3페이지를 추출**하여 이미지(WebP)로 변환한다.
-    - **Resolution:** 가독성을 위해 Width 기준 `1920px` 이상으로 렌더링한다.
-    - **Memory Safety:** 브라우저 멈춤 방지를 위해 3장을 동시에 변환하지 않고, **한 장씩 순차적으로(Sequential) 처리**한다.
-  - **Constraint:** 원본 PDF가 3장 미만일 경우 있는 페이지만 변환하고, 3장을 초과해도 **앞의 3장까지만** 저장한다.
+#### Implemented Routes
 
-- **Feature: File Upload UX:**
-  - **Loading State (Indeterminate):**
-    - 정확한 퍼센트(%)를 보여주기 위해 복잡한 XHR을 사용하지 않는다.
-    - 대신 **React 19의 `useFormStatus` (pending)**를 활용하여, 업로드 중임을 알리는 **"로딩 스피너"**나 **"업로드 중..." 텍스트**를 표시한다.
-  - **Blocking:** 업로드(Action)가 진행되는 동안에는 Submit 버튼을 `disabled` 처리하여 중복 전송을 방지한다.
+- `/login` - 로그인 페이지 (LoginCard widget)
+- `/(admin)/` - 대시보드 (Date, RecentBulletinCard, RecentAnnouncementCard, RecentEventCard, RecentSermonCard, RecentGalleryCard)
+- `/(admin)/announcements` - 공지사항 관리 (search + pagination)
+- `/(admin)/bulletins` - 주보 관리 (search + pagination)
+- `/(admin)/events` - 이벤트 관리 (search + pagination)
+- `/(admin)/gallery` - 갤러리/앨범 관리 (search + pagination)
+- `/(admin)/sermons` - 설교 관리 (search + pagination)
+- `/(admin)/servants` - 섬기는 사람들 (placeholder, not implemented)
 
-- **Image Pipeline (Client-Side Compression):**
-  - 라이브러리: `browser-image-compression`.
-  - 로직: 업로드 전 브라우저에서 `Max 1MB`, `WebP Format`으로 변환.
-  - GIF 처리: 첫 프레임 추출 후 정적 이미지로 변환.
-  - 에러 처리: 압축/변환 실패 시 Toast 메시지 출력 후 업로드 차단.
+#### FSD Layer Implementation
 
-- **Auth:** 화이트리스트 아이디 기반 접속 허용.
+**Entities Layer (`src/entities/`):**
+
+- announcement/, bulletin/, event/, gallery/, sermon/, user/
+- Structure: `model/` (types), `api/queries.ts` (data fetching), `api/dto.ts`, `lib/mapper.ts`, `index.ts`
+- Current: MOCK data in queries (not connected to Supabase yet)
+
+**Features Layer (`src/features/`):**
+
+- announcement/, auth/, bulletin/, event/, gallery/, sermon/
+- Structure: `ui/` (CreateButton, EditButton, DeleteButton, Form), `model/actions.ts` (Server Actions), `model/schema.ts` (Zod), `model/use-form.ts`, `model/use-delete-*.ts`, `config/form.ts`, `lib/`
+- Pattern: Server Actions + `useFormState` + React Hook Form
+- Validation: Zod schemas with field-level error handling
+
+**Widgets Layer (`src/widgets/`):**
+
+- \*-list/ (AnnouncementsList, BulletinsList, EventsList, AlbumsList, SermonsList)
+- dashboard/ (Date, Recent\*Card components)
+- login-card/ (LoginCard)
+- main-layout/ (Sidebar, MainHeader, SidebarNav, SidebarFooter, SidebarProvider context)
+
+**Shared Layer (`src/shared/`):**
+
+- `config/route.ts` - ADMIN_ROUTES 정의 (href, label, icon)
+- `ui/` - @repo/ui 래핑 컴포넌트 (Button, Card, Input, Label, Textarea, Switch, Skeleton, Table, etc.)
+- `ui/components/` - EmptyState, ListSkeleton, Pagination, SearchInput
+- `ui/utils/` - withAsyncBoundary
+- `lib/` - 유틸리티 함수
+- `model/` - ActionState 타입
+
+#### Page Pattern (All CRUD Pages)
+
+```tsx
+// searchParams: { q?: string; page?: string }
+// Suspense + ListSkeleton fallback
+// CreateButton + List widget
+```
+
+#### Form Pattern
+
+- Schema: Zod validation (`createAnnouncementSchema`, `createBulletinSchema`, etc.)
+- Actions: Server Actions (`createAnnouncementAction`, `updateAnnouncementAction`, etc.)
+- Hook: `useFormState` + custom `use-form.ts` hook
+- UI: React Hook Form integration, field errors display, `isPending` state
+- Success: `revalidatePath()` 호출 후 success callback
+
+#### Validation Schemas
+
+- **Announcement:** title (required), content (required), isUrgent (boolean)
+- **Bulletin:** publishedAt (date), pdfFile (File, PDF only, max 10MB)
+- **Event:** title, description, startDate, photoFile (Image: jpg/png/webp, max 5MB)
+- **Sermon:** title, preacher, date, youtubeUrl (validated with extractVideoId)
+- **Gallery:** title, eventDate, images[] (File array, max 5MB each, jpg/png/webp)
+- **Auth:** username, password (simple login schema)
+
+#### Layout Structure
+
+- `layout.tsx` (root) - Noto Sans KR font, metadata
+- `(admin)/layout.tsx` - SidebarProvider + Sidebar + MainHeader + content area
+- Sidebar: ADMIN_ROUTES navigation with Lucide icons, responsive (mobile hamburger)
+- MainHeader: User profile (getMyProfile), logout dropdown
+
+#### Not Yet Implemented
+
+- PDF to image conversion (bulletin feature)
+- Real Supabase integration (currently using mocks)
+- Image compression pipeline
+- Auth middleware & whitelist check
+- Servants CRUD functionality
 
 ## 7. 데이터베이스 스키마 상세 명세 (Database Schema & Policies)
 
@@ -277,7 +331,7 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
   - `video_url`: TEXT (NOT NULL, YouTube Link)
   - `created_at`: TIMESTAMPTZ (Default: NOW())
 
-#### 2. `galleries` (교회 앨범)
+#### 2. `gallery` (교회 앨범)
 
 - **Columns:**
   - `id`: UUID (PK)
@@ -356,7 +410,17 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 ## 8. 개발 컨벤션 (Conventions)
 
 - **Strict Type Safety:** `any` 사용 절대 금지. `packages/database`의 타입을 import하여 사용.
-- **Naming:** 컴포넌트는 PascalCase, 함수는 camelCase, 폴더는 kebab-case.
+- **Naming Convention (기존 코드베이스 참조 필수):**
+  - **컴포넌트:** PascalCase (예: `AnnouncementsList`, `CreateButton`)
+  - **함수:** camelCase (예: `getAnnouncements`, `mapBulletin`)
+  - **폴더:** kebab-case (예: `announcement-list`, `main-layout`)
+  - **파일명:**
+    - React 컴포넌트: PascalCase.tsx (예: `AnnouncementsList.tsx`, `LoginCard.tsx`)
+    - 유틸/훅: camelCase.ts (예: `use-form.ts`, `mapper.ts`)
+    - 타입/모델: 도메인명.ts (예: `announcement.ts`, `schema.ts`)
+  - **중요:** 새로운 파일이나 변수를 생성할 때는 **반드시 기존 프로젝트의 유사한 파일들을 먼저 검색하여 네이밍 패턴을 확인**하고 동일한 규칙을 따른다.
+    - 예: announcement 기능 추가 시 → bulletin, sermon 등 기존 entities/features 폴더 구조와 파일명 참조
+    - AI는 코드 작성 전 `find_by_name`, `grep_search` 등을 활용하여 기존 패턴을 반드시 확인해야 함.
 - **Performance Check:** 컴포넌트 개발 시 불필요한 `useEffect` 사용을 지양하고, Server Actions를 우선 고려.
 
 - **Responsive Design Strategy (Standard):**

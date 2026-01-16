@@ -1,20 +1,47 @@
 import { DashboardCardWrapper } from './dashboard-card-wrapper';
 import { Images } from 'lucide-react';
-import { getLatestGalleryImages } from '@/entities/gallery';
-import { GalleryItem } from './GalleryItem';
+import { getLatestGallery } from '@/entities/gallery';
+import { withAsyncBoundary } from '@/shared/ui';
 import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
-import { withAsyncBoundary } from '@/shared/ui';
+import Image from 'next/image';
 
 async function GalleryCard() {
-  const galleryItems = await getLatestGalleryImages();
+  const data = await getLatestGallery();
+
+  if (!data) {
+    return (
+      <DashboardCardWrapper title="최근 갤러리" icon={Images} href="/gallery">
+        <div className="text-muted-foreground flex h-full min-h-[60px] items-center justify-center text-sm">
+          등록된 사진이 없습니다.
+        </div>
+      </DashboardCardWrapper>
+    );
+  }
+
+  const displayImages = data.images.slice(0, 3);
 
   return (
     <DashboardCardWrapper title="최근 갤러리" icon={Images} href="/gallery">
-      <div className="flex items-center gap-4">
-        {galleryItems.map((item) => (
-          <GalleryItem key={item.alt} src={item.src} alt={item.alt} />
-        ))}
+      <div className="space-y-2">
+        <h3 className="font-medium">{data.title}</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {displayImages.map((image) => (
+            <div key={image.id} className="relative aspect-square">
+              <Image
+                src={image.storagePath}
+                alt={data.title}
+                fill
+                className="rounded object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        {data.images.length > 3 && (
+          <p className="text-muted-foreground text-sm">
+            +{data.images.length - 3}장 더보기
+          </p>
+        )}
       </div>
     </DashboardCardWrapper>
   );

@@ -4,12 +4,15 @@ import { Button, DeleteDialog } from '@/shared/ui';
 import { Trash2 } from 'lucide-react';
 import { useDeleteAlbum } from '../model/use-delete-album';
 
-interface Props {
+interface DeleteAlbumButtonProps {
   albumId: string;
   albumTitle?: string;
 }
 
-export function DeleteAlbumButton({ albumId, albumTitle }: Props) {
+export function DeleteAlbumButton({
+  albumId,
+  albumTitle,
+}: DeleteAlbumButtonProps) {
   const { isOpen, openDialog, closeDialog, handleDelete } =
     useDeleteAlbum(albumId);
 
@@ -23,11 +26,11 @@ export function DeleteAlbumButton({ albumId, albumTitle }: Props) {
         open={isOpen}
         onOpenChange={closeDialog}
         onConfirm={handleDelete}
-        title="앨범을 삭제하시겠습니까?"
+        title="앨범 삭제"
         description={
           albumTitle
-            ? `"${albumTitle}" 앨범의 모든 사진이 영구적으로 삭제됩니다.`
-            : '이 작업은 되돌릴 수 없습니다. 앨범의 모든 사진이 영구적으로 삭제됩니다.'
+            ? `정말로 "${albumTitle}" 앨범을 삭제하시겠습니까?`
+            : '정말로 이 앨범을 삭제하시겠습니까?'
         }
       />
     </>
