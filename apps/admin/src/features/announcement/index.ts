@@ -1,4 +1,4 @@
-export { CreateAnnouncementButton } from './ui/CreateAnnouncementButton';
-export { AnnouncementForm } from './ui/AnnouncementForm';
-export { DeleteAnnouncementButton } from './ui/DeleteAnnouncementButton';
-export { EditAnnouncementButton } from './ui/EditAnnouncementButton';
+export { CreateAnnouncementButton } from './ui/CreateButton';
+export { DeleteAnnouncementButton } from './ui/DeleteButton';
+export { EditAnnouncementButton } from './ui/EditButton';
+export { AnnouncementForm } from './ui/Form';

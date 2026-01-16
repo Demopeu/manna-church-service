@@ -1,7 +1,7 @@
 import {
   Date,
   RecentBulletinCard,
-  RecentAnnouncementsCard,
+  RecentAnnouncementCard,
   RecentEventCard,
   RecentSermonCard,
   RecentGalleryCard,
@@ -14,7 +14,7 @@ export default function DashboardPage() {
       <RecentBulletinCard />
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <RecentSermonCard />
-        <RecentAnnouncementsCard />
+        <RecentAnnouncementCard />
         <RecentEventCard />
       </div>
       <RecentGalleryCard />
