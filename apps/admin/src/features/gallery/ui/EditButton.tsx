@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/shared/ui';
 import {
+  Button,
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@repo/ui/shadcn';
+} from '@/shared/ui';
 import { Pencil } from 'lucide-react';
 import { GalleryWithImages } from '@/entities/gallery';
 import { GalleryForm } from './Form';

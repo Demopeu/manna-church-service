@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { Button } from '@/shared/ui';
 import {
+  Button,
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,

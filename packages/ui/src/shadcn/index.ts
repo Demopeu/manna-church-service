@@ -59,3 +59,11 @@ export { Switch } from './switch';
 export { Textarea } from './textarea';
 
 export { Skeleton } from './skeleton';
+
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';

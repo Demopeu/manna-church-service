@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@repo/ui/shadcn';
+} from '@/shared/ui';
 
 interface DeleteDialogProps {
   open: boolean;

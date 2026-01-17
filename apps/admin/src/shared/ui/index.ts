@@ -9,6 +9,8 @@ export * from './base/Card';
 export * from './base/Table';
 export * from './base/Switch';
 export * from './base/Skeleton';
+export * from './base/AlertDialog';
+export * from './base/Select';
 
 // components
 export * from './components/EmptyState';
