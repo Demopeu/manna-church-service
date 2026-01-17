@@ -5,7 +5,11 @@ import { Search } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 
-export function SearchInput() {
+export function SearchInput({
+  placeholder = '제목으로 검색...',
+}: {
+  placeholder?: string;
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -27,7 +31,7 @@ export function SearchInput() {
     <div className="relative max-w-sm">
       <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
       <Input
-        placeholder="제목으로 검색..."
+        placeholder={placeholder}
         onChange={(e) => handleSearch(e.target.value)}
         defaultValue={searchParams.get('q')?.toString()}
         className="h-9 pl-10"

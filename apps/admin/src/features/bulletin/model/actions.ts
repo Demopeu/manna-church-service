@@ -10,10 +10,12 @@ export async function createBulletinAction(
 ): Promise<ActionState> {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
+  const coverImageFile = formData.get('coverImageFile') as File | null;
   const pdfFile = formData.get('pdfFile') as File | null;
 
   const rawData = {
     publishedAt: formData.get('publishedAt'),
+    coverImageFile: coverImageFile,
     pdfFile: pdfFile,
   };
 
@@ -29,8 +31,10 @@ export async function createBulletinAction(
 
   console.log('✅ 주보 등록 서버 액션 성공:', {
     publishedAt: validatedFields.data.publishedAt,
-    fileName: validatedFields.data.pdfFile.name,
-    fileSize: validatedFields.data.pdfFile.size,
+    coverImageFileName: validatedFields.data.coverImageFile.name,
+    coverImageFileSize: validatedFields.data.coverImageFile.size,
+    pdfFileName: validatedFields.data.pdfFile.name,
+    pdfFileSize: validatedFields.data.pdfFile.size,
   });
 
   return {
@@ -46,10 +50,12 @@ export async function updateBulletinAction(
 ): Promise<ActionState> {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
+  const coverImageFile = formData.get('coverImageFile') as File | null;
   const pdfFile = formData.get('pdfFile') as File | null;
 
   const rawData = {
     publishedAt: formData.get('publishedAt'),
+    coverImageFile: coverImageFile,
     pdfFile: pdfFile,
   };
 
@@ -65,7 +71,8 @@ export async function updateBulletinAction(
 
   console.log(`📝 주보 수정 완료 (${id}):`, {
     publishedAt: validatedFields.data.publishedAt,
-    fileName: validatedFields.data.pdfFile.name,
+    coverImageFileName: validatedFields.data.coverImageFile.name,
+    pdfFileName: validatedFields.data.pdfFile.name,
   });
 
   revalidatePath('/bulletins');

@@ -31,7 +31,7 @@ export async function BulletinsList({ searchQuery, currentPage }: Props) {
       description="등록된 주보를 관리합니다. (최신순)"
       action={
         <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput />
+          <SearchInput placeholder="게시일로 검색..." />
         </Suspense>
       }
     >

@@ -30,6 +30,11 @@ export function useBulletinForm({ bulletin, onSuccess }: Params) {
   const [pdfFile, setPdfFile] = useState<{ name: string; file: File } | null>(
     null,
   );
+  const [coverImageFile, setCoverImageFile] = useState<{
+    file: File;
+    preview: string;
+  } | null>(null);
+  const [imageDragActive, setImageDragActive] = useState(false);
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -63,6 +68,50 @@ export function useBulletinForm({ bulletin, onSuccess }: Params) {
     setPdfFile(null);
   };
 
+  const handleImageDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setImageDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setImageDragActive(false);
+    }
+  }, []);
+
+  const handleImageDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setImageDragActive(false);
+
+    const files = e.dataTransfer.files;
+    if (files && files[0]) {
+      handleImageFile(files[0]);
+    }
+  }, []);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      handleImageFile(files[0]);
+    }
+  };
+
+  const handleImageFile = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+    setCoverImageFile({ file, preview });
+  };
+
+  const removeCoverImageFile = () => {
+    if (coverImageFile?.preview) {
+      URL.revokeObjectURL(coverImageFile.preview);
+    }
+    setCoverImageFile(null);
+  };
+
   useEffect(() => {
     if (state.success) {
       alert(state.message);
@@ -87,6 +136,14 @@ export function useBulletinForm({ bulletin, onSuccess }: Params) {
       handleDrop,
       handleFileSelect,
       removePdfFile,
+    },
+    coverImageFile: {
+      file: coverImageFile,
+      dragActive: imageDragActive,
+      handleDrag: handleImageDrag,
+      handleDrop: handleImageDrop,
+      handleFileSelect: handleImageSelect,
+      removeCoverImageFile,
     },
   };
 }
