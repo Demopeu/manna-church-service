@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { ServantsList } from '@/widgets/servant-list';
+import { SERVANT_UI, ServantsList } from '@/widgets/servant-list';
 import { CreateServantButton } from '@/features/servant';
 import { ListSkeleton } from '@/shared/ui';
 
@@ -19,11 +19,17 @@ export default async function ServantsPage({
   const roleFilter = role || 'all';
   const isPublicFilter = isPublic || 'all';
   const currentPage = Math.max(1, Number(page) || 1);
-
   return (
     <div className="space-y-6">
       <CreateServantButton />
-      <Suspense fallback={<ListSkeleton />}>
+      <Suspense
+        fallback={
+          <ListSkeleton
+            title={SERVANT_UI.TITLE}
+            description={SERVANT_UI.DESCRIPTION}
+          />
+        }
+      >
         <ServantsList
           searchQuery={searchQuery}
           roleFilter={roleFilter}

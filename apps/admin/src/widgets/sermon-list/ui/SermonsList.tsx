@@ -10,6 +10,7 @@ import {
   SectionCard,
 } from '@/shared/ui';
 import { COLUMNS } from '../config/columns';
+import { SERMON_UI } from '../config/labels';
 import { SermonsItem } from './SermonsItem';
 
 interface Props {
@@ -24,19 +25,19 @@ export async function SermonsList({ searchQuery, currentPage }: Props) {
   });
   return (
     <SectionCard
-      title="설교 목록"
-      description="등록된 설교 영상을 관리합니다. (최신순)"
+      title={SERMON_UI.TITLE}
+      description={SERMON_UI.DESCRIPTION}
       action={
         <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput />
+          <SearchInput placeholder={SERMON_UI.SEARCH_PLACEHOLDER} />
         </Suspense>
       }
     >
       {sermons.length === 0 ? (
         <EmptyState
           icon={Video}
-          title="등록된 설교가 없습니다"
-          description="위의 '설교 등록' 버튼을 눌러 첫 설교를 등록해보세요."
+          title={SERMON_UI.EMPTY}
+          description={SERMON_UI.EMPTY_DESCRIPTION}
         />
       ) : (
         <DataTable columns={COLUMNS}>

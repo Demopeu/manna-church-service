@@ -10,6 +10,7 @@ import {
   SectionCard,
 } from '@/shared/ui';
 import { COLUMNS } from '../config/columns';
+import { ANNOUNCEMENT_UI } from '../config/labels';
 import { AnnouncementsItem } from './AnnouncementsItem';
 
 interface Props {
@@ -24,19 +25,19 @@ export async function AnnouncementsList({ searchQuery, currentPage }: Props) {
   });
   return (
     <SectionCard
-      title="공지 목록"
-      description="등록된 공지사항을 관리합니다. (최신순)"
+      title={ANNOUNCEMENT_UI.TITLE}
+      description={ANNOUNCEMENT_UI.DESCRIPTION}
       action={
         <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput />
+          <SearchInput placeholder={ANNOUNCEMENT_UI.SEARCH_PLACEHOLDER} />
         </Suspense>
       }
     >
       {announcements.length === 0 ? (
         <EmptyState
           icon={Megaphone}
-          title="등록된 공지가 없습니다"
-          description="위의 '공지 작성' 버튼을 눌러 첫 공지를 등록해보세요."
+          title={ANNOUNCEMENT_UI.EMPTY}
+          description={ANNOUNCEMENT_UI.EMPTY_DESCRIPTION}
         />
       ) : (
         <DataTable columns={COLUMNS}>

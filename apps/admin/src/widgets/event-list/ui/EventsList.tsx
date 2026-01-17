@@ -10,6 +10,7 @@ import {
   SectionCard,
 } from '@/shared/ui';
 import { COLUMNS } from '../config/columns';
+import { EVENT_UI } from '../config/labels';
 import { EventsItem } from './EventsItem';
 
 interface Props {
@@ -24,19 +25,19 @@ export async function EventsList({ searchQuery, currentPage }: Props) {
   });
   return (
     <SectionCard
-      title="이벤트 목록"
-      description="등록된 이벤트를 관리합니다. (최신순)"
+      title={EVENT_UI.TITLE}
+      description={EVENT_UI.DESCRIPTION}
       action={
         <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput />
+          <SearchInput placeholder={EVENT_UI.SEARCH_PLACEHOLDER} />
         </Suspense>
       }
     >
       {events.length === 0 ? (
         <EmptyState
           icon={CalendarDays}
-          title="등록된 이벤트가 없습니다"
-          description="위의 '이벤트 등록' 버튼을 눌러 첫 이벤트를 등록해보세요."
+          title={EVENT_UI.EMPTY}
+          description={EVENT_UI.EMPTY_DESCRIPTION}
         />
       ) : (
         <DataTable columns={COLUMNS}>

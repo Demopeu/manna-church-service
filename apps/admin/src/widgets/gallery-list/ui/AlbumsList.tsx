@@ -10,6 +10,7 @@ import {
   SearchInputSkeleton,
   SectionCard,
 } from '@/shared/ui';
+import { GALLERY_UI } from '../config/labels';
 import { AlbumsItem } from './AlbumsItem';
 
 interface Props {
@@ -25,11 +26,11 @@ export async function AlbumsList({ searchQuery, currentPage }: Props) {
 
   return (
     <SectionCard
-      title="앨범 목록"
-      description="등록된 앨범을 관리합니다. (최신순)"
+      title={GALLERY_UI.TITLE}
+      description={GALLERY_UI.DESCRIPTION}
       action={
         <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput />
+          <SearchInput placeholder={GALLERY_UI.SEARCH_PLACEHOLDER} />
         </Suspense>
       }
     >
@@ -38,8 +39,8 @@ export async function AlbumsList({ searchQuery, currentPage }: Props) {
           <CardContent className="py-8">
             <EmptyState
               icon={Images}
-              title="등록된 앨범이 없습니다"
-              description="위의 '앨범 만들기' 버튼을 눌러 첫 앨범을 만들어보세요."
+              title={GALLERY_UI.EMPTY}
+              description={GALLERY_UI.EMPTY_DESCRIPTION}
             />
           </CardContent>
         </Card>

@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { AlbumsList } from '@/widgets/gallery-list';
+import { AlbumsList, GALLERY_UI } from '@/widgets/gallery-list';
 import { CreateAlbumButton } from '@/features/gallery';
 import { ListSkeleton } from '@/shared/ui';
 
@@ -12,11 +12,17 @@ export default async function GalleryPage({
 
   const searchQuery = q || '';
   const currentPage = Math.max(1, Number(page) || 1);
-
   return (
     <div className="space-y-6">
       <CreateAlbumButton />
-      <Suspense fallback={<ListSkeleton />}>
+      <Suspense
+        fallback={
+          <ListSkeleton
+            title={GALLERY_UI.TITLE}
+            description={GALLERY_UI.DESCRIPTION}
+          />
+        }
+      >
         <AlbumsList searchQuery={searchQuery} currentPage={currentPage} />
       </Suspense>
     </div>

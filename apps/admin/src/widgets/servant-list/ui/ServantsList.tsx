@@ -10,6 +10,7 @@ import {
   SectionCard,
 } from '@/shared/ui';
 import { COLUMNS } from '../config/columns';
+import { SERVANT_UI } from '../config/labels';
 import { ServantsFilters } from './ServantsFilters';
 import { ServantsItem } from './ServantsItem';
 
@@ -35,11 +36,11 @@ export async function ServantsList({
 
   return (
     <SectionCard
-      title="섬기는 사람 목록"
-      description="교회 섬기는 사람들을 관리합니다. (정렬순)"
+      title={SERVANT_UI.TITLE}
+      description={SERVANT_UI.DESCRIPTION}
       action={
         <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput placeholder="이름 또는 직분으로 검색..." />
+          <SearchInput placeholder="이름으로 검색..." />
         </Suspense>
       }
     >
@@ -51,8 +52,8 @@ export async function ServantsList({
       {servants.length === 0 ? (
         <EmptyState
           icon={Users}
-          title="섬기는 사람이 없습니다"
-          description="위의 '섬기는 사람 추가' 버튼을 눌러 첫 번째 섬기는 사람을 등록해보세요."
+          title={SERVANT_UI.EMPTY}
+          description={SERVANT_UI.EMPTY_DESCRIPTION}
         />
       ) : (
         <DataTable columns={COLUMNS}>
@@ -61,7 +62,6 @@ export async function ServantsList({
           ))}
         </DataTable>
       )}
-
       <Pagination totalPages={totalPages} currentPage={currentPage} />
     </SectionCard>
   );

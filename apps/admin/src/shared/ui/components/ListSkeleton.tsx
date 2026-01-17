@@ -10,11 +10,16 @@ import {
   TableRow,
 } from '@/shared/ui';
 
-export function ListSkeleton() {
+interface Props {
+  title: string;
+  description: string;
+}
+
+export function ListSkeleton({ title, description }: Props) {
   return (
     <SectionCard
-      title="설교 목록"
-      description="등록된 설교 영상을 관리합니다. (최신순)"
+      title={title}
+      description={description}
       action={<SearchInputSkeleton />}
     >
       <div className="overflow-x-auto">

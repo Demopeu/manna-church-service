@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { EventsList } from '@/widgets/event-list';
+import { EVENT_UI, EventsList } from '@/widgets/event-list';
 import { CreateEventButton } from '@/features/event';
 import { ListSkeleton } from '@/shared/ui';
 
@@ -12,11 +12,17 @@ export default async function EventsPage({
 
   const searchQuery = q || '';
   const currentPage = Math.max(1, Number(page) || 1);
-
   return (
     <div className="space-y-6">
       <CreateEventButton />
-      <Suspense fallback={<ListSkeleton />}>
+      <Suspense
+        fallback={
+          <ListSkeleton
+            title={EVENT_UI.TITLE}
+            description={EVENT_UI.DESCRIPTION}
+          />
+        }
+      >
         <EventsList searchQuery={searchQuery} currentPage={currentPage} />
       </Suspense>
     </div>
