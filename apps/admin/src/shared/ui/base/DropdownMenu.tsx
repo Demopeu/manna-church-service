@@ -1,11 +1,11 @@
 import * as React from 'react';
 import {
   DropdownMenu as BaseDropdownMenu,
-  DropdownMenuTrigger as BaseDropdownMenuTrigger,
   DropdownMenuContent as BaseDropdownMenuContent,
   DropdownMenuItem as BaseDropdownMenuItem,
   DropdownMenuLabel as BaseDropdownMenuLabel,
   DropdownMenuSeparator as BaseDropdownMenuSeparator,
+  DropdownMenuTrigger as BaseDropdownMenuTrigger,
 } from '@repo/ui/shadcn';
 
 export function DropdownMenu({

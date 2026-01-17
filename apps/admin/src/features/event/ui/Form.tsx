@@ -1,21 +1,21 @@
 'use client';
 
-import {
-  Button,
-  Input,
-  Label,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  Textarea,
-} from '@/shared/ui';
+import Image from 'next/image';
 import { Upload, X } from 'lucide-react';
 import { cn } from '@repo/ui/lib';
-import { useEventForm } from '../model/use-form';
 import { Event } from '@/entities/event';
-import Image from 'next/image';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
+  Textarea,
+} from '@/shared/ui';
+import { useEventForm } from '../model/use-form';
 
 interface Props {
   event?: Event;

@@ -1,20 +1,20 @@
 'use client';
 
+import { AlertTriangle } from 'lucide-react';
+import { Announcement } from '@/entities/announcement';
 import {
   Button,
-  Input,
-  Label,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  Textarea,
+  Input,
+  Label,
   Switch,
+  Textarea,
 } from '@/shared/ui';
-import { AlertTriangle } from 'lucide-react';
 import { useAnnouncementForm } from '../model/use-form';
-import { Announcement } from '@/entities/announcement';
 
 interface Props {
   announcement?: Announcement;

@@ -1,7 +1,7 @@
 'use client';
 
-import { EventForm } from './Form';
 import { FormTriggerButton } from '@/shared/ui';
+import { EventForm } from './Form';
 
 export function CreateEventButton() {
   return (

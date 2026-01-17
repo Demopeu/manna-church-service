@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
-import { ArrowRight, LucideIcon } from 'lucide-react';
 import Link from 'next/link';
+import { ArrowRight, LucideIcon } from 'lucide-react';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
 interface Prop {
   title: string;

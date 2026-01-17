@@ -1,13 +1,13 @@
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-  SectionCard,
   SearchInputSkeleton,
+  SectionCard,
   Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/shared/ui';
 
 export function ListSkeleton() {

@@ -1,15 +1,15 @@
 'use client';
 import { useState } from 'react';
+import { Pencil } from 'lucide-react';
+import { Event } from '@/entities/event';
 import {
-  Button,
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Button,
 } from '@/shared/ui';
-import { Pencil } from 'lucide-react';
-import { Event } from '@/entities/event';
 import { EventForm } from './Form';
 
 interface Props {

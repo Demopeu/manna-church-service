@@ -1,6 +1,6 @@
 import { mapAnnouncement } from '../lib/mapper';
-import type { AnnouncementDto } from './dto';
 import type { Announcement } from '../model/announcement';
+import type { AnnouncementDto } from './dto';
 
 const MOCK_ANNOUNCEMENTS: AnnouncementDto[] = [
   {

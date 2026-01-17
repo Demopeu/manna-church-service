@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {
   Table as BaseTable,
-  TableHeader as BaseTableHeader,
   TableBody as BaseTableBody,
+  TableCaption as BaseTableCaption,
+  TableCell as BaseTableCell,
   TableFooter as BaseTableFooter,
   TableHead as BaseTableHead,
+  TableHeader as BaseTableHeader,
   TableRow as BaseTableRow,
-  TableCell as BaseTableCell,
-  TableCaption as BaseTableCaption,
 } from '@repo/ui/shadcn';
 
 export function Table({

@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle, Button } from '@/shared/ui';
-import { FileImage, ArrowRight, AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowRight, FileImage } from 'lucide-react';
 import { getLatestBulletin } from '@/entities/bulletin';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { withAsyncBoundary } from '@/shared/ui';
-import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
+import { CardSkeleton } from './CardSkeleton';
 
 export async function BulletinCard() {
   const hasBulletin = await getLatestBulletin();

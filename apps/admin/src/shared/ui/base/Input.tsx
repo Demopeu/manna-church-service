@@ -1,6 +1,6 @@
-import { Input as BaseInput } from '@repo/ui/shadcn';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@repo/ui/lib';
+import { Input as BaseInput } from '@repo/ui/shadcn';
 
 const inputVariants = cva('transition-all duration-200', {
   variants: {

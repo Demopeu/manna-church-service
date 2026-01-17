@@ -1,6 +1,6 @@
+import { Suspense } from 'react';
 import { AnnouncementsList } from '@/widgets/announcement-list';
 import { CreateAnnouncementButton } from '@/features/announcement';
-import { Suspense } from 'react';
 import { ListSkeleton } from '@/shared/ui';
 
 export default async function AnnouncementsPage({

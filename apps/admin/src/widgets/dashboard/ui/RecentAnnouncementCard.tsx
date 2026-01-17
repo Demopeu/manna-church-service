@@ -1,9 +1,9 @@
 import { Megaphone } from 'lucide-react';
-import { DashboardCardWrapper } from './dashboard-card-wrapper';
 import { getLatestAnnouncement } from '@/entities/announcement';
 import { withAsyncBoundary } from '@/shared/ui';
-import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
+import { CardSkeleton } from './CardSkeleton';
+import { DashboardCardWrapper } from './dashboard-card-wrapper';
 
 async function AnnouncementCard() {
   const data = await getLatestAnnouncement();

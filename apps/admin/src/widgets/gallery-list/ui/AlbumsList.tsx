@@ -1,16 +1,16 @@
+import { Suspense } from 'react';
+import { Images } from 'lucide-react';
+import { getGalleries } from '@/entities/gallery';
 import {
   Card,
   CardContent,
   EmptyState,
+  Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
-  Pagination,
 } from '@/shared/ui';
-import { Suspense } from 'react';
-import { Images } from 'lucide-react';
 import { AlbumsItem } from './AlbumsItem';
-import { getGalleries } from '@/entities/gallery';
 
 interface Props {
   searchQuery: string;

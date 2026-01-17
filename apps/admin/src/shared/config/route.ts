@@ -1,11 +1,11 @@
 import {
-  LayoutDashboard,
-  Video,
+  CalendarDays,
   FileImage,
   Images,
+  LayoutDashboard,
   Megaphone,
   Users,
-  CalendarDays,
+  Video,
 } from 'lucide-react';
 
 export const ADMIN_ROUTES = [

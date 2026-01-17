@@ -1,8 +1,8 @@
 'use server';
 
-import { createAnnouncementSchema } from './schema';
-import { ActionState } from '@/shared/model';
 import { revalidatePath } from 'next/cache';
+import { ActionState } from '@/shared/model';
+import { createAnnouncementSchema } from './schema';
 
 export async function createAnnouncementAction(
   prevState: ActionState,

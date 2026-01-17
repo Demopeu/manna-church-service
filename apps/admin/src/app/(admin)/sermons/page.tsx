@@ -1,6 +1,6 @@
+import { Suspense } from 'react';
 import { SermonsList } from '@/widgets/sermon-list';
 import { CreateSermonButton } from '@/features/sermon';
-import { Suspense } from 'react';
 import { ListSkeleton } from '@/shared/ui';
 
 export default async function SermonsPage({

@@ -1,13 +1,13 @@
+import { type VariantProps, cva } from 'class-variance-authority';
+import { cn } from '@repo/ui/lib';
 import {
   Card as BaseCard,
+  CardContent as BaseCardContent,
+  CardDescription as BaseCardDescription,
+  CardFooter as BaseCardFooter,
   CardHeader as BaseCardHeader,
   CardTitle as BaseCardTitle,
-  CardDescription as BaseCardDescription,
-  CardContent as BaseCardContent,
-  CardFooter as BaseCardFooter,
 } from '@repo/ui/shadcn';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@repo/ui/lib';
 
 const cardVariants = cva('transition-all duration-200', {
   variants: {

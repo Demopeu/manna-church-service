@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { ADMIN_ROUTES } from '@/shared/config';
-import { cn } from '@repo/ui/lib';
 import { usePathname } from 'next/navigation';
+import { cn } from '@repo/ui/lib';
+import { ADMIN_ROUTES } from '@/shared/config';
 import { useSidebar } from '../model/context';
 
 export function SidebarNav() {

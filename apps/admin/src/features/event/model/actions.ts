@@ -1,8 +1,8 @@
 'use server';
 
-import { createEventSchema } from './schema';
-import { ActionState } from '@/shared/model';
 import { revalidatePath } from 'next/cache';
+import { ActionState } from '@/shared/model';
+import { createEventSchema } from './schema';
 
 export async function createEventAction(
   prevState: ActionState,

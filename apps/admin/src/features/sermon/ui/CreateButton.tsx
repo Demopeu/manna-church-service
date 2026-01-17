@@ -1,7 +1,7 @@
 'use client';
 
-import { SermonForm } from './Form';
 import { FormTriggerButton } from '@/shared/ui';
+import { SermonForm } from './Form';
 
 export function CreateSermonButton() {
   return (

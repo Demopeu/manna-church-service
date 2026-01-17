@@ -1,5 +1,5 @@
+import { MainHeader, Sidebar, SidebarProvider } from '@/widgets/main-layout';
 import { getMyProfile } from '@/entities/user';
-import { SidebarProvider, Sidebar, MainHeader } from '@/widgets/main-layout';
 
 interface Props {
   children: React.ReactNode;

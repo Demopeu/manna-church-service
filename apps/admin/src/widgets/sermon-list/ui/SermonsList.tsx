@@ -1,19 +1,16 @@
+import { Suspense } from 'react';
+import { Video } from 'lucide-react';
+import { getSermons } from '@/entities/sermon';
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
+  DataTable,
   EmptyState,
+  Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
-  Pagination,
 } from '@/shared/ui';
-import { Suspense } from 'react';
-import { Video } from 'lucide-react';
+import { COLUMNS } from '../config/columns';
 import { SermonsItem } from './SermonsItem';
-import { getSermons } from '@/entities/sermon';
 
 interface Props {
   searchQuery: string;
@@ -42,24 +39,11 @@ export async function SermonsList({ searchQuery, currentPage }: Props) {
           description="위의 '설교 등록' 버튼을 눌러 첫 설교를 등록해보세요."
         />
       ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[150px]">제목</TableHead>
-                <TableHead>설교자</TableHead>
-                <TableHead>날짜</TableHead>
-                <TableHead>링크</TableHead>
-                <TableHead className="text-right">관리</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sermons.map((sermon) => (
-                <SermonsItem key={sermon.id} sermon={sermon} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable columns={COLUMNS}>
+          {sermons.map((sermon) => (
+            <SermonsItem key={sermon.id} sermon={sermon} />
+          ))}
+        </DataTable>
       )}
       <Pagination totalPages={totalPages} currentPage={currentPage} />
     </SectionCard>

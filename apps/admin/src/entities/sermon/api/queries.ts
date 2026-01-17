@@ -1,6 +1,6 @@
+import { mapSermon } from '../lib/mapper';
 import type { Sermon } from '../model/sermon';
 import type { SermonDto } from './dto';
-import { mapSermon } from '../lib/mapper';
 
 const MOCK_SERMONS: SermonDto[] = [
   {

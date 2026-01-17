@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useActionState, useEffect, useCallback } from 'react';
+import { useActionState, useCallback, useEffect, useState } from 'react';
+import type React from 'react';
 import { useRouter } from 'next/navigation';
+import { Bulletin } from '@/entities/bulletin';
+import { FORM_TEXT } from '../config/form';
+import { getDefaultValues } from '../lib/mapper';
+import { validatePdfFile } from '../lib/validate-pdf';
 import { createBulletinAction, updateBulletinAction } from './actions';
 import { initialState } from './schema';
-import { Bulletin } from '@/entities/bulletin';
-import { getDefaultValues } from '../lib/mapper';
-import { FORM_TEXT } from '../config/form';
-import { validatePdfFile } from '../lib/validate-pdf';
-import type React from 'react';
 
 interface Params {
   bulletin?: Bulletin;

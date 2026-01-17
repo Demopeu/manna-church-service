@@ -1,8 +1,8 @@
 'use server';
 
-import { createSermonSchema } from './schema';
-import { ActionState } from '@/shared/model';
 import { revalidatePath } from 'next/cache';
+import { ActionState } from '@/shared/model';
+import { createSermonSchema } from './schema';
 
 export async function createSermonAction(
   prevState: ActionState,

@@ -26,3 +26,4 @@ export * from './utils/withAsyncBoundary';
 export * from './DeleteDialog';
 export * from './FormTriggerButton';
 export * from './SectionCard';
+export * from './DataTable';

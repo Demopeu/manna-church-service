@@ -1,9 +1,9 @@
 'use client';
 
-import { RefreshCw, AlertCircle, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { AlertCircle, RefreshCw, X } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import { DashboardCardWrapper } from './dashboard-card-wrapper';
-import { useRouter } from 'next/navigation';
 
 interface Props {
   title: string;

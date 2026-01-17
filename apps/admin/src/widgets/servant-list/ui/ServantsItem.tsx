@@ -1,8 +1,8 @@
-import { TableRow, TableCell, Badge } from '@/shared/ui';
-import { EditServantButton, DeleteServantButton } from '@/features/servant';
-import { Servant } from '@/entities/servant';
-import { Phone } from 'lucide-react';
 import Image from 'next/image';
+import { Phone } from 'lucide-react';
+import { DeleteServantButton, EditServantButton } from '@/features/servant';
+import { Servant } from '@/entities/servant';
+import { Badge, TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
   servant: Servant;

@@ -1,14 +1,14 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
+import { POSITION_OPTIONS } from '@/entities/servant';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/shared/ui';
-import { POSITION_OPTIONS } from '@/entities/servant';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
   roleFilter: string;

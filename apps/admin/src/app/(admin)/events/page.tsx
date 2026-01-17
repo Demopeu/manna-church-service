@@ -1,6 +1,6 @@
+import { Suspense } from 'react';
 import { EventsList } from '@/widgets/event-list';
 import { CreateEventButton } from '@/features/event';
-import { Suspense } from 'react';
 import { ListSkeleton } from '@/shared/ui';
 
 export default async function EventsPage({

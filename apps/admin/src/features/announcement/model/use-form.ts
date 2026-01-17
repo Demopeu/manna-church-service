@@ -1,11 +1,11 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { Announcement } from '@/entities/announcement';
+import { FORM_TEXT } from '../config/form';
+import { getDefaultValues } from '../lib/mapper';
 import { createAnnouncementAction, updateAnnouncementAction } from './actions';
 import { initialState } from './schema';
-import { getDefaultValues } from '../lib/mapper';
-import { FORM_TEXT } from '../config/form';
-import { Announcement } from '@/entities/announcement';
 
 interface UseAnnouncementFormProps {
   announcement?: Announcement;

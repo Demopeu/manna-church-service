@@ -1,19 +1,16 @@
+import { Suspense } from 'react';
+import { FileImage } from 'lucide-react';
+import { getBulletins } from '@/entities/bulletin';
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
+  DataTable,
   EmptyState,
+  Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
-  Pagination,
 } from '@/shared/ui';
-import { Suspense } from 'react';
-import { FileImage } from 'lucide-react';
+import { COLUMNS } from '../config/columns';
 import { BulletinsItem } from './BulletinsItem';
-import { getBulletins } from '@/entities/bulletin';
 
 interface Props {
   searchQuery: string;
@@ -42,23 +39,11 @@ export async function BulletinsList({ searchQuery, currentPage }: Props) {
           description="위의 '주보 등록' 버튼을 눌러 첫 주보를 업로드해보세요."
         />
       ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[120px]">게시일</TableHead>
-                <TableHead>표지</TableHead>
-                <TableHead>PDF</TableHead>
-                <TableHead className="text-right">관리</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {bulletins.map((bulletin) => (
-                <BulletinsItem key={bulletin.id} bulletin={bulletin} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable columns={COLUMNS}>
+          {bulletins.map((bulletin) => (
+            <BulletinsItem key={bulletin.id} bulletin={bulletin} />
+          ))}
+        </DataTable>
       )}
       <Pagination totalPages={totalPages} currentPage={currentPage} />
     </SectionCard>

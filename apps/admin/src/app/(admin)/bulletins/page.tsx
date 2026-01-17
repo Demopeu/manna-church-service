@@ -1,7 +1,7 @@
-import { ListSkeleton } from '@/shared/ui';
+import { Suspense } from 'react';
 import { BulletinsList } from '@/widgets/bulletin-list';
 import { CreateBulletinButton } from '@/features/bulletin';
-import { Suspense } from 'react';
+import { ListSkeleton } from '@/shared/ui';
 
 export default async function BulletinsPage({
   searchParams,

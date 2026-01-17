@@ -1,10 +1,10 @@
 'use client';
 
-import { TableRow, TableCell } from '@/shared/ui';
-import { EditEventButton, DeleteEventButton } from '@/features/event';
-import { Event } from '@/entities/event';
-import { ImageIcon } from 'lucide-react';
 import Image from 'next/image';
+import { ImageIcon } from 'lucide-react';
+import { DeleteEventButton, EditEventButton } from '@/features/event';
+import { Event } from '@/entities/event';
+import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
   event: Event;

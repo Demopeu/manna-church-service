@@ -1,16 +1,16 @@
 'use client';
 
 import { useState } from 'react';
+import { Pencil } from 'lucide-react';
+import { Servant } from '@/entities/servant';
 import {
-  Button,
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Button,
 } from '@/shared/ui';
-import { Pencil } from 'lucide-react';
-import { Servant } from '@/entities/servant';
 import { ServantForm } from './Form';
 
 interface Props {

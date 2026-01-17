@@ -1,6 +1,6 @@
 import { mapGallery, mapGalleryImage } from '../lib/mapper';
-import type { GalleryDto, GalleryImageDto } from './dto';
 import type { GalleryWithImages } from '../model/gallery';
+import type { GalleryDto, GalleryImageDto } from './dto';
 
 const MOCK_GALLERY_IMAGES: GalleryImageDto[] = [
   {

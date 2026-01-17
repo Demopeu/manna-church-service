@@ -1,6 +1,6 @@
 import { mapEvent } from '../lib/mapper';
-import type { EventDto } from './dto';
 import type { Event } from '../model/event';
+import type { EventDto } from './dto';
 
 const MOCK_EVENTS: EventDto[] = [
   {

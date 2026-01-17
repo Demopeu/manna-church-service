@@ -1,20 +1,20 @@
 'use client';
 
+import Image from 'next/image';
+import { FileText, ImageIcon, Upload, X } from 'lucide-react';
+import { cn } from '@repo/ui/lib';
+import { Bulletin } from '@/entities/bulletin';
 import {
   Button,
-  Input,
-  Label,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
+  Input,
+  Label,
 } from '@/shared/ui';
-import { Upload, X, FileText, ImageIcon } from 'lucide-react';
-import { cn } from '@repo/ui/lib';
 import { useBulletinForm } from '../model/use-form';
-import { Bulletin } from '@/entities/bulletin';
-import Image from 'next/image';
 
 interface Props {
   bulletin?: Bulletin;

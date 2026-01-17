@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, DeleteDialog } from '@/shared/ui';
 import { Trash2 } from 'lucide-react';
+import { Button, DeleteDialog } from '@/shared/ui';
 import { useDeleteAnnouncement } from '../model/use-delete-announcement';
 
 interface DeleteAnnouncementButtonProps {

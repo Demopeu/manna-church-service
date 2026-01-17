@@ -1,5 +1,10 @@
 'use client';
 
+import Image from 'next/image';
+import { Star } from 'lucide-react';
+import { cn } from '@repo/ui/lib';
+import { DeleteAlbumButton, EditAlbumButton } from '@/features/gallery';
+import { GalleryWithImages } from '@/entities/gallery';
 import {
   Card,
   CardContent,
@@ -7,11 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui';
-import { EditAlbumButton, DeleteAlbumButton } from '@/features/gallery';
-import { GalleryWithImages } from '@/entities/gallery';
-import { Star } from 'lucide-react';
-import { cn } from '@repo/ui/lib';
-import Image from 'next/image';
 
 interface Props {
   gallery: GalleryWithImages;

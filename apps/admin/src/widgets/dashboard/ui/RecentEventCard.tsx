@@ -1,9 +1,9 @@
 import { CalendarDays } from 'lucide-react';
-import { DashboardCardWrapper } from './dashboard-card-wrapper';
 import { getLatestEvent } from '@/entities/event';
 import { withAsyncBoundary } from '@/shared/ui';
-import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
+import { CardSkeleton } from './CardSkeleton';
+import { DashboardCardWrapper } from './dashboard-card-wrapper';
 
 async function EventCard() {
   const data = await getLatestEvent();

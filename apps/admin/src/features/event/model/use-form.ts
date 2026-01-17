@@ -1,11 +1,11 @@
 'use client';
 
 import { useActionState, useEffect, useState } from 'react';
+import { Event } from '@/entities/event';
+import { FORM_TEXT } from '../config/form';
+import { getDefaultValues } from '../lib/mapper';
 import { createEventAction, updateEventAction } from './actions';
 import { initialState } from './schema';
-import { getDefaultValues } from '../lib/mapper';
-import { FORM_TEXT } from '../config/form';
-import { Event } from '@/entities/event';
 
 interface UseEventFormProps {
   event?: Event;

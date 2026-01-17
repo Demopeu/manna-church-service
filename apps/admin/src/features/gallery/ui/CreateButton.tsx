@@ -1,7 +1,7 @@
 'use client';
 
-import { GalleryForm } from './Form';
 import { FormTriggerButton } from '@/shared/ui';
+import { GalleryForm } from './Form';
 
 export function CreateAlbumButton() {
   return (

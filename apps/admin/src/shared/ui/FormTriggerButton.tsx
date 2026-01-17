@@ -1,8 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from './base/Button';
-import { useState } from 'react';
 
 interface Props {
   children: (props: { close: () => void }) => React.ReactNode;

@@ -1,7 +1,7 @@
 'use client';
 
-import { ServantForm } from './Form';
 import { FormTriggerButton } from '@/shared/ui';
+import { ServantForm } from './Form';
 
 export function CreateServantButton() {
   return (

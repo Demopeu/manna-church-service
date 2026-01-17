@@ -1,9 +1,9 @@
 'use client';
 
-import { Input } from '@/shared/ui';
-import { Search } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Search } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
+import { Input } from '@/shared/ui';
 
 export function SearchInput({
   placeholder = '제목으로 검색...',

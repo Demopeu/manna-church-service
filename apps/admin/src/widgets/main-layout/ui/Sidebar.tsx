@@ -1,10 +1,10 @@
 'use client';
 
 import { cn } from '@repo/ui/lib';
+import { useSidebar } from '../model/context';
+import { SidebarFooter } from './SidebarFooter';
 import { SidebarHeader } from './SidebarHeader';
 import { SidebarNav } from './SidebarNav';
-import { SidebarFooter } from './SidebarFooter';
-import { useSidebar } from '../model/context';
 
 export function Sidebar() {
   const { isOpen, close } = useSidebar();

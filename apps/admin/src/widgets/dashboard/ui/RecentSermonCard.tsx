@@ -1,9 +1,9 @@
 import { Video } from 'lucide-react';
-import { DashboardCardWrapper } from './dashboard-card-wrapper';
 import { getLatestSermon } from '@/entities/sermon';
 import { withAsyncBoundary } from '@/shared/ui';
-import { CardSkeleton } from './CardSkeleton';
 import { CardError } from './CardError';
+import { CardSkeleton } from './CardSkeleton';
+import { DashboardCardWrapper } from './dashboard-card-wrapper';
 
 async function SermonCard() {
   const data = await getLatestSermon();

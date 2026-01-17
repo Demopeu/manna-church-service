@@ -1,7 +1,7 @@
 'use client';
 
-import { AnnouncementForm } from './Form';
 import { FormTriggerButton } from '@/shared/ui';
+import { AnnouncementForm } from './Form';
 
 export function CreateAnnouncementButton() {
   return (

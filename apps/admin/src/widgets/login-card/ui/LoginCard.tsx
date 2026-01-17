@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { Church } from 'lucide-react';
 import { LoginForm } from '@/features/auth';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
 export function LoginCard() {
   return (

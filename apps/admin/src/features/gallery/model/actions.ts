@@ -1,8 +1,8 @@
 'use server';
 
-import { createGallerySchema } from './schema';
-import { ActionState } from '@/shared/model';
 import { revalidatePath } from 'next/cache';
+import { ActionState } from '@/shared/model';
+import { createGallerySchema } from './schema';
 
 export async function createGalleryAction(
   prevState: ActionState,

@@ -1,6 +1,10 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
+import { LogoutDropdownItem } from '@/features/auth';
+import { UserProfile } from '@/entities/user';
+import { ADMIN_ROUTES } from '@/shared/config';
 import { Button } from '@/shared/ui';
 import {
   DropdownMenu,
@@ -8,10 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui';
 import { useSidebar } from '../model/context';
-import { LogoutDropdownItem } from '@/features/auth';
-import { UserProfile } from '@/entities/user';
-import { usePathname } from 'next/navigation';
-import { ADMIN_ROUTES } from '@/shared/config';
 
 interface Props {
   name: string;

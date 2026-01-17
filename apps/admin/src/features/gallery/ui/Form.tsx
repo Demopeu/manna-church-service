@@ -1,20 +1,20 @@
 'use client';
 
+import Image from 'next/image';
+import { Plus, Star, Upload, X } from 'lucide-react';
+import { cn } from '@repo/ui/lib';
+import { GalleryWithImages } from '@/entities/gallery';
 import {
   Button,
-  Input,
-  Label,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
+  Input,
+  Label,
 } from '@/shared/ui';
-import { Upload, X, Plus, Star } from 'lucide-react';
-import { cn } from '@repo/ui/lib';
 import { useGalleryForm } from '../model/use-form';
-import { GalleryWithImages } from '@/entities/gallery';
-import Image from 'next/image';
 
 interface Props {
   gallery?: GalleryWithImages;

@@ -1,17 +1,17 @@
 'use client';
 
+import { Sermon } from '@/entities/sermon';
 import {
   Button,
-  Input,
-  Label,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
+  Input,
+  Label,
 } from '@/shared/ui';
 import { useSermonForm } from '../model/use-form';
-import { Sermon } from '@/entities/sermon';
 
 interface Props {
   sermon?: Sermon;

@@ -1,11 +1,11 @@
 'use client';
 
-import { TableRow, TableCell } from '@/shared/ui';
 import {
-  EditAnnouncementButton,
   DeleteAnnouncementButton,
+  EditAnnouncementButton,
 } from '@/features/announcement';
 import { Announcement } from '@/entities/announcement';
+import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
   announcement: Announcement;

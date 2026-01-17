@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, DeleteDialog } from '@/shared/ui';
 import { Trash2 } from 'lucide-react';
+import { Button, DeleteDialog } from '@/shared/ui';
 import { useDeleteEvent } from '../model/use-delete-event';
 
 interface DeleteEventButtonProps {

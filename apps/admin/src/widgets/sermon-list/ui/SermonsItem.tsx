@@ -1,9 +1,9 @@
 'use client';
 
-import { TableRow, TableCell } from '@/shared/ui';
 import { ExternalLink } from 'lucide-react';
-import { EditSermonButton, DeleteSermonButton } from '@/features/sermon';
+import { DeleteSermonButton, EditSermonButton } from '@/features/sermon';
 import { Sermon } from '@/entities/sermon';
+import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
   sermon: Sermon;

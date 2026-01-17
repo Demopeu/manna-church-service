@@ -1,8 +1,8 @@
 'use server';
 
-import { createServantSchema } from './schema';
-import { ActionState } from '@/shared/model';
 import { revalidatePath } from 'next/cache';
+import { ActionState } from '@/shared/model';
+import { createServantSchema } from './schema';
 
 export async function createServantAction(
   prevState: ActionState,

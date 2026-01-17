@@ -1,6 +1,6 @@
+import { Suspense } from 'react';
 import { AlbumsList } from '@/widgets/gallery-list';
 import { CreateAlbumButton } from '@/features/gallery';
-import { Suspense } from 'react';
 import { ListSkeleton } from '@/shared/ui';
 
 export default async function GalleryPage({

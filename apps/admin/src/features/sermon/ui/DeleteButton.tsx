@@ -1,8 +1,8 @@
 'use client';
 
-import { useDeleteSermon } from '../model/use-delete-sermon';
-import { Button, DeleteDialog } from '@/shared/ui';
 import { Trash2 } from 'lucide-react';
+import { Button, DeleteDialog } from '@/shared/ui';
+import { useDeleteSermon } from '../model/use-delete-sermon';
 
 interface DeleteSermonButtonProps {
   sermonId: string;

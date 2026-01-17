@@ -1,10 +1,10 @@
 import {
   Date,
-  RecentBulletinCard,
   RecentAnnouncementCard,
+  RecentBulletinCard,
   RecentEventCard,
-  RecentSermonCard,
   RecentGalleryCard,
+  RecentSermonCard,
 } from '@/widgets/dashboard';
 
 export default function DashboardPage() {

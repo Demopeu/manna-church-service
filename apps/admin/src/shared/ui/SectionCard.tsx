@@ -1,3 +1,4 @@
+import { cn } from '@repo/ui/lib';
 import {
   Card,
   CardContent,
@@ -5,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/shared/ui';
-import { cn } from '@repo/ui/lib';
 
 interface SectionCardProps {
   title: string;

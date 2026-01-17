@@ -1,27 +1,27 @@
 'use client';
 
+import Image from 'next/image';
+import { ImageIcon, X } from 'lucide-react';
+import { cn } from '@repo/ui/lib';
+import { POSITION_OPTIONS, Servant } from '@/entities/servant';
 import {
   Button,
-  Input,
-  Label,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  Textarea,
-  Switch,
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
+  Textarea,
 } from '@/shared/ui';
-import { X, ImageIcon } from 'lucide-react';
-import { cn } from '@repo/ui/lib';
 import { useServantForm } from '../model/use-form';
-import { Servant, POSITION_OPTIONS } from '@/entities/servant';
-import Image from 'next/image';
 
 interface Props {
   servant?: Servant;

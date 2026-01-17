@@ -1,13 +1,13 @@
 'use client';
 
-import { Button } from '@/shared/ui';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
 } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/shared/ui';
 
 interface Props {
   totalPages: number;

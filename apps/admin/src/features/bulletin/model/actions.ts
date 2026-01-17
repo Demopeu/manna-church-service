@@ -1,8 +1,8 @@
 'use server';
 
-import { createBulletinSchema } from './schema';
-import { ActionState } from '@/shared/model';
 import { revalidatePath } from 'next/cache';
+import { ActionState } from '@/shared/model';
+import { createBulletinSchema } from './schema';
 
 export async function createBulletinAction(
   prevState: ActionState,

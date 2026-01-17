@@ -1,15 +1,15 @@
 'use client';
 import { useState } from 'react';
+import { Pencil } from 'lucide-react';
+import { Sermon } from '@/entities/sermon';
 import {
-  Button,
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  Button,
 } from '@/shared/ui';
-import { Pencil } from 'lucide-react';
-import { Sermon } from '@/entities/sermon';
 import { SermonForm } from './Form';
 
 interface Props {

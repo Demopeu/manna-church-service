@@ -1,6 +1,6 @@
-import type { ServantDto } from './dto';
 import { mapServant } from '../lib/mapper';
 import type { Servant } from '../model/servant';
+import type { ServantDto } from './dto';
 
 const MOCK_SERVANTS: ServantDto[] = [
   {

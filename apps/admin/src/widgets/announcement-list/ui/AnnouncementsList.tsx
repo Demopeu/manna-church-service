@@ -1,19 +1,16 @@
+import { Suspense } from 'react';
+import { Megaphone } from 'lucide-react';
+import { getAnnouncements } from '@/entities/announcement';
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
+  DataTable,
   EmptyState,
+  Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
-  Pagination,
 } from '@/shared/ui';
-import { Suspense } from 'react';
-import { Megaphone } from 'lucide-react';
+import { COLUMNS } from '../config/columns';
 import { AnnouncementsItem } from './AnnouncementsItem';
-import { getAnnouncements } from '@/entities/announcement';
 
 interface Props {
   searchQuery: string;
@@ -42,26 +39,14 @@ export async function AnnouncementsList({ searchQuery, currentPage }: Props) {
           description="위의 '공지 작성' 버튼을 눌러 첫 공지를 등록해보세요."
         />
       ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[200px]">제목</TableHead>
-                <TableHead className="min-w-[300px]">내용</TableHead>
-                <TableHead>작성일</TableHead>
-                <TableHead className="text-right">관리</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {announcements.map((announcement) => (
-                <AnnouncementsItem
-                  key={announcement.id}
-                  announcement={announcement}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable columns={COLUMNS}>
+          {announcements.map((announcement) => (
+            <AnnouncementsItem
+              key={announcement.id}
+              announcement={announcement}
+            />
+          ))}
+        </DataTable>
       )}
       <Pagination totalPages={totalPages} currentPage={currentPage} />
     </SectionCard>

@@ -1,19 +1,16 @@
+import { Suspense } from 'react';
+import { CalendarDays } from 'lucide-react';
+import { getEvents } from '@/entities/event';
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
+  DataTable,
   EmptyState,
+  Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
-  Pagination,
 } from '@/shared/ui';
-import { Suspense } from 'react';
-import { CalendarDays } from 'lucide-react';
+import { COLUMNS } from '../config/columns';
 import { EventsItem } from './EventsItem';
-import { getEvents } from '@/entities/event';
 
 interface Props {
   searchQuery: string;
@@ -42,24 +39,11 @@ export async function EventsList({ searchQuery, currentPage }: Props) {
           description="위의 '이벤트 등록' 버튼을 눌러 첫 이벤트를 등록해보세요."
         />
       ) : (
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">사진</TableHead>
-                <TableHead className="min-w-[150px]">제목</TableHead>
-                <TableHead className="min-w-[250px]">설명</TableHead>
-                <TableHead>시작일</TableHead>
-                <TableHead className="text-right">관리</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {events.map((event) => (
-                <EventsItem key={event.id} event={event} />
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable columns={COLUMNS}>
+          {events.map((event) => (
+            <EventsItem key={event.id} event={event} />
+          ))}
+        </DataTable>
       )}
       <Pagination totalPages={totalPages} currentPage={currentPage} />
     </SectionCard>

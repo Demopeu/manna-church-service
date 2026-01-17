@@ -1,9 +1,9 @@
 'use client';
 
-import { TableRow, TableCell } from '@/shared/ui';
 import { ExternalLink } from 'lucide-react';
-import { EditBulletinButton, DeleteBulletinButton } from '@/features/bulletin';
+import { DeleteBulletinButton, EditBulletinButton } from '@/features/bulletin';
 import { Bulletin } from '@/entities/bulletin';
+import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
   bulletin: Bulletin;

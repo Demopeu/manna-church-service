@@ -1,6 +1,6 @@
+import { mapBulletin } from '../lib/mapper';
 import type { Bulletin } from '../model/bulletin';
 import type { BulletinDto } from './dto';
-import { mapBulletin } from '../lib/mapper';
 
 const MOCK_BULLETINS: BulletinDto[] = [
   {

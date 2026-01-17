@@ -1,7 +1,7 @@
 'use client';
 
-import { BulletinForm } from './Form';
 import { FormTriggerButton } from '@/shared/ui';
+import { BulletinForm } from './Form';
 
 export function CreateBulletinButton() {
   return (

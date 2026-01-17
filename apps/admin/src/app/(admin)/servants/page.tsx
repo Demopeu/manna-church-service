@@ -1,7 +1,7 @@
-import { ListSkeleton } from '@/shared/ui';
+import { Suspense } from 'react';
 import { ServantsList } from '@/widgets/servant-list';
 import { CreateServantButton } from '@/features/servant';
-import { Suspense } from 'react';
+import { ListSkeleton } from '@/shared/ui';
 
 export default async function ServantsPage({
   searchParams,
