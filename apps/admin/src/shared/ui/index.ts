@@ -11,6 +11,7 @@ export * from './base/Switch';
 export * from './base/Skeleton';
 export * from './base/AlertDialog';
 export * from './base/Select';
+export * from './base/Badge';
 
 // components
 export * from './components/EmptyState';

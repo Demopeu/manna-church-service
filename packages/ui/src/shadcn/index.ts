@@ -67,3 +67,5 @@ export {
   SelectTrigger,
   SelectValue,
 } from './select';
+
+export { Badge, badgeVariants } from './badge';
