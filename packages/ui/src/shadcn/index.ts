@@ -29,3 +29,43 @@ export {
 } from './dropdown-menu';
 
 export { Avatar, AvatarImage, AvatarFallback } from './avatar';
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from './table';
+
+export {
+  AlertDialog,
+  AlertDialogPortal,
+  AlertDialogOverlay,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from './alert-dialog';
+
+export { Switch } from './switch';
+export { Textarea } from './textarea';
+
+export { Skeleton } from './skeleton';
+
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';
+
+export { Badge, badgeVariants } from './badge';

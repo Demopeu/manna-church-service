@@ -1,0 +1,38 @@
+'use client';
+
+import { Trash2 } from 'lucide-react';
+import { Button, DeleteDialog } from '@/shared/ui';
+import { useDeleteServant } from '../model/use-delete-servant';
+
+interface DeleteServantButtonProps {
+  servantId: string;
+  servantName?: string;
+}
+
+export function DeleteServantButton({
+  servantId,
+  servantName,
+}: DeleteServantButtonProps) {
+  const { isOpen, openDialog, closeDialog, handleDelete } =
+    useDeleteServant(servantId);
+
+  return (
+    <>
+      <Button variant="ghost" size="icon" onClick={openDialog}>
+        <Trash2 className="text-destructive h-4 w-4" />
+      </Button>
+
+      <DeleteDialog
+        open={isOpen}
+        onOpenChange={closeDialog}
+        onConfirm={handleDelete}
+        title="섬기는 사람을 삭제하시겠습니까?"
+        description={
+          servantName
+            ? `"${servantName}"님의 정보가 영구적으로 삭제됩니다.`
+            : '이 작업은 되돌릴 수 없습니다. 해당 정보가 영구적으로 삭제됩니다.'
+        }
+      />
+    </>
+  );
+}

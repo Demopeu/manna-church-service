@@ -1,6 +1,6 @@
 export { Date } from './ui/Date';
-export { BulletinTaskCard } from './ui/BulletinTaskCard';
-export { RecentAnnouncementsCard } from './ui/RecentAnnouncementsCard';
-export { RecentEventsCard } from './ui/RecentEventsCard';
+export { RecentBulletinCard } from './ui/RecentBulletinCard';
+export { RecentAnnouncementCard } from './ui/RecentAnnouncementCard';
+export { RecentEventCard } from './ui/RecentEventCard';
 export { RecentSermonCard } from './ui/RecentSermonCard';
 export { RecentGalleryCard } from './ui/RecentGalleryCard';

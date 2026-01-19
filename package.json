@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.25.0",
   "engines": {
-    "node": ">=25.0.0", 
+    "node": ">=25.0.0",
     "pnpm": ">=10.25.0"
   },
   "scripts": {
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@commitlint/cli": "20.3.0",
     "@commitlint/config-conventional": "20.3.0",
+    "@trivago/prettier-plugin-sort-imports": "6.0.2",
     "cross-env": "10.1.0",
     "husky": "9.1.7",
     "prettier": "3.7.4",

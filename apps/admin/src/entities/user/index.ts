@@ -1,1 +1,2 @@
-export { HeaderProfile } from './ui/HeaderProfile';
+export { UserProfile } from './ui/UserProfile';
+export { getMyProfile } from './api/queries';
