@@ -1,3 +1,18 @@
+'use server';
+
+import { createClient } from '@repo/database/client';
+
 export async function getMyProfile() {
-  return { name: '관리자', email: 'admin@admin.com' };
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { name: null };
+  }
+
+  return { name: user.user_metadata || null };
 }

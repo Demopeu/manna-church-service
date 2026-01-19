@@ -1,12 +1,9 @@
-import { useRouter } from 'next/navigation';
+import { logoutAction } from './actions';
 
 export function useLogout() {
-  const router = useRouter();
-
   const logout = async () => {
     try {
-      console.log('로그아웃 로직 실행...');
-      router.push('/login');
+      await logoutAction();
     } catch (error) {
       console.error('로그아웃 실패', error);
     }

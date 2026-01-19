@@ -39,3 +39,16 @@ export async function loginAction(
 
   redirect('/');
 }
+
+export async function logoutAction(): Promise<void> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error('Logout Error:', error);
+    throw new Error('로그아웃에 실패했습니다.');
+  }
+
+  redirect('/login');
+}

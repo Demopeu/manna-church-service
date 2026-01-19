@@ -1,7 +1,3 @@
-export interface AnnouncementDto {
-  id: string;
-  title: string;
-  content: string;
-  is_urgent: boolean;
-  created_at: string;
-}
+import type { Database } from '@repo/database/types';
+
+export type AnnouncementDto = Database['public']['Tables']['notices']['Row'];
