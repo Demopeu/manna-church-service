@@ -78,31 +78,34 @@ export function useBulletinForm({ bulletin, onSuccess }: Params) {
     }
   }, []);
 
-  const handleImageDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImageDragActive(false);
-
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      handleImageFile(files[0]);
-    }
-  }, []);
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      handleImageFile(files[0]);
-    }
-  };
-
-  const handleImageFile = (file: File) => {
+  const handleImageFile = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
       return;
     }
 
     const preview = URL.createObjectURL(file);
     setCoverImageFile({ file, preview });
+  }, []);
+
+  const handleImageDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setImageDragActive(false);
+
+      const files = e.dataTransfer.files;
+      if (files && files[0]) {
+        handleImageFile(files[0]);
+      }
+    },
+    [handleImageFile],
+  );
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      handleImageFile(files[0]);
+    }
   };
 
   const removeCoverImageFile = () => {

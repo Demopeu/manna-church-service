@@ -31,6 +31,15 @@ export function useServantForm({ servant, onSuccess }: Params) {
   } | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
 
+  const handleImageFile = useCallback((file: File) => {
+    if (!file.type.startsWith('image/')) {
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+    setPhotoFile({ file, preview });
+  }, []);
+
   const handleImageDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -41,17 +50,6 @@ export function useServantForm({ servant, onSuccess }: Params) {
     }
   }, []);
 
-  const handleImageDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setImageDragActive(false);
-
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      handleImageFile(files[0]);
-    }
-  }, []);
-
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
@@ -59,14 +57,19 @@ export function useServantForm({ servant, onSuccess }: Params) {
     }
   };
 
-  const handleImageFile = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
+  const handleImageDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setImageDragActive(false);
 
-    const preview = URL.createObjectURL(file);
-    setPhotoFile({ file, preview });
-  };
+      const files = e.dataTransfer.files;
+      if (files && files[0]) {
+        handleImageFile(files[0]);
+      }
+    },
+    [handleImageFile],
+  );
 
   const removePhotoFile = () => {
     if (photoFile?.preview) {

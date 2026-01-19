@@ -1,36 +1,48 @@
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useEffectEvent,
+} from 'react';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginState, loginAction } from './actions';
 import { LoginSchema, loginSchema } from './schema';
 
 export function useLoginForm() {
-  const router = useRouter();
+  const [state, action, isPending] = useActionState(loginAction, null);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
-
     defaultValues: {
       username: '',
       password: '',
     },
   });
 
-  // 나중에 api
-  const handleLogin = (data: LoginSchema) => {
-    if (data.username === 'admin' && data.password === '1234') {
-      router.push('/');
-    } else {
+  const handleError = useEffectEvent((currentState: LoginState) => {
+    if (currentState && !currentState.success && currentState.message) {
       form.setError('root', {
-        type: 'manual',
-        message: '아이디 또는 비밀번호가 일치하지 않습니다.',
+        type: 'server',
+        message: currentState.message,
       });
     }
+  });
+
+  useEffect(() => {
+    handleError(state);
+  }, [state]);
+
+  const handleLogin = (data: LoginSchema) => {
+    startTransition(() => {
+      action(data);
+    });
   };
 
   return {
     register: form.register,
     handleSubmit: form.handleSubmit(handleLogin),
     errors: form.formState.errors,
-    isSubmitting: form.formState.isSubmitting,
+    isSubmitting: form.formState.isSubmitting || isPending,
   };
 }

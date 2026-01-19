@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useCallback, useEffect, useState } from 'react';
 import { Event } from '@/entities/event';
 import { FORM_TEXT } from '../config/form';
 import { getDefaultValues } from '../lib/mapper';
@@ -35,7 +35,16 @@ export function useEventForm({ event, onSuccess }: UseEventFormProps) {
     }
   }, [state.success, onSuccess]);
 
-  const handleDrag = (e: React.DragEvent) => {
+  const handleFile = useCallback((file: File) => {
+    if (!file.type.startsWith('image/')) {
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+    setPhotoFile({ file, preview });
+  }, []);
+
+  const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') {
@@ -43,33 +52,27 @@ export function useEventForm({ event, onSuccess }: UseEventFormProps) {
     } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
-  };
+  }, []);
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
 
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      handleFile(files[0]);
-    }
-  };
+      const files = e.dataTransfer.files;
+      if (files && files[0]) {
+        handleFile(files[0]);
+      }
+    },
+    [handleFile],
+  );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
       handleFile(files[0]);
     }
-  };
-
-  const handleFile = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
-
-    const preview = URL.createObjectURL(file);
-    setPhotoFile({ file, preview });
   };
 
   const removePhotoFile = () => {
