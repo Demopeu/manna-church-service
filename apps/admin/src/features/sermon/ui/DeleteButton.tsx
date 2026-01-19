@@ -2,7 +2,7 @@
 
 import { Trash2 } from 'lucide-react';
 import { Button, DeleteDialog } from '@/shared/ui';
-import { useDeleteSermon } from '../model/use-delete-sermon';
+import { useDeleteSermon } from '../model/use-delete';
 
 interface DeleteSermonButtonProps {
   sermonId: string;

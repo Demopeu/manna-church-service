@@ -26,14 +26,16 @@ export function SermonForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const { state, action, isPending, defaultValues, uiText, preview } =
+  const { form, handleSubmit, isSubmitting, hasChanges, uiText, preview } =
     useSermonForm({ sermon, onSuccess });
 
+  const errors = form.formState.errors;
+
   const FormContent = (
-    <form action={action} className="space-y-4">
-      {state.message && !state.success && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -42,30 +44,26 @@ export function SermonForm({
           <Label htmlFor="title">설교 제목 *</Label>
           <Input
             id="title"
-            name="title"
-            defaultValue={defaultValues.title}
-            required
             className="h-12 text-base"
             placeholder="설교 제목을 입력해주세요."
+            disabled={isSubmitting}
+            {...form.register('title')}
           />
-          {state.fieldErrors?.title && (
-            <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
+          {errors.title && (
+            <p className="text-sm text-red-500">{errors.title.message}</p>
           )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="preacher">설교자 *</Label>
           <Input
             id="preacher"
-            name="preacher"
-            defaultValue={defaultValues.preacher}
-            required
             className="h-12 text-base"
             placeholder="설교자를 입력해주세요."
+            disabled={isSubmitting}
+            {...form.register('preacher')}
           />
-          {state.fieldErrors?.preacher && (
-            <p className="text-sm text-red-500">
-              {state.fieldErrors.preacher[0]}
-            </p>
+          {errors.preacher && (
+            <p className="text-sm text-red-500">{errors.preacher.message}</p>
           )}
         </div>
       </div>
@@ -75,28 +73,25 @@ export function SermonForm({
           <Label htmlFor="date">설교 날짜 *</Label>
           <Input
             id="date"
-            name="date"
             type="date"
-            defaultValue={defaultValues.date}
-            required
             className="h-12 text-base"
             placeholder="설교 날짜를 입력해주세요."
+            disabled={isSubmitting}
+            {...form.register('date')}
           />
-          {state.fieldErrors?.date && (
-            <p className="text-sm text-red-500">{state.fieldErrors.date[0]}</p>
+          {errors.date && (
+            <p className="text-sm text-red-500">{errors.date.message}</p>
           )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="youtubeUrl">유튜브 링크 *</Label>
           <Input
             id="youtubeUrl"
-            name="youtubeUrl"
             type="url"
-            defaultValue={defaultValues.videoUrl}
-            onChange={(e) => preview.setUrl(e.target.value)}
-            required
             className="h-12 text-base"
             placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+            disabled={isSubmitting}
+            {...form.register('youtubeUrl')}
           />
           <p className="text-muted-foreground text-sm">{uiText.youtubeHelp}</p>
           {preview.id && (
@@ -104,10 +99,8 @@ export function SermonForm({
               ✓ 영상 ID: {preview.id}
             </p>
           )}
-          {state.fieldErrors?.youtubeUrl && (
-            <p className="text-sm text-red-500">
-              {state.fieldErrors.youtubeUrl[0]}
-            </p>
+          {errors.youtubeUrl && (
+            <p className="text-sm text-red-500">{errors.youtubeUrl.message}</p>
           )}
         </div>
       </div>
@@ -116,15 +109,15 @@ export function SermonForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isPending || !preview.isValid}
+          disabled={isSubmitting || !preview.isValid || !hasChanges}
         >
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={isSubmitting}
           size="lg"
         >
           취소

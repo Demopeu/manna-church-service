@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
 import { createSermonSchema } from './schema';
 
@@ -8,8 +9,6 @@ export async function createSermonAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
   const rawData = {
     title: formData.get('title'),
     preacher: formData.get('preacher'),
@@ -27,7 +26,24 @@ export async function createSermonAction(
     };
   }
 
-  console.log('✅ 서버 액션 성공:', validatedFields.data);
+  const supabase = await createClient();
+
+  const { error } = await supabase.from('sermons').insert({
+    title: validatedFields.data.title,
+    preacher: validatedFields.data.preacher,
+    preached_at: validatedFields.data.date,
+    video_url: validatedFields.data.youtubeUrl,
+  });
+
+  if (error) {
+    console.error('설교 등록 실패:', error);
+    return {
+      success: false,
+      message: '설교 등록에 실패했습니다.',
+    };
+  }
+
+  revalidatePath('/sermons');
 
   return {
     success: true,
@@ -40,8 +56,6 @@ export async function updateSermonAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
   const rawData = {
     title: formData.get('title'),
     preacher: formData.get('preacher'),
@@ -59,10 +73,25 @@ export async function updateSermonAction(
     };
   }
 
-  // 4. (나중에) Supabase Update 로직
-  // await supabase.from('sermons').update(rawData).eq('id', id);
+  const supabase = await createClient();
 
-  console.log(`📝 설교 수정 완료 (${id}):`, validatedFields.data);
+  const { error } = await supabase
+    .from('sermons')
+    .update({
+      title: validatedFields.data.title,
+      preacher: validatedFields.data.preacher,
+      preached_at: validatedFields.data.date,
+      video_url: validatedFields.data.youtubeUrl,
+    })
+    .eq('id', id);
+
+  if (error) {
+    console.error('설교 수정 실패:', error);
+    return {
+      success: false,
+      message: '설교 수정에 실패했습니다.',
+    };
+  }
 
   revalidatePath('/sermons');
 
@@ -70,4 +99,17 @@ export async function updateSermonAction(
     success: true,
     message: '설교가 수정되었습니다.',
   };
+}
+
+export async function deleteSermonAction(id: string): Promise<void> {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from('sermons').delete().eq('id', id);
+
+  if (error) {
+    console.error('설교 삭제 실패:', error);
+    throw new Error('설교 삭제에 실패했습니다.');
+  }
+
+  revalidatePath('/sermons');
 }
