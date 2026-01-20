@@ -12,6 +12,10 @@
       "types": "./dist/client.d.ts",
       "default": "./dist/client.js"
     },
+    "./auth": {
+      "types": "./dist/auth.d.ts",
+      "default": "./dist/auth.js"
+    },
     "./middleware": {
       "types": "./dist/middleware.d.ts",
       "default": "./dist/middleware.js"

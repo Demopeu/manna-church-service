@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { verifySession } from '@repo/database/auth';
 import { createClient } from '@repo/database/client';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
 import { ActionState } from '@/shared/model';
@@ -78,6 +79,15 @@ export async function createSermonAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const session = await verifySession();
+
+  if (!session) {
+    return {
+      success: false,
+      message: '로그인이 필요합니다.',
+    };
+  }
+
   const rawData = {
     title: formData.get('title'),
     preacher: formData.get('preacher'),
@@ -103,6 +113,15 @@ export async function updateSermonAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const session = await verifySession();
+
+  if (!session) {
+    return {
+      success: false,
+      message: '로그인이 필요합니다.',
+    };
+  }
+
   const rawData = {
     title: formData.get('title'),
     preacher: formData.get('preacher'),
@@ -124,5 +143,11 @@ export async function updateSermonAction(
 }
 
 export async function deleteSermonAction(id: string): Promise<void> {
+  const session = await verifySession();
+
+  if (!session) {
+    throw new Error('로그인이 필요합니다.');
+  }
+
   await tryCatchVoid(() => deleteSermon(id));
 }
