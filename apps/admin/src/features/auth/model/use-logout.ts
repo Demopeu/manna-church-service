@@ -1,4 +1,4 @@
-import { logoutAction } from './actions';
+import { logoutAction } from '../api/actions';
 
 export function useLogout() {
   const logout = async () => {

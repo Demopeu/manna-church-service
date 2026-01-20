@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@repo/database/client';
-import { mapServant } from '../lib/mapper';
 import type { Servant } from '../model/servant';
+import { mapServant } from './mapper';
 
 interface GetServantsParams {
   query?: string;

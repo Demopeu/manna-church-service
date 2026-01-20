@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@repo/database/client';
-import { mapGallery, mapGalleryImage } from '../lib/mapper';
 import type { GalleryWithImages } from '../model/gallery';
+import { mapGallery, mapGalleryImage } from './mapper';
 
 interface GetGalleriesParams {
   query?: string;

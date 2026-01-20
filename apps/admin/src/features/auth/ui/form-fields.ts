@@ -1,9 +1,9 @@
 export const LOGIN_FORM_FIELDS = [
   {
-    id: 'username',
-    label: '아이디',
-    type: 'text',
-    placeholder: '아이디를 입력해주세요.',
+    id: 'email',
+    label: '이메일',
+    type: 'email',
+    placeholder: '이메일을 입력해주세요.',
   },
   {
     id: 'password',

@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@repo/database/client';
-import { mapAnnouncement } from '../lib/mapper';
 import type { Announcement } from '../model/announcement';
+import { mapAnnouncement } from './mapper';
 
 interface GetAnnouncementsParams {
   query?: string;

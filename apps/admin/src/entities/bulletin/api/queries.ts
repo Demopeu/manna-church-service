@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@repo/database/client';
-import { mapBulletin } from '../lib/mapper';
 import type { Bulletin } from '../model/bulletin';
+import { mapBulletin } from './mapper';
 
 interface GetBulletinsParams {
   query: string;

@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@repo/database/client';
-import { mapEvent } from '../lib/mapper';
 import type { Event } from '../model/event';
+import { mapEvent } from './mapper';
 
 interface GetEventsParams {
   query?: string;

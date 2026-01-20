@@ -1,3 +1,5 @@
+'use client';
+
 import {
   startTransition,
   useActionState,
@@ -6,7 +8,7 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginState, loginAction } from './actions';
+import { LoginState, loginAction } from '../api/actions';
 import { LoginSchema, loginSchema } from './schema';
 
 export function useLoginForm() {
@@ -15,7 +17,7 @@ export function useLoginForm() {
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });

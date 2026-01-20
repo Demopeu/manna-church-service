@@ -1,8 +1,8 @@
 'use server';
 
 import { createClient } from '@repo/database/client';
-import { mapSermon } from '../lib/mapper';
 import type { Sermon } from '../model/sermon';
+import { mapSermon } from './mapper';
 
 interface GetSermonsParams {
   query: string;
