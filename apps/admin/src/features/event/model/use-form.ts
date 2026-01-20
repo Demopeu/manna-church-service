@@ -1,24 +1,47 @@
 'use client';
 
-import { useActionState, useCallback, useEffect, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Event } from '@/entities/event';
-import { FORM_TEXT } from '../config/form';
-import { getDefaultValues } from '../lib/mapper';
-import { createEventAction, updateEventAction } from './actions';
-import { initialState } from './schema';
+import { useToastAndRefresh } from '@/shared/lib';
+import { createEventAction, updateEventAction } from '../api/actions';
+import { getDefaultValues, toFormData } from '../lib/mapper';
+import { CreateEventInput, createEventSchema, initialState } from './schema';
 
 interface UseEventFormProps {
   event?: Event;
-  onSuccess: () => void;
+  onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useEventForm({ event, onSuccess }: UseEventFormProps) {
-  const isEditMode = !!event;
-  const action = isEditMode
-    ? updateEventAction.bind(null, event.id)
-    : createEventAction;
+export function useEventForm({
+  event,
+  onSuccess,
+  successMessage,
+}: UseEventFormProps) {
+  const { complete } = useToastAndRefresh(onSuccess);
+  const MODE = event ? 'EDIT' : 'CREATE';
+  const action =
+    MODE === 'EDIT'
+      ? updateEventAction.bind(null, event!.id)
+      : createEventAction;
 
   const [state, formAction, isPending] = useActionState(action, initialState);
+
+  const form = useForm<CreateEventInput>({
+    resolver: zodResolver(createEventSchema),
+    defaultValues: getDefaultValues(event),
+  });
+
+  const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
   const [photoFile, setPhotoFile] = useState<{
     file: File;
@@ -26,14 +49,45 @@ export function useEventForm({ event, onSuccess }: UseEventFormProps) {
   } | null>(null);
   const [dragActive, setDragActive] = useState(false);
 
-  const defaultValues = getDefaultValues(event);
-  const uiText = isEditMode ? FORM_TEXT.EDIT : FORM_TEXT.CREATE;
+  const handleError = useEffectEvent((currentState: typeof state) => {
+    if (currentState && !currentState.success) {
+      if (currentState.message) {
+        form.setError('root', {
+          type: 'server',
+          message: currentState.message,
+        });
+      }
+      if (currentState.fieldErrors) {
+        Object.entries(currentState.fieldErrors).forEach(
+          ([field, messages]) => {
+            if (messages && messages[0]) {
+              form.setError(field as keyof CreateEventInput, {
+                type: 'server',
+                message: messages[0],
+              });
+            }
+          },
+        );
+      }
+    }
+  });
+
+  const handleSuccess = useEffectEvent((currentState: typeof state) => {
+    if (currentState?.success) {
+      complete(successMessage);
+    }
+  });
 
   useEffect(() => {
-    if (state.success) {
-      onSuccess();
-    }
-  }, [state.success, onSuccess]);
+    handleError(state);
+    handleSuccess(state);
+  }, [state]);
+
+  const handleSubmit = form.handleSubmit((data) => {
+    startTransition(() => {
+      formAction(toFormData(data));
+    });
+  });
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -83,11 +137,10 @@ export function useEventForm({ event, onSuccess }: UseEventFormProps) {
   };
 
   return {
-    state,
-    action: formAction,
-    isPending,
-    defaultValues,
-    uiText,
+    form,
+    handleSubmit,
+    isSubmitting: form.formState.isSubmitting || isPending,
+    hasChanges,
     photoFile: {
       file: photoFile,
       dragActive,

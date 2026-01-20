@@ -2,35 +2,35 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { deleteSermonAction } from './actions';
+import { toast } from 'sonner';
+import { useDialog } from '@/shared/lib';
+import { deleteSermonAction } from '../api/actions';
 
 export function useDeleteSermon(sermonId: string) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, open, close } = useDialog();
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
       await deleteSermonAction(sermonId);
-      setIsOpen(false);
+      close();
+      toast.success('설교가 성공적으로 삭제되었습니다.');
       router.refresh();
     } catch (error) {
       console.error('설교 삭제 실패:', error);
-      alert('설교 삭제에 실패했습니다.');
+      toast.error('설교 삭제에 실패했습니다.');
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const openDialog = () => setIsOpen(true);
-  const closeDialog = (open: boolean) => setIsOpen(open);
-
   return {
     isOpen,
+    open,
+    close,
     isDeleting,
-    openDialog,
-    closeDialog,
     handleDelete,
   };
 }

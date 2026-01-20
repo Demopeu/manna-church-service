@@ -15,6 +15,7 @@ import {
   Label,
 } from '@/shared/ui';
 import { useGalleryForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   gallery?: GalleryWithImages;
@@ -29,12 +30,12 @@ export function GalleryForm({
   onCancel,
   isDialog = false,
 }: Props) {
+  const uiText = getFormText(gallery);
+
   const {
-    state,
-    action,
-    isPending,
-    defaultValues,
-    uiText,
+    form,
+    handleSubmit,
+    isSubmitting,
     dragActive,
     previews,
     handleDrag,
@@ -42,26 +43,19 @@ export function GalleryForm({
     handleFileSelect,
     removePreview,
     setThumbnail,
-  } = useGalleryForm({ gallery, onSuccess });
+  } = useGalleryForm({
+    gallery,
+    onSuccess,
+    successMessage: uiText.successDescription,
+  });
 
-  const thumbnailIndex = previews.findIndex((p) => p.isThumbnail);
+  const errors = form.formState.errors;
 
   const FormContent = (
-    <form
-      action={(formData: FormData) => {
-        previews.forEach((preview, idx) => {
-          if (preview.file) {
-            formData.append(`image-${idx}`, preview.file);
-          }
-        });
-        formData.append('thumbnailIndex', thumbnailIndex.toString());
-        action(formData);
-      }}
-      className="space-y-4"
-    >
-      {state.message && !state.success && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -70,30 +64,26 @@ export function GalleryForm({
           <Label htmlFor="title">앨범 제목 *</Label>
           <Input
             id="title"
-            name="title"
-            defaultValue={defaultValues.title}
-            required
             className="h-12 text-base"
             placeholder="예: 2024 신년 예배"
+            disabled={isSubmitting}
+            {...form.register('title')}
           />
-          {state.fieldErrors?.title && (
-            <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
+          {errors.title && (
+            <p className="text-sm text-red-500">{errors.title.message}</p>
           )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="eventDate">날짜 *</Label>
           <Input
             id="eventDate"
-            name="eventDate"
             type="date"
-            defaultValue={defaultValues.eventDate}
-            required
             className="h-12 text-base"
+            disabled={isSubmitting}
+            {...form.register('eventDate')}
           />
-          {state.fieldErrors?.eventDate && (
-            <p className="text-sm text-red-500">
-              {state.fieldErrors.eventDate[0]}
-            </p>
+          {errors.eventDate && (
+            <p className="text-sm text-red-500">{errors.eventDate.message}</p>
           )}
         </div>
       </div>
@@ -121,7 +111,7 @@ export function GalleryForm({
                   <div key={preview.id} className="group relative">
                     <div className="relative aspect-square w-full">
                       <Image
-                        src={preview.url}
+                        src={preview.preview}
                         alt="사진"
                         fill
                         className={cn(
@@ -196,8 +186,8 @@ export function GalleryForm({
             </div>
           )}
         </div>
-        {state.fieldErrors?.images && (
-          <p className="text-sm text-red-500">{state.fieldErrors.images[0]}</p>
+        {errors.images && (
+          <p className="text-sm text-red-500">{errors.images.message}</p>
         )}
       </div>
 
@@ -205,15 +195,15 @@ export function GalleryForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isPending || previews.length === 0}
+          disabled={isSubmitting || previews.length === 0}
         >
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={isSubmitting}
           size="lg"
         >
           취소

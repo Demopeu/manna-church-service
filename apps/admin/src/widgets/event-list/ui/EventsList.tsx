@@ -9,9 +9,9 @@ import {
   SearchInputSkeleton,
   SectionCard,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { EVENT_UI } from '../config/labels';
 import { EventsItem } from './EventsItem';
+import { COLUMNS } from './columns';
+import { EVENT_UI } from './labels';
 
 interface Props {
   searchQuery: string;

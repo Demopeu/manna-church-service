@@ -15,6 +15,7 @@ import {
   Label,
 } from '@/shared/ui';
 import { useBulletinForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   bulletin?: Bulletin;
@@ -29,21 +30,22 @@ export function BulletinForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const {
-    state,
-    action,
-    isPending,
-    defaultValues,
-    uiText,
-    pdfFile,
-    coverImageFile,
-  } = useBulletinForm({ bulletin, onSuccess });
+  const uiText = getFormText(bulletin);
+
+  const { form, handleSubmit, isSubmitting, pdfFile, coverImageFile } =
+    useBulletinForm({
+      bulletin,
+      onSuccess,
+      successMessage: uiText.successDescription,
+    });
+
+  const errors = form.formState.errors;
 
   const FormContent = (
-    <form action={action} className="space-y-4">
-      {state.message && !state.success && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -51,16 +53,13 @@ export function BulletinForm({
         <Label htmlFor="publishedAt">게시일 *</Label>
         <Input
           id="publishedAt"
-          name="publishedAt"
           type="date"
-          defaultValue={defaultValues.publishedAt}
-          required
           className="h-12 text-base"
+          disabled={isSubmitting}
+          {...form.register('publishedAt')}
         />
-        {state.fieldErrors?.publishedAt && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.publishedAt[0]}
-          </p>
+        {errors.publishedAt && (
+          <p className="text-sm text-red-500">{errors.publishedAt.message}</p>
         )}
       </div>
 
@@ -136,9 +135,9 @@ export function BulletinForm({
             </div>
           )}
         </div>
-        {state.fieldErrors?.coverImageFile && (
+        {errors.coverImageFile && (
           <p className="text-sm text-red-500">
-            {state.fieldErrors.coverImageFile[0]}
+            {errors.coverImageFile.message}
           </p>
         )}
         {bulletin?.coverImageUrl && !coverImageFile.file && (
@@ -213,8 +212,8 @@ export function BulletinForm({
             </div>
           )}
         </div>
-        {state.fieldErrors?.pdfFile && (
-          <p className="text-sm text-red-500">{state.fieldErrors.pdfFile[0]}</p>
+        {errors.pdfFile && (
+          <p className="text-sm text-red-500">{errors.pdfFile.message}</p>
         )}
       </div>
 
@@ -222,15 +221,15 @@ export function BulletinForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isPending || !pdfFile.file || !coverImageFile.file}
+          disabled={isSubmitting || !pdfFile.file || !coverImageFile.file}
         >
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={isSubmitting}
           size="lg"
         >
           취소

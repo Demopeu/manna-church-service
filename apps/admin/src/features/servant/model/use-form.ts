@@ -1,29 +1,49 @@
 'use client';
 
-import { useActionState, useCallback, useEffect, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import type React from 'react';
-import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Servant } from '@/entities/servant';
-import { FORM_TEXT } from '../config/form';
-import { getDefaultValues } from '../lib/mapper';
-import { createServantAction, updateServantAction } from './actions';
-import { initialState } from './schema';
+import { useToastAndRefresh } from '@/shared/lib';
+import { createServantAction, updateServantAction } from '../api/actions';
+import { getDefaultValues, toFormData } from '../lib/mapper';
+import {
+  CreateServantInput,
+  createServantSchema,
+  initialState,
+} from './schema';
 
 interface Params {
   servant?: Servant;
   onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useServantForm({ servant, onSuccess }: Params) {
-  const router = useRouter();
-  const MODE = servant ? 'edit' : 'create';
+export function useServantForm({ servant, onSuccess, successMessage }: Params) {
+  const { complete } = useToastAndRefresh(onSuccess);
+  const MODE = servant ? 'EDIT' : 'CREATE';
 
   const actionFn =
-    MODE === 'edit'
+    MODE === 'EDIT'
       ? updateServantAction.bind(null, servant!.id)
       : createServantAction;
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
+
+  const form = useForm<CreateServantInput>({
+    resolver: zodResolver(createServantSchema),
+    defaultValues: getDefaultValues(servant),
+  });
+
+  const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
   const [photoFile, setPhotoFile] = useState<{
     file: File;
@@ -78,23 +98,51 @@ export function useServantForm({ servant, onSuccess }: Params) {
     setPhotoFile(null);
   };
 
-  useEffect(() => {
-    if (state.success) {
-      alert(state.message);
-      router.refresh();
-      onSuccess?.();
+  const handleError = useEffectEvent((currentState: typeof state) => {
+    if (currentState && !currentState.success) {
+      if (currentState.message) {
+        form.setError('root', {
+          type: 'server',
+          message: currentState.message,
+        });
+      }
+      if (currentState.fieldErrors) {
+        Object.entries(currentState.fieldErrors).forEach(
+          ([field, messages]) => {
+            if (messages && messages[0]) {
+              form.setError(field as keyof CreateServantInput, {
+                type: 'server',
+                message: messages[0],
+              });
+            }
+          },
+        );
+      }
     }
-  }, [state.success, state.message, router, onSuccess]);
+  });
 
-  const uiText = FORM_TEXT[MODE];
-  const defaultValues = getDefaultValues(servant);
+  const handleSuccess = useEffectEvent((currentState: typeof state) => {
+    if (currentState?.success) {
+      complete(successMessage);
+    }
+  });
+
+  useEffect(() => {
+    handleError(state);
+    handleSuccess(state);
+  }, [state]);
+
+  const handleSubmit = form.handleSubmit((data) => {
+    startTransition(() => {
+      action(toFormData(data));
+    });
+  });
 
   return {
-    state,
-    action,
-    isPending,
-    defaultValues,
-    uiText,
+    form,
+    handleSubmit,
+    isSubmitting: form.formState.isSubmitting || isPending,
+    hasChanges,
     photoFile: {
       file: photoFile,
       dragActive: imageDragActive,

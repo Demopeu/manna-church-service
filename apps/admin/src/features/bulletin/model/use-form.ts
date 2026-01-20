@@ -1,22 +1,39 @@
 'use client';
 
-import { useActionState, useCallback, useEffect, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
 import type React from 'react';
-import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Bulletin } from '@/entities/bulletin';
-import { FORM_TEXT } from '../config/form';
-import { getDefaultValues } from '../lib/mapper';
+import { useToastAndRefresh } from '@/shared/lib';
+import { createBulletinAction, updateBulletinAction } from '../api/actions';
+import { getDefaultValues, toFormData } from '../lib/mapper';
 import { validatePdfFile } from '../lib/validate-pdf';
-import { createBulletinAction, updateBulletinAction } from './actions';
-import { initialState } from './schema';
+import {
+  CreateBulletinInput,
+  createBulletinSchema,
+  initialState,
+} from './schema';
 
 interface Params {
   bulletin?: Bulletin;
   onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useBulletinForm({ bulletin, onSuccess }: Params) {
-  const router = useRouter();
+export function useBulletinForm({
+  bulletin,
+  onSuccess,
+  successMessage,
+}: Params) {
+  const { complete } = useToastAndRefresh(onSuccess);
   const MODE = bulletin ? 'EDIT' : 'CREATE';
 
   const actionFn =
@@ -25,6 +42,13 @@ export function useBulletinForm({ bulletin, onSuccess }: Params) {
       : createBulletinAction;
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
+
+  const form = useForm<CreateBulletinInput>({
+    resolver: zodResolver(createBulletinSchema),
+    defaultValues: getDefaultValues(bulletin),
+  });
+
+  const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
   const [dragActive, setDragActive] = useState(false);
   const [pdfFile, setPdfFile] = useState<{ name: string; file: File } | null>(
@@ -115,23 +139,51 @@ export function useBulletinForm({ bulletin, onSuccess }: Params) {
     setCoverImageFile(null);
   };
 
-  useEffect(() => {
-    if (state.success) {
-      alert(state.message);
-      router.refresh();
-      onSuccess?.();
+  const handleError = useEffectEvent((currentState: typeof state) => {
+    if (currentState && !currentState.success) {
+      if (currentState.message) {
+        form.setError('root', {
+          type: 'server',
+          message: currentState.message,
+        });
+      }
+      if (currentState.fieldErrors) {
+        Object.entries(currentState.fieldErrors).forEach(
+          ([field, messages]) => {
+            if (messages && messages[0]) {
+              form.setError(field as keyof CreateBulletinInput, {
+                type: 'server',
+                message: messages[0],
+              });
+            }
+          },
+        );
+      }
     }
-  }, [state.success, state.message, router, onSuccess]);
+  });
 
-  const uiText = FORM_TEXT[MODE];
-  const defaultValues = getDefaultValues(bulletin);
+  const handleSuccess = useEffectEvent((currentState: typeof state) => {
+    if (currentState?.success) {
+      complete(successMessage);
+    }
+  });
+
+  useEffect(() => {
+    handleError(state);
+    handleSuccess(state);
+  }, [state]);
+
+  const handleSubmit = form.handleSubmit((data) => {
+    startTransition(() => {
+      action(toFormData(data));
+    });
+  });
 
   return {
-    state,
-    action,
-    isPending,
-    defaultValues,
-    uiText,
+    form,
+    handleSubmit,
+    isSubmitting: form.formState.isSubmitting || isPending,
+    hasChanges,
     pdfFile: {
       file: pdfFile,
       dragActive,

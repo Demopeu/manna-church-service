@@ -1,31 +1,62 @@
 'use client';
 
-import { useActionState, useCallback, useEffect, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useState,
+} from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { GalleryWithImages } from '@/entities/gallery';
-import { FORM_TEXT } from '../config/form';
-import { GalleryFormImage, getDefaultValues } from '../lib/mapper';
-import { createGalleryAction, updateGalleryAction } from './actions';
-import { initialState } from './schema';
+import { useToastAndRefresh } from '@/shared/lib';
+import { createGalleryAction, updateGalleryAction } from '../api/actions';
+import { GalleryFormImage, getDefaultValues, toFormData } from '../lib/mapper';
+import {
+  CreateGalleryInput,
+  createGallerySchema,
+  initialState,
+} from './schema';
 
 interface UseGalleryFormProps {
   gallery?: GalleryWithImages;
-  onSuccess: () => void;
+  onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useGalleryForm({ gallery, onSuccess }: UseGalleryFormProps) {
-  const isEditMode = !!gallery;
-  const action = isEditMode
-    ? updateGalleryAction.bind(null, gallery.id)
-    : createGalleryAction;
+export function useGalleryForm({
+  gallery,
+  onSuccess,
+  successMessage,
+}: UseGalleryFormProps) {
+  const { complete } = useToastAndRefresh(onSuccess);
+  const MODE = gallery ? 'EDIT' : 'CREATE';
+  const action =
+    MODE === 'EDIT'
+      ? updateGalleryAction.bind(null, gallery!.id)
+      : createGalleryAction;
 
   const [state, formAction, isPending] = useActionState(action, initialState);
 
-  const defaultValues = getDefaultValues(gallery);
-  const uiText = isEditMode ? FORM_TEXT.EDIT : FORM_TEXT.CREATE;
+  const form = useForm<CreateGalleryInput>({
+    resolver: zodResolver(createGallerySchema),
+    defaultValues: getDefaultValues(gallery),
+  });
+
+  const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
   const [dragActive, setDragActive] = useState(false);
   const [previews, setPreviews] = useState<GalleryFormImage[]>(
-    defaultValues.images,
+    gallery
+      ? gallery.images.map((img, index) => ({
+          id: img.id,
+          file: null,
+          preview: img.storagePath,
+          isThumbnail: index === 0,
+        }))
+      : [],
   );
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -47,22 +78,19 @@ export function useGalleryForm({ gallery, onSuccess }: UseGalleryFormProps) {
       f.type.startsWith('image/'),
     );
     files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newImage: GalleryFormImage = {
-          id: Date.now().toString() + Math.random(),
-          url: reader.result as string,
-          isThumbnail: false,
-          file,
-        };
-        setPreviews((prev) => {
-          if (prev.length === 0) {
-            return [{ ...newImage, isThumbnail: true }];
-          }
-          return [...prev, newImage];
-        });
+      const preview = URL.createObjectURL(file);
+      const newImage: GalleryFormImage = {
+        id: crypto.randomUUID(),
+        file,
+        preview,
+        isThumbnail: false,
       };
-      reader.readAsDataURL(file);
+      setPreviews((prev) => {
+        if (prev.length === 0) {
+          return [{ ...newImage, isThumbnail: true }];
+        }
+        return [...prev, newImage];
+      });
     });
   }, []);
 
@@ -71,33 +99,24 @@ export function useGalleryForm({ gallery, onSuccess }: UseGalleryFormProps) {
       f.type.startsWith('image/'),
     );
     files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newImage: GalleryFormImage = {
-          id: Date.now().toString() + Math.random(),
-          url: reader.result as string,
-          isThumbnail: false,
-          file,
-        };
-        setPreviews((prev) => {
-          if (prev.length === 0) {
-            return [{ ...newImage, isThumbnail: true }];
-          }
-          return [...prev, newImage];
-        });
+      const preview = URL.createObjectURL(file);
+      const newPreview: GalleryFormImage = {
+        id: crypto.randomUUID(),
+        file,
+        preview,
+        isThumbnail: previews.length === 0,
       };
-      reader.readAsDataURL(file);
+      setPreviews((prev) => [...prev, newPreview]);
     });
   };
 
   const removePreview = (id: string) => {
     setPreviews((prev) => {
-      const filtered = prev.filter((p) => p.id !== id);
-      const hasThumbnail = filtered.some((p) => p.isThumbnail);
-      if (!hasThumbnail && filtered.length > 0) {
-        filtered[0]!.isThumbnail = true;
+      const preview = prev.find((p) => p.id === id);
+      if (preview?.preview.startsWith('blob:')) {
+        URL.revokeObjectURL(preview.preview);
       }
-      return filtered;
+      return prev.filter((p) => p.id !== id);
     });
   };
 
@@ -110,18 +129,51 @@ export function useGalleryForm({ gallery, onSuccess }: UseGalleryFormProps) {
     );
   };
 
-  useEffect(() => {
-    if (state.success) {
-      onSuccess();
+  const handleError = useEffectEvent((currentState: typeof state) => {
+    if (currentState && !currentState.success) {
+      if (currentState.message) {
+        form.setError('root', {
+          type: 'server',
+          message: currentState.message,
+        });
+      }
+      if (currentState.fieldErrors) {
+        Object.entries(currentState.fieldErrors).forEach(
+          ([field, messages]) => {
+            if (messages && messages[0]) {
+              form.setError(field as keyof CreateGalleryInput, {
+                type: 'server',
+                message: messages[0],
+              });
+            }
+          },
+        );
+      }
     }
-  }, [state.success, onSuccess]);
+  });
+
+  const handleSuccess = useEffectEvent((currentState: typeof state) => {
+    if (currentState?.success) {
+      complete(successMessage);
+    }
+  });
+
+  useEffect(() => {
+    handleError(state);
+    handleSuccess(state);
+  }, [state]);
+
+  const handleSubmit = form.handleSubmit((data) => {
+    startTransition(() => {
+      formAction(toFormData(data, previews));
+    });
+  });
 
   return {
-    state,
-    action: formAction,
-    isPending,
-    defaultValues,
-    uiText,
+    form,
+    handleSubmit,
+    isSubmitting: form.formState.isSubmitting || isPending,
+    hasChanges,
     dragActive,
     previews,
     handleDrag,

@@ -6,23 +6,29 @@ import {
   useEffect,
   useEffectEvent,
 } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { Control, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Sermon } from '@/entities/sermon';
-import { FORM_TEXT } from '../config/form';
+import { useToastAndRefresh } from '@/shared/lib';
+import { createSermonAction, updateSermonAction } from '../api/actions';
 import { extractVideoId } from '../lib/extract-video-id';
-import { getDefaultValues } from '../lib/mapper';
-import { createSermonAction, updateSermonAction } from './actions';
+import { getDefaultValues, toFormData } from './mapper';
 import { CreateSermonInput, createSermonSchema, initialState } from './schema';
 
 interface Params {
   sermon?: Sermon;
   onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useSermonForm({ sermon, onSuccess }: Params) {
-  const router = useRouter();
+function useYoutubePreview(control: Control<CreateSermonInput>) {
+  const url = useWatch({ control, name: 'youtubeUrl' });
+  const id = extractVideoId(url);
+  return { url, id, isValid: !!id };
+}
+
+export function useSermonForm({ sermon, onSuccess, successMessage }: Params) {
+  const { complete } = useToastAndRefresh(onSuccess);
   const MODE = sermon ? 'EDIT' : 'CREATE';
 
   const actionFn =
@@ -37,10 +43,7 @@ export function useSermonForm({ sermon, onSuccess }: Params) {
     defaultValues: getDefaultValues(sermon),
   });
 
-  const youtubeUrl = useWatch({ control: form.control, name: 'youtubeUrl' });
-  const videoId = extractVideoId(youtubeUrl);
-  const isValidVideo = !!videoId;
-
+  const preview = useYoutubePreview(form.control);
   const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
   const handleError = useEffectEvent((currentState: typeof state) => {
@@ -68,9 +71,7 @@ export function useSermonForm({ sermon, onSuccess }: Params) {
 
   const handleSuccess = useEffectEvent((currentState: typeof state) => {
     if (currentState?.success) {
-      alert(currentState.message);
-      router.refresh();
-      onSuccess?.();
+      complete(successMessage);
     }
   });
 
@@ -81,27 +82,15 @@ export function useSermonForm({ sermon, onSuccess }: Params) {
 
   const handleSubmit = form.handleSubmit((data) => {
     startTransition(() => {
-      const formData = new FormData();
-      formData.append('title', data.title);
-      formData.append('preacher', data.preacher);
-      formData.append('date', data.date);
-      formData.append('youtubeUrl', data.youtubeUrl);
-      action(formData);
+      action(toFormData(data));
     });
   });
-
-  const uiText = FORM_TEXT[MODE];
 
   return {
     form,
     handleSubmit,
     isSubmitting: form.formState.isSubmitting || isPending,
     hasChanges,
-    uiText,
-    preview: {
-      url: youtubeUrl,
-      id: videoId,
-      isValid: isValidVideo,
-    },
+    preview,
   };
 }

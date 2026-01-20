@@ -16,6 +16,7 @@ import {
   Textarea,
 } from '@/shared/ui';
 import { useEventForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   event?: Event;
@@ -30,14 +31,21 @@ export function EventForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const { state, action, isPending, defaultValues, uiText, photoFile } =
-    useEventForm({ event, onSuccess });
+  const uiText = getFormText(event);
+
+  const { form, handleSubmit, isSubmitting, photoFile } = useEventForm({
+    event,
+    onSuccess,
+    successMessage: uiText.successDescription,
+  });
+
+  const errors = form.formState.errors;
 
   const FormContent = (
-    <form action={action} className="space-y-4">
-      {state.message && !state.success && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -45,14 +53,13 @@ export function EventForm({
         <Label htmlFor="title">제목 *</Label>
         <Input
           id="title"
-          name="title"
-          defaultValue={defaultValues.title}
-          required
           className="h-12 text-base"
           placeholder="이벤트 제목을 입력하세요"
+          disabled={isSubmitting}
+          {...form.register('title')}
         />
-        {state.fieldErrors?.title && (
-          <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
+        {errors.title && (
+          <p className="text-sm text-red-500">{errors.title.message}</p>
         )}
       </div>
 
@@ -60,16 +67,13 @@ export function EventForm({
         <Label htmlFor="startDate">시작 날짜 *</Label>
         <Input
           id="startDate"
-          name="startDate"
           type="date"
-          defaultValue={defaultValues.startDate}
-          required
           className="h-12 text-base"
+          disabled={isSubmitting}
+          {...form.register('startDate')}
         />
-        {state.fieldErrors?.startDate && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.startDate[0]}
-          </p>
+        {errors.startDate && (
+          <p className="text-sm text-red-500">{errors.startDate.message}</p>
         )}
       </div>
 
@@ -145,10 +149,8 @@ export function EventForm({
             </div>
           )}
         </div>
-        {state.fieldErrors?.photoFile && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.photoFile[0]}
-          </p>
+        {errors.photoFile && (
+          <p className="text-sm text-red-500">{errors.photoFile.message}</p>
         )}
       </div>
 
@@ -156,28 +158,29 @@ export function EventForm({
         <Label htmlFor="description">설명 *</Label>
         <Textarea
           id="description"
-          name="description"
-          defaultValue={defaultValues.description}
-          required
           className="min-h-32 text-base"
           placeholder="이벤트 설명을 입력하세요"
+          disabled={isSubmitting}
+          {...form.register('description')}
         />
-        {state.fieldErrors?.description && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.description[0]}
-          </p>
+        {errors.description && (
+          <p className="text-sm text-red-500">{errors.description.message}</p>
         )}
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <Button type="submit" size="lg" disabled={isPending || !photoFile.file}>
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+        <Button
+          type="submit"
+          size="lg"
+          disabled={isSubmitting || !photoFile.file}
+        >
+          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={isSubmitting}
           size="lg"
         >
           취소

@@ -9,9 +9,9 @@ import {
   SearchInputSkeleton,
   SectionCard,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { SERMON_UI } from '../config/labels';
 import { SermonsItem } from './SermonsItem';
+import { COLUMNS } from './columns';
+import { SERMON_UI } from './labels';
 
 interface Props {
   searchQuery: string;

@@ -9,9 +9,9 @@ import {
   SearchInputSkeleton,
   SectionCard,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { ANNOUNCEMENT_UI } from '../config/labels';
 import { AnnouncementsItem } from './AnnouncementsItem';
+import { COLUMNS } from './columns';
+import { ANNOUNCEMENT_UI } from './labels';
 
 interface Props {
   searchQuery: string;

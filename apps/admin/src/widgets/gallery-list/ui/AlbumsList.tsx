@@ -10,8 +10,8 @@ import {
   SearchInputSkeleton,
   SectionCard,
 } from '@/shared/ui';
-import { GALLERY_UI } from '../config/labels';
 import { AlbumsItem } from './AlbumsItem';
+import { GALLERY_UI } from './labels';
 
 interface Props {
   searchQuery: string;

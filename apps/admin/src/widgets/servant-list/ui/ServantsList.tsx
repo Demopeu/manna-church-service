@@ -9,10 +9,10 @@ import {
   SearchInputSkeleton,
   SectionCard,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { SERVANT_UI } from '../config/labels';
 import { ServantsFilters } from './ServantsFilters';
 import { ServantsItem } from './ServantsItem';
+import { COLUMNS } from './columns';
+import { SERVANT_UI } from './labels';
 
 interface Props {
   searchQuery: string;

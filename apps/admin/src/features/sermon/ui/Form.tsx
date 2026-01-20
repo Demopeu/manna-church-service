@@ -12,6 +12,7 @@ import {
   Label,
 } from '@/shared/ui';
 import { useSermonForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   sermon?: Sermon;
@@ -26,9 +27,14 @@ export function SermonForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const { form, handleSubmit, isSubmitting, hasChanges, uiText, preview } =
-    useSermonForm({ sermon, onSuccess });
+  const uiText = getFormText(sermon);
 
+  const { form, handleSubmit, isSubmitting, hasChanges, preview } =
+    useSermonForm({
+      sermon,
+      onSuccess,
+      successMessage: uiText.successDescription,
+    });
   const errors = form.formState.errors;
 
   const FormContent = (

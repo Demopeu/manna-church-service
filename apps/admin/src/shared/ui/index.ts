@@ -27,3 +27,4 @@ export * from './DeleteDialog';
 export * from './FormTriggerButton';
 export * from './SectionCard';
 export * from './DataTable';
+export * from './Toaster';
