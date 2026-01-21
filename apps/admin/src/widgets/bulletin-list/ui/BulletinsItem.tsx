@@ -3,6 +3,7 @@
 import { ExternalLink } from 'lucide-react';
 import { DeleteBulletinButton, EditBulletinButton } from '@/features/bulletin';
 import { Bulletin } from '@/entities/bulletin';
+import { formatRelativeDate } from '@/shared/lib';
 import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
@@ -12,7 +13,9 @@ interface Props {
 export function BulletinsItem({ bulletin }: Props) {
   return (
     <TableRow key={bulletin.id}>
-      <TableCell className="font-medium">{bulletin.publishedAt}</TableCell>
+      <TableCell className="font-medium">
+        {formatRelativeDate(bulletin.publishedAt)}
+      </TableCell>
       <TableCell>
         {bulletin.coverImageUrl ? (
           <a

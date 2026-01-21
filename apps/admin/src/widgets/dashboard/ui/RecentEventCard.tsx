@@ -1,5 +1,6 @@
 import { CalendarDays } from 'lucide-react';
 import { getLatestEvent } from '@/entities/event';
+import { formatKoreanDate } from '@/shared/lib';
 import { withAsyncBoundary } from '@/shared/ui';
 import { CardError } from './CardError';
 import { CardSkeleton } from './CardSkeleton';
@@ -34,7 +35,7 @@ async function EventCard() {
           {data.description}
         </p>
         <p className="text-muted-foreground text-sm">
-          시작일: {data.startDate}
+          시작일: {formatKoreanDate(data.startDate)}
         </p>
       </div>
     </DashboardCardWrapper>

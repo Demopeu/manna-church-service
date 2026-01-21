@@ -16,9 +16,9 @@ export function Toaster({ ...props }: React.ComponentProps<typeof Sonner>) {
           padding: '16px 20px',
         },
         classNames: {
-          toast: 'w-full max-w-md shadow-lg',
-          title: 'text-lg',
-          description: 'text-base',
+          toast: 'w-full max-w-md shadow-lg break-keep whitespace-pre-wrap',
+          title: 'text-lg leading-snug',
+          description: 'text-base leading-relaxed',
           actionButton: 'bg-primary text-primary-foreground',
           cancelButton: 'bg-muted text-muted-foreground',
         },

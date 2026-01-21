@@ -1,5 +1,6 @@
 import { Video } from 'lucide-react';
 import { getLatestSermon } from '@/entities/sermon';
+import { formatKoreanDate } from '@/shared/lib';
 import { withAsyncBoundary } from '@/shared/ui';
 import { CardError } from './CardError';
 import { CardSkeleton } from './CardSkeleton';
@@ -23,7 +24,7 @@ async function SermonCard() {
       <div className="space-y-2">
         <h3 className="font-medium">{data.title}</h3>
         <p className="text-muted-foreground text-sm">
-          {data.preacher} • {data.date}
+          {data.preacher} • {formatKoreanDate(data.date)}
         </p>
       </div>
     </DashboardCardWrapper>
