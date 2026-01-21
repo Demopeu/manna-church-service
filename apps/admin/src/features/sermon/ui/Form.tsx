@@ -28,7 +28,6 @@ export function SermonForm({
   isDialog = false,
 }: Props) {
   const uiText = getFormText(sermon);
-
   const { form, handleSubmit, isSubmitting, hasChanges, preview } =
     useSermonForm({
       sermon,

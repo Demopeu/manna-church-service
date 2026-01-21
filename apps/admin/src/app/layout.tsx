@@ -21,21 +21,7 @@ export default function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body className={`${notoSansKR.className} antialiased`}>
         {children}
-        <Toaster
-          position="top-center"
-          richColors
-          duration={4000}
-          toastOptions={{
-            style: {
-              fontSize: '18px',
-              fontWeight: 'bold',
-              padding: '20px',
-            },
-            classNames: {
-              toast: 'w-full max-w-md',
-            },
-          }}
-        />
+        <Toaster />
       </body>
     </html>
   );

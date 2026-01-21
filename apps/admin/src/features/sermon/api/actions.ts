@@ -1,9 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { verifySession } from '@repo/database/auth';
 import { createClient } from '@repo/database/client';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
+import { requireAuth } from '@/shared/lib';
 import { ActionState } from '@/shared/model';
 import { type CreateSermonInput, createSermonSchema } from '../model/schema';
 
@@ -76,16 +76,12 @@ async function deleteSermon(id: string): Promise<void> {
 }
 
 export async function createSermonAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await verifySession();
-
-  if (!session) {
-    return {
-      success: false,
-      message: '로그인이 필요합니다.',
-    };
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
   }
 
   const rawData = {
@@ -113,13 +109,9 @@ export async function updateSermonAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const session = await verifySession();
-
-  if (!session) {
-    return {
-      success: false,
-      message: '로그인이 필요합니다.',
-    };
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
   }
 
   const rawData = {
@@ -143,11 +135,6 @@ export async function updateSermonAction(
 }
 
 export async function deleteSermonAction(id: string): Promise<void> {
-  const session = await verifySession();
-
-  if (!session) {
-    throw new Error('로그인이 필요합니다.');
-  }
-
+  await requireAuth(true);
   await tryCatchVoid(() => deleteSermon(id));
 }
