@@ -1,5 +1,3 @@
-'use server';
-
 import { createClient } from '@repo/database/client';
 import type { Bulletin } from '../model/bulletin';
 import { mapBulletin } from './mapper';

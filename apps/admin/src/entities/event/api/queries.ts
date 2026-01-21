@@ -1,5 +1,3 @@
-'use server';
-
 import { createClient } from '@repo/database/client';
 import type { Event } from '../model/event';
 import { mapEvent } from './mapper';

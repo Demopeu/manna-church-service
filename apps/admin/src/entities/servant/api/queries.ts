@@ -1,5 +1,3 @@
-'use server';
-
 import { createClient } from '@repo/database/client';
 import type { Servant } from '../model/servant';
 import { mapServant } from './mapper';

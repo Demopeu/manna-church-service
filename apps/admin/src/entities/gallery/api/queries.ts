@@ -1,5 +1,3 @@
-'use server';
-
 import { createClient } from '@repo/database/client';
 import type { GalleryWithImages } from '../model/gallery';
 import { mapGallery, mapGalleryImage } from './mapper';

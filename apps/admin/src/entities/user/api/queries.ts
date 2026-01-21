@@ -1,5 +1,3 @@
-'use server';
-
 import { createClient } from '@repo/database/client';
 
 export async function getMyProfile() {
