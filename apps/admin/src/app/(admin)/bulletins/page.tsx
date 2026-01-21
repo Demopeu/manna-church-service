@@ -1,7 +1,5 @@
-import { Suspense } from 'react';
-import { BULLETIN_UI, BulletinsList } from '@/widgets/bulletin-list';
+import { BulletinsList } from '@/widgets/bulletin-list';
 import { CreateBulletinButton } from '@/features/bulletin';
-import { ListSkeleton } from '@/shared/ui';
 
 export default async function BulletinsPage({
   searchParams,
@@ -15,16 +13,7 @@ export default async function BulletinsPage({
   return (
     <div className="space-y-6">
       <CreateBulletinButton />
-      <Suspense
-        fallback={
-          <ListSkeleton
-            title={BULLETIN_UI.TITLE}
-            description={BULLETIN_UI.DESCRIPTION}
-          />
-        }
-      >
-        <BulletinsList searchQuery={searchQuery} currentPage={currentPage} />
-      </Suspense>
+      <BulletinsList searchQuery={searchQuery} currentPage={currentPage} />
     </div>
   );
 }

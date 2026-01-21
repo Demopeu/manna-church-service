@@ -1,7 +1,5 @@
-import { Suspense } from 'react';
-import { EVENT_UI, EventsList } from '@/widgets/event-list';
+import { EventsList } from '@/widgets/event-list';
 import { CreateEventButton } from '@/features/event';
-import { ListSkeleton } from '@/shared/ui';
 
 export default async function EventsPage({
   searchParams,
@@ -15,16 +13,7 @@ export default async function EventsPage({
   return (
     <div className="space-y-6">
       <CreateEventButton />
-      <Suspense
-        fallback={
-          <ListSkeleton
-            title={EVENT_UI.TITLE}
-            description={EVENT_UI.DESCRIPTION}
-          />
-        }
-      >
-        <EventsList searchQuery={searchQuery} currentPage={currentPage} />
-      </Suspense>
+      <EventsList searchQuery={searchQuery} currentPage={currentPage} />
     </div>
   );
 }

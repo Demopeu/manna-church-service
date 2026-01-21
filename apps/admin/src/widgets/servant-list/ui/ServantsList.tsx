@@ -4,10 +4,12 @@ import { getServants } from '@/entities/servant';
 import {
   DataTable,
   EmptyState,
+  ListSkeleton,
   Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
 import { ServantsFilters } from './ServantsFilters';
 import { ServantsItem } from './ServantsItem';
@@ -21,7 +23,7 @@ interface Props {
   currentPage: number;
 }
 
-export async function ServantsList({
+async function List({
   searchQuery,
   roleFilter,
   isPublicFilter,
@@ -66,3 +68,13 @@ export async function ServantsList({
     </SectionCard>
   );
 }
+
+export const ServantsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={SERVANT_UI.TITLE}
+      description={SERVANT_UI.DESCRIPTION}
+      columns={COLUMNS}
+    />
+  ),
+});

@@ -5,10 +5,12 @@ import {
   Card,
   CardContent,
   EmptyState,
+  ListSkeleton,
   Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
 import { AlbumsItem } from './AlbumsItem';
 import { GALLERY_UI } from './labels';
@@ -18,7 +20,7 @@ interface Props {
   currentPage: number;
 }
 
-export async function AlbumsList({ searchQuery, currentPage }: Props) {
+export async function List({ searchQuery, currentPage }: Props) {
   const { galleries, totalPages } = await getGalleries({
     query: searchQuery,
     page: currentPage,
@@ -55,3 +57,12 @@ export async function AlbumsList({ searchQuery, currentPage }: Props) {
     </SectionCard>
   );
 }
+
+export const AlbumsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={GALLERY_UI.TITLE}
+      description={GALLERY_UI.DESCRIPTION}
+    />
+  ),
+});

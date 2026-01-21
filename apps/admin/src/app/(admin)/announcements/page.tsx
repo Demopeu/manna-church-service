@@ -1,10 +1,5 @@
-import { Suspense } from 'react';
-import {
-  ANNOUNCEMENT_UI,
-  AnnouncementsList,
-} from '@/widgets/announcement-list';
+import { AnnouncementsList } from '@/widgets/announcement-list';
 import { CreateAnnouncementButton } from '@/features/announcement';
-import { ListSkeleton } from '@/shared/ui';
 
 export default async function AnnouncementsPage({
   searchParams,
@@ -18,19 +13,8 @@ export default async function AnnouncementsPage({
   return (
     <div className="space-y-6">
       <CreateAnnouncementButton />
-      <Suspense
-        fallback={
-          <ListSkeleton
-            title={ANNOUNCEMENT_UI.TITLE}
-            description={ANNOUNCEMENT_UI.DESCRIPTION}
-          />
-        }
-      >
-        <AnnouncementsList
-          searchQuery={searchQuery}
-          currentPage={currentPage}
-        />
-      </Suspense>
+
+      <AnnouncementsList searchQuery={searchQuery} currentPage={currentPage} />
     </div>
   );
 }

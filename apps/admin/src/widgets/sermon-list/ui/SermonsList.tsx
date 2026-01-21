@@ -8,7 +8,9 @@ import {
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
+import { ListSkeleton } from '@/shared/ui';
 import { SermonsItem } from './SermonsItem';
 import { COLUMNS } from './columns';
 import { SERMON_UI } from './labels';
@@ -18,7 +20,7 @@ interface Props {
   currentPage: number;
 }
 
-export async function SermonsList({ searchQuery, currentPage }: Props) {
+async function List({ searchQuery, currentPage }: Props) {
   const { sermons, totalPages } = await getSermons({
     query: searchQuery,
     page: currentPage,
@@ -50,3 +52,13 @@ export async function SermonsList({ searchQuery, currentPage }: Props) {
     </SectionCard>
   );
 }
+
+export const SermonsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={SERMON_UI.TITLE}
+      description={SERMON_UI.DESCRIPTION}
+      columns={COLUMNS}
+    />
+  ),
+});

@@ -4,10 +4,12 @@ import { getBulletins } from '@/entities/bulletin';
 import {
   DataTable,
   EmptyState,
+  ListSkeleton,
   Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
 import { BulletinsItem } from './BulletinsItem';
 import { COLUMNS } from './columns';
@@ -18,7 +20,7 @@ interface Props {
   currentPage: number;
 }
 
-export async function BulletinsList({ searchQuery, currentPage }: Props) {
+async function List({ searchQuery, currentPage }: Props) {
   const { bulletins, totalPages } = await getBulletins({
     query: searchQuery,
     page: currentPage,
@@ -50,3 +52,13 @@ export async function BulletinsList({ searchQuery, currentPage }: Props) {
     </SectionCard>
   );
 }
+
+export const BulletinsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={BULLETIN_UI.TITLE}
+      description={BULLETIN_UI.DESCRIPTION}
+      columns={COLUMNS}
+    />
+  ),
+});

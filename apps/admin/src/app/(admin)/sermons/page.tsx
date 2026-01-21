@@ -1,7 +1,5 @@
-import { Suspense } from 'react';
-import { SERMON_UI, SermonsList } from '@/widgets/sermon-list';
+import { SermonsList } from '@/widgets/sermon-list';
 import { CreateSermonButton } from '@/features/sermon';
-import { ListSkeleton } from '@/shared/ui';
 
 export default async function SermonsPage({
   searchParams,
@@ -15,16 +13,7 @@ export default async function SermonsPage({
   return (
     <div className="space-y-6">
       <CreateSermonButton />
-      <Suspense
-        fallback={
-          <ListSkeleton
-            title={SERMON_UI.TITLE}
-            description={SERMON_UI.DESCRIPTION}
-          />
-        }
-      >
-        <SermonsList searchQuery={searchQuery} currentPage={currentPage} />
-      </Suspense>
+      <SermonsList searchQuery={searchQuery} currentPage={currentPage} />
     </div>
   );
 }

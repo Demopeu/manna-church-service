@@ -37,7 +37,7 @@ async function logout() {
 }
 
 export async function loginAction(
-  prevState: LoginState,
+  _prevState: LoginState,
   data: LoginSchema,
 ): Promise<LoginState> {
   const validated = loginSchema.safeParse(data);
