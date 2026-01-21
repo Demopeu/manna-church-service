@@ -11,22 +11,18 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Event } from '@/entities/event';
-import { useToastAndRefresh } from '@/shared/lib';
+import { imageConverter, useToastAndRefresh } from '@/shared/lib';
 import { createEventAction, updateEventAction } from '../api/actions';
 import { getDefaultValues, toFormData } from '../lib/mapper';
 import { CreateEventInput, createEventSchema, initialState } from './schema';
 
-interface UseEventFormProps {
+interface Props {
   event?: Event;
   onSuccess?: () => void;
   successMessage: string;
 }
 
-export function useEventForm({
-  event,
-  onSuccess,
-  successMessage,
-}: UseEventFormProps) {
+export function useEventForm({ event, onSuccess, successMessage }: Props) {
   const { complete } = useToastAndRefresh(onSuccess);
   const MODE = event ? 'EDIT' : 'CREATE';
   const action =
@@ -83,20 +79,34 @@ export function useEventForm({
     handleSuccess(state);
   }, [state]);
 
-  const handleSubmit = form.handleSubmit((data) => {
-    startTransition(() => {
-      formAction(toFormData(data));
+  const handleSubmit = async (data: CreateEventInput) => {
+    const formData = toFormData(data);
+    const isSuccess = await imageConverter({
+      formData,
+      file: photoFile?.file,
+      title: data.title,
+      setError: form.setError,
+      type: 'image-to-webp',
     });
-  });
+    if (!isSuccess) return;
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
 
-  const handleFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
+  const handleFile = useCallback(
+    (file: File) => {
+      if (!file.type.startsWith('image/')) {
+        return;
+      }
 
-    const preview = URL.createObjectURL(file);
-    setPhotoFile({ file, preview });
-  }, []);
+      const preview = URL.createObjectURL(file);
+      setPhotoFile({ file, preview });
+      form.setValue('photoFile', file, { shouldValidate: true });
+      form.clearErrors('photoFile');
+    },
+    [form],
+  );
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -127,6 +137,7 @@ export function useEventForm({
     if (files && files[0]) {
       handleFile(files[0]);
     }
+    e.target.value = '';
   };
 
   const removePhotoFile = () => {
@@ -134,11 +145,12 @@ export function useEventForm({
       URL.revokeObjectURL(photoFile.preview);
     }
     setPhotoFile(null);
+    form.setValue('photoFile', undefined as unknown as File);
   };
 
   return {
     form,
-    handleSubmit,
+    handleSubmit: form.handleSubmit(handleSubmit),
     isSubmitting: form.formState.isSubmitting || isPending,
     hasChanges,
     photoFile: {

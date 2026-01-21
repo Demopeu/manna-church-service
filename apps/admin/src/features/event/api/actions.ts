@@ -5,34 +5,7 @@ import { createClient } from '@repo/database/client';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
 import { ActionState } from '@/shared/model';
 import { type CreateEventInput, createEventSchema } from '../model/schema';
-
-async function createEvent(
-  validatedFields: CreateEventInput,
-): Promise<ActionState> {
-  const supabase = await createClient();
-
-  // TODO: 실제 구현 - 파일 업로드 및 DB 저장
-  const { error } = await supabase.from('events').insert({
-    title: validatedFields.title,
-    description: validatedFields.description,
-    start_date: validatedFields.startDate,
-    photo_url: 'temp_photo_url', // TODO: Storage 업로드
-  });
-
-  if (error) {
-    console.error('이벤트 등록 실패:', error);
-    return {
-      success: false,
-      message: '이벤트 등록에 실패했습니다.',
-    };
-  }
-
-  revalidatePath('/events');
-
-  return {
-    success: true,
-  };
-}
+import { createEvent } from './create';
 
 async function updateEvent(
   id: string,
@@ -40,7 +13,6 @@ async function updateEvent(
 ): Promise<ActionState> {
   const supabase = await createClient();
 
-  // TODO: 실제 구현 - 파일 업로드 및 DB 업데이트
   const { error } = await supabase
     .from('events')
     .update({
@@ -76,7 +48,7 @@ async function deleteEvent(id: string): Promise<void> {
 }
 
 export async function createEventAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const rawData = {

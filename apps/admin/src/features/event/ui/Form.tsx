@@ -94,18 +94,18 @@ export function EventForm({
         >
           {photoFile.file ? (
             <div className="flex items-center gap-4">
-              <div className="relative h-24 w-24 shrink-0">
+              <div className="relative h-40 w-40 shrink-0">
                 <Image
+                  key={photoFile.file.preview}
                   src={photoFile.file.preview}
                   alt="이벤트 사진 미리보기"
                   fill
                   className="rounded-lg object-cover"
                 />
               </div>
-              <div className="flex-1">
-                <p className="font-medium">{photoFile.file.file.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  {(photoFile.file.file.size / 1024 / 1024).toFixed(2)} MB
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium">
+                  {photoFile.file.file.name}
                 </p>
               </div>
               <Button
@@ -140,6 +140,7 @@ export function EventForm({
                 {uiText.imageHelp}
               </p>
               <input
+                key={`file-input`}
                 type="file"
                 name="photoFile"
                 accept="image/*"

@@ -12,6 +12,7 @@ export * from './base/Skeleton';
 export * from './base/AlertDialog';
 export * from './base/Select';
 export * from './base/Badge';
+export * from './base/Dialog';
 
 // components
 export * from './components/EmptyState';
@@ -28,3 +29,4 @@ export * from './FormTriggerButton';
 export * from './SectionCard';
 export * from './DataTable';
 export * from './Toaster';
+export * from './ImageDialog';

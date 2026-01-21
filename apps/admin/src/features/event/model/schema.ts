@@ -16,8 +16,8 @@ export const createEventSchema = z.object({
         message: 'JPG, PNG, WebP 파일만 업로드 가능합니다.',
       },
     )
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: '파일 크기는 5MB 이하여야 합니다.',
+    .refine((file) => file.size <= 10 * 1024 * 1024, {
+      message: '파일 크기는 10MB 이하여야 합니다.',
     }),
 });
 
