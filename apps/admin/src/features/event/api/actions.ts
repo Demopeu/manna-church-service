@@ -1,56 +1,22 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import { createClient } from '@repo/database/client';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
+import { requireAuth } from '@/shared/lib';
 import { ActionState } from '@/shared/model';
-import { type CreateEventInput, createEventSchema } from '../model/schema';
+import { createEventSchema, updateEventSchema } from '../model/schema';
 import { createEvent } from './create';
-
-async function updateEvent(
-  id: string,
-  validatedFields: CreateEventInput,
-): Promise<ActionState> {
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from('events')
-    .update({
-      title: validatedFields.title,
-      description: validatedFields.description,
-      start_date: validatedFields.startDate,
-    })
-    .eq('id', id);
-
-  if (error) {
-    console.error('이벤트 수정 실패:', error);
-    return {
-      success: false,
-      message: '이벤트 수정에 실패했습니다.',
-    };
-  }
-
-  revalidatePath('/events');
-
-  return {
-    success: true,
-  };
-}
-
-async function deleteEvent(id: string): Promise<void> {
-  const supabase = await createClient();
-  const { error } = await supabase.from('events').delete().eq('id', id);
-
-  if (error) {
-    console.error('이벤트 삭제 실패:', error);
-    throw new Error('이벤트 삭제에 실패했습니다.');
-  }
-}
+import { deleteEvent } from './delete';
+import { updateEvent } from './update';
 
 export async function createEventAction(
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
+  }
+
   const rawData = {
     title: formData.get('title'),
     description: formData.get('description'),
@@ -76,6 +42,11 @@ export async function updateEventAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
+  }
+
   const rawData = {
     title: formData.get('title'),
     description: formData.get('description'),
@@ -83,7 +54,7 @@ export async function updateEventAction(
     photoFile: formData.get('photoFile'),
   };
 
-  const validatedFields = createEventSchema.safeParse(rawData);
+  const validatedFields = updateEventSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
     return {
@@ -97,5 +68,6 @@ export async function updateEventAction(
 }
 
 export async function deleteEventAction(id: string): Promise<void> {
+  await requireAuth(true);
   await tryCatchVoid(() => deleteEvent(id));
 }

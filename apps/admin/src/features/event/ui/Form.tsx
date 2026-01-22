@@ -33,16 +33,15 @@ export function EventForm({
 }: Props) {
   const uiText = getFormText(event);
 
-  const { form, handleSubmit, isSubmitting, photoFile } = useEventForm({
+  const { form, imageUI, handler, status } = useEventForm({
     event,
     onSuccess,
     successMessage: uiText.successDescription,
   });
-
   const errors = form.formState.errors;
 
   const FormContent = (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handler.submit} className="space-y-4">
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -55,7 +54,7 @@ export function EventForm({
           id="title"
           className="h-12 text-base"
           placeholder="이벤트 제목을 입력하세요"
-          disabled={isSubmitting}
+          disabled={status.isPending}
           {...form.register('title')}
         />
         {errors.title && (
@@ -69,7 +68,7 @@ export function EventForm({
           id="startDate"
           type="date"
           className="h-12 text-base"
-          disabled={isSubmitting}
+          disabled={status.isPending}
           {...form.register('startDate')}
         />
         {errors.startDate && (
@@ -82,37 +81,40 @@ export function EventForm({
         <div
           className={cn(
             'relative rounded-lg border-2 border-dashed transition-colors',
-            photoFile.dragActive
+            imageUI.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            photoFile.file ? 'p-4' : 'p-8',
+            imageUI.preview ? 'p-4' : 'p-8',
           )}
-          onDragEnter={photoFile.handleDrag}
-          onDragLeave={photoFile.handleDrag}
-          onDragOver={photoFile.handleDrag}
-          onDrop={photoFile.handleDrop}
+          onDragEnter={imageUI.handleDrag}
+          onDragLeave={imageUI.handleDrag}
+          onDragOver={imageUI.handleDrag}
+          onDrop={imageUI.handleDrop}
         >
-          {photoFile.file ? (
-            <div className="flex items-center gap-4">
+          {imageUI.preview ? (
+            <div className="flex items-center gap-3">
               <div className="relative h-40 w-40 shrink-0">
                 <Image
-                  key={photoFile.file.preview}
-                  src={photoFile.file.preview}
+                  key={imageUI.preview}
+                  src={imageUI.preview}
                   alt="이벤트 사진 미리보기"
                   fill
                   className="rounded-lg object-cover"
                 />
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-medium">
-                  {photoFile.file.file.name}
+              <div className="w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {imageUI.rawFile
+                    ? imageUI.rawFile.name
+                    : '기존 등록된 이미지'}
                 </p>
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={photoFile.removePhotoFile}
+                className="shrink-0"
+                onClick={imageUI.removeFile}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -122,9 +124,9 @@ export function EventForm({
                 accept="image/*"
                 className="hidden"
                 ref={(input) => {
-                  if (input && photoFile.file) {
+                  if (input && imageUI.rawFile) {
                     const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(photoFile.file.file);
+                    dataTransfer.items.add(imageUI.rawFile);
                     input.files = dataTransfer.files;
                   }
                 }}
@@ -144,7 +146,7 @@ export function EventForm({
                 type="file"
                 name="photoFile"
                 accept="image/*"
-                onChange={photoFile.handleFileSelect}
+                onChange={imageUI.handleFileSelect}
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
             </div>
@@ -156,12 +158,12 @@ export function EventForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">설명 *</Label>
+        <Label htmlFor="description">설명</Label>
         <Textarea
           id="description"
           className="min-h-32 text-base"
           placeholder="이벤트 설명을 입력하세요"
-          disabled={isSubmitting}
+          disabled={status.isPending}
           {...form.register('description')}
         />
         {errors.description && (
@@ -173,15 +175,15 @@ export function EventForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isSubmitting || !photoFile.file}
+          disabled={status.isPending || !status.hasChanges || !imageUI.preview}
         >
-          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
+          {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isSubmitting}
+          disabled={status.isPending}
           size="lg"
         >
           취소
