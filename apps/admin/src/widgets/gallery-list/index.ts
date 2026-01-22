@@ -1,1 +1,1 @@
-export { AlbumsList } from './ui/AlbumsList';
+export { GalleriesList } from './ui/GalleriesList';

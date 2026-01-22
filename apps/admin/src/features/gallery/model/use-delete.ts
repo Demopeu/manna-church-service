@@ -16,11 +16,11 @@ export function useDeleteGallery(galleryId: string) {
       setIsDeleting(true);
       await deleteGalleryAction(galleryId);
       close();
-      toast.success('앨범이 성공적으로 삭제되었습니다.');
+      toast.success('갤러리가 성공적으로 삭제되었습니다.');
       router.refresh();
     } catch (error) {
-      console.error('앨범 삭제 실패:', error);
-      toast.error('앨범 삭제에 실패했습니다.');
+      console.error('갤러리 삭제 실패:', error);
+      toast.error('갤러리 삭제에 실패했습니다.');
     } finally {
       setIsDeleting(false);
     }

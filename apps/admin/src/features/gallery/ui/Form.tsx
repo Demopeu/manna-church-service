@@ -32,18 +32,7 @@ export function GalleryForm({
 }: Props) {
   const uiText = getFormText(gallery);
 
-  const {
-    form,
-    handleSubmit,
-    isSubmitting,
-    dragActive,
-    previews,
-    handleDrag,
-    handleDrop,
-    handleFileSelect,
-    removePreview,
-    setThumbnail,
-  } = useGalleryForm({
+  const { form, imageUI, handler, status } = useGalleryForm({
     gallery,
     onSuccess,
     successMessage: uiText.successDescription,
@@ -52,7 +41,7 @@ export function GalleryForm({
   const errors = form.formState.errors;
 
   const FormContent = (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handler.submit} className="space-y-4">
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -61,12 +50,12 @@ export function GalleryForm({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="title">앨범 제목 *</Label>
+          <Label htmlFor="title">갤러리 제목 *</Label>
           <Input
             id="title"
             className="h-12 text-base"
             placeholder="예: 2024 신년 예배"
-            disabled={isSubmitting}
+            disabled={status.isPending}
             {...form.register('title')}
           />
           {errors.title && (
@@ -79,7 +68,7 @@ export function GalleryForm({
             id="eventDate"
             type="date"
             className="h-12 text-base"
-            disabled={isSubmitting}
+            disabled={status.isPending}
             {...form.register('eventDate')}
           />
           {errors.eventDate && (
@@ -96,18 +85,20 @@ export function GalleryForm({
         <div
           className={cn(
             'relative rounded-lg border-2 border-dashed transition-colors',
-            dragActive ? 'border-primary bg-primary/5' : 'border-border',
-            previews.length > 0 ? 'p-4' : 'p-8',
+            imageUI.dragActive
+              ? 'border-primary bg-primary/5'
+              : 'border-border',
+            imageUI.previews.length > 0 ? 'p-4' : 'p-8',
           )}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
+          onDragEnter={imageUI.handleDrag}
+          onDragLeave={imageUI.handleDrag}
+          onDragOver={imageUI.handleDrag}
+          onDrop={imageUI.handleDrop}
         >
-          {previews.length > 0 ? (
+          {imageUI.previews.length > 0 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                {previews.map((preview) => (
+                {imageUI.previews.map((preview) => (
                   <div key={preview.id} className="group relative">
                     <div className="relative aspect-square w-full">
                       <Image
@@ -132,7 +123,7 @@ export function GalleryForm({
                           ? ''
                           : 'opacity-0 group-hover:opacity-100',
                       )}
-                      onClick={() => setThumbnail(preview.id)}
+                      onClick={() => imageUI.setThumbnail(preview.id)}
                     >
                       <Star
                         className={cn(
@@ -146,7 +137,7 @@ export function GalleryForm({
                       variant="destructive"
                       size="icon"
                       className="absolute -top-2 -right-2 h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                      onClick={() => removePreview(preview.id)}
+                      onClick={() => imageUI.removePreview(preview.id)}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -158,13 +149,13 @@ export function GalleryForm({
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={handleFileSelect}
+                    onChange={imageUI.handleFileSelect}
                     className="hidden"
                   />
                 </label>
               </div>
               <p className="text-muted-foreground text-sm">
-                {previews.length}개 사진 선택됨
+                {imageUI.previews.length}개 사진 선택됨
               </p>
             </div>
           ) : (
@@ -180,7 +171,7 @@ export function GalleryForm({
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={handleFileSelect}
+                onChange={imageUI.handleFileSelect}
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
             </div>
@@ -195,15 +186,15 @@ export function GalleryForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isSubmitting || previews.length === 0}
+          disabled={status.isPending || imageUI.previews.length === 0}
         >
-          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
+          {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isSubmitting}
+          disabled={status.isPending}
           size="lg"
         >
           취소

@@ -2,12 +2,19 @@
 
 import { useEffect, useState } from 'react';
 
-interface Props {
+export interface ImageItem {
+  id: string;
+  file: File | null;
+  preview: string;
+  isThumbnail: boolean;
+}
+
+interface ImageInputProps {
   initialUrl?: string;
   onFileChange?: (file: File | null) => void;
 }
 
-export function useImageInput({ initialUrl, onFileChange }: Props) {
+export function useImageInput({ initialUrl, onFileChange }: ImageInputProps) {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(initialUrl || null);
   const [rawFile, setRawFile] = useState<File | null>(null);

@@ -1,5 +1,5 @@
-import { AlbumsList } from '@/widgets/gallery-list';
-import { CreateAlbumButton } from '@/features/gallery';
+import { GalleriesList } from '@/widgets/gallery-list';
+import { CreateGalleryButton } from '@/features/gallery';
 
 export default async function GalleryPage({
   searchParams,
@@ -12,8 +12,8 @@ export default async function GalleryPage({
   const currentPage = Math.max(1, Number(page) || 1);
   return (
     <div className="space-y-6">
-      <CreateAlbumButton />
-      <AlbumsList searchQuery={searchQuery} currentPage={currentPage} />
+      <CreateGalleryButton />
+      <GalleriesList searchQuery={searchQuery} currentPage={currentPage} />
     </div>
   );
 }

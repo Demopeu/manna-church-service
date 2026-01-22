@@ -12,7 +12,7 @@ import {
   SectionCard,
   withAsyncBoundary,
 } from '@/shared/ui';
-import { AlbumsItem } from './AlbumsItem';
+import { GalleriesItem } from './GalleriesItem';
 import { GALLERY_UI } from './labels';
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
   currentPage: number;
 }
 
-export async function List({ searchQuery, currentPage }: Props) {
+async function List({ searchQuery, currentPage }: Props) {
   const { galleries, totalPages } = await getGalleries({
     query: searchQuery,
     page: currentPage,
@@ -49,7 +49,7 @@ export async function List({ searchQuery, currentPage }: Props) {
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
           {galleries.map((gallery) => (
-            <AlbumsItem key={gallery.id} gallery={gallery} />
+            <GalleriesItem key={gallery.id} gallery={gallery} />
           ))}
         </div>
       )}
@@ -58,7 +58,7 @@ export async function List({ searchQuery, currentPage }: Props) {
   );
 }
 
-export const AlbumsList = withAsyncBoundary(List, {
+export const GalleriesList = withAsyncBoundary(List, {
   loadingFallback: (
     <ListSkeleton
       title={GALLERY_UI.TITLE}

@@ -2,8 +2,7 @@
 
 import Image from 'next/image';
 import { Star } from 'lucide-react';
-import { cn } from '@repo/ui/lib';
-import { DeleteAlbumButton, EditAlbumButton } from '@/features/gallery';
+import { DeleteGalleryButton, EditGalleryButton } from '@/features/gallery';
 import { GalleryWithImages } from '@/entities/gallery';
 import {
   Card,
@@ -17,7 +16,7 @@ interface Props {
   gallery: GalleryWithImages;
 }
 
-export function AlbumsItem({ gallery }: Props) {
+export function GalleriesItem({ gallery }: Props) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
@@ -29,10 +28,10 @@ export function AlbumsItem({ gallery }: Props) {
             </CardDescription>
           </div>
           <div className="flex gap-1">
-            <EditAlbumButton gallery={gallery} />
-            <DeleteAlbumButton
-              albumId={gallery.id}
-              albumTitle={gallery.title}
+            <EditGalleryButton gallery={gallery} />
+            <DeleteGalleryButton
+              galleryId={gallery.id}
+              galleryTitle={gallery.title}
             />
           </div>
         </div>
@@ -46,10 +45,7 @@ export function AlbumsItem({ gallery }: Props) {
                   src={image.storagePath}
                   alt={`${gallery.title} ${index + 1}`}
                   fill
-                  className={cn(
-                    'rounded-lg border-2 object-cover',
-                    index === 0 ? 'border-primary' : 'border-transparent',
-                  )}
+                  className={`rounded-lg border-2 object-cover ${index === 0 ? 'border-primary' : 'border-transparent'}`}
                 />
               </div>
               {index === 0 && (

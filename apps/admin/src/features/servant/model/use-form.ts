@@ -12,13 +12,15 @@ import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Servant } from '@/entities/servant';
-import { useToastAndRefresh } from '@/shared/lib';
+import { imageConverter, useToastAndRefresh } from '@/shared/lib';
 import { createServantAction, updateServantAction } from '../api/actions';
-import { getDefaultValues, toFormData } from '../lib/mapper';
+import { getDefaultValues, toFormData } from './mapper';
 import {
-  CreateServantInput,
+  type CreateServantInput,
+  type UpdateServantInput,
   createServantSchema,
   initialState,
+  updateServantSchema,
 } from './schema';
 
 interface Params {
@@ -38,8 +40,10 @@ export function useServantForm({ servant, onSuccess, successMessage }: Params) {
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
 
-  const form = useForm<CreateServantInput>({
-    resolver: zodResolver(createServantSchema),
+  const form = useForm<CreateServantInput | UpdateServantInput>({
+    resolver: zodResolver(
+      MODE === 'EDIT' ? updateServantSchema : createServantSchema,
+    ),
     defaultValues: getDefaultValues(servant),
   });
 
@@ -110,10 +114,13 @@ export function useServantForm({ servant, onSuccess, successMessage }: Params) {
         Object.entries(currentState.fieldErrors).forEach(
           ([field, messages]) => {
             if (messages && messages[0]) {
-              form.setError(field as keyof CreateServantInput, {
-                type: 'server',
-                message: messages[0],
-              });
+              form.setError(
+                field as keyof CreateServantInput | keyof UpdateServantInput,
+                {
+                  type: 'server',
+                  message: messages[0],
+                },
+              );
             }
           },
         );
@@ -132,9 +139,23 @@ export function useServantForm({ servant, onSuccess, successMessage }: Params) {
     handleSuccess(state);
   }, [state]);
 
-  const handleSubmit = form.handleSubmit((data) => {
+  const handleSubmit = form.handleSubmit(async (data) => {
+    const formData = toFormData(data);
+
+    if (photoFile?.file) {
+      const isSuccess = await imageConverter({
+        formData,
+        file: photoFile.file,
+        title: data.name,
+        setError: form.setError,
+        type: 'image-to-webp',
+      });
+
+      if (!isSuccess) return;
+    }
+
     startTransition(() => {
-      action(toFormData(data));
+      action(formData);
     });
   });
 

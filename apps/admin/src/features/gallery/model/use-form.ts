@@ -11,14 +11,24 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GalleryWithImages } from '@/entities/gallery';
-import { useToastAndRefresh } from '@/shared/lib';
-import { createGalleryAction, updateGalleryAction } from '../api/actions';
-import { GalleryFormImage, getDefaultValues, toFormData } from '../lib/mapper';
 import {
-  CreateGalleryInput,
+  type ImageItem,
+  imageConverter,
+  useToastAndRefresh,
+} from '@/shared/lib';
+import { createGalleryAction, updateGalleryAction } from '../api/actions';
+import { getDefaultValues, toFormData } from './mapper';
+import {
+  type CreateGalleryInput,
+  type UpdateGalleryInput,
   createGallerySchema,
   initialState,
+  updateGallerySchema,
 } from './schema';
+
+export interface GalleryFormImage extends ImageItem {
+  isThumbnail: boolean;
+}
 
 interface UseGalleryFormProps {
   gallery?: GalleryWithImages;
@@ -40,8 +50,10 @@ export function useGalleryForm({
 
   const [state, formAction, isPending] = useActionState(action, initialState);
 
-  const form = useForm<CreateGalleryInput>({
-    resolver: zodResolver(createGallerySchema),
+  const form = useForm<CreateGalleryInput | UpdateGalleryInput>({
+    resolver: zodResolver(
+      MODE === 'EDIT' ? updateGallerySchema : createGallerySchema,
+    ),
     defaultValues: getDefaultValues(gallery),
   });
 
@@ -141,10 +153,13 @@ export function useGalleryForm({
         Object.entries(currentState.fieldErrors).forEach(
           ([field, messages]) => {
             if (messages && messages[0]) {
-              form.setError(field as keyof CreateGalleryInput, {
-                type: 'server',
-                message: messages[0],
-              });
+              form.setError(
+                field as keyof CreateGalleryInput | keyof UpdateGalleryInput,
+                {
+                  type: 'server',
+                  message: messages[0],
+                },
+              );
             }
           },
         );
@@ -163,23 +178,66 @@ export function useGalleryForm({
     handleSuccess(state);
   }, [state]);
 
-  const handleSubmit = form.handleSubmit((data) => {
+  const handleSubmit = form.handleSubmit(async (data) => {
+    const keepImageIds = previews.filter((p) => !p.file).map((p) => p.id);
+    const thumbnailIndex = previews.findIndex((p) => p.isThumbnail);
+
+    const formData = toFormData(
+      data,
+      thumbnailIndex >= 0 ? thumbnailIndex : 0,
+      keepImageIds,
+    );
+
+    const newImageFiles = previews.filter((p) => p.file);
+
+    if (newImageFiles.length > 0) {
+      let imageIndex = 0;
+      for (const preview of newImageFiles) {
+        if (!preview.file) continue;
+
+        const isSuccess = await imageConverter({
+          formData,
+          file: preview.file,
+          title: data.title,
+          setError: form.setError,
+          type: 'image-to-webp',
+        });
+
+        if (!isSuccess) return;
+
+        const convertedImage = formData.get('image');
+        if (convertedImage) {
+          formData.delete('image');
+          formData.append(`image-${imageIndex}`, convertedImage);
+        }
+
+        imageIndex++;
+      }
+    }
+
     startTransition(() => {
-      formAction(toFormData(data, previews));
+      formAction(formData);
     });
   });
 
   return {
     form,
-    handleSubmit,
-    isSubmitting: form.formState.isSubmitting || isPending,
-    hasChanges,
-    dragActive,
-    previews,
-    handleDrag,
-    handleDrop,
-    handleFileSelect,
-    removePreview,
-    setThumbnail,
+    imageUI: {
+      previews,
+      dragActive,
+      handleDrag,
+      handleDrop,
+      handleFileSelect,
+      removePreview,
+      setThumbnail,
+    },
+    handler: {
+      submit: handleSubmit,
+    },
+    status: {
+      isPending,
+      mode: MODE,
+      hasChanges,
+    },
   };
 }

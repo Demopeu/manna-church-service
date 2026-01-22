@@ -224,35 +224,18 @@ export function ServantForm({
         )}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="sortOrder">정렬 순서</Label>
-          <Input
-            id="sortOrder"
-            type="number"
-            min="1"
-            className="h-12 text-base"
-            disabled={isSubmitting}
-            {...form.register('sortOrder', { valueAsNumber: true })}
-          />
-          {errors.sortOrder && (
-            <p className="text-sm text-red-500">{errors.sortOrder.message}</p>
-          )}
-        </div>
-
-        <div className="flex items-center space-x-2 pt-8">
-          <Switch
-            id="isPublic"
-            checked={form.watch('isPublic')}
-            onCheckedChange={(checked) =>
-              form.setValue('isPublic', checked, { shouldDirty: true })
-            }
-            disabled={isSubmitting}
-          />
-          <Label htmlFor="isPublic" className="cursor-pointer">
-            웹사이트에 공개
-          </Label>
-        </div>
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="isPublic"
+          checked={form.watch('isPublic')}
+          onCheckedChange={(checked) =>
+            form.setValue('isPublic', checked, { shouldDirty: true })
+          }
+          disabled={isSubmitting}
+        />
+        <Label htmlFor="isPublic" className="cursor-pointer">
+          웹사이트에 공개
+        </Label>
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
