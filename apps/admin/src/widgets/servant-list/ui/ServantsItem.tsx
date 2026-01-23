@@ -17,7 +17,7 @@ export function ServantsItem({ servant }: Props) {
       <TableCell>
         <div className="bg-muted relative h-12 w-12 overflow-hidden rounded-full">
           <Image
-            src={servant.photoUrl || '/placeholder.svg'}
+            src={servant.photoFile || '/placeholder.svg'}
             alt={servant.name}
             fill
             className="object-cover"

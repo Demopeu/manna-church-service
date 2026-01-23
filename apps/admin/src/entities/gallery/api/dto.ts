@@ -1,16 +1,5 @@
-export interface GalleryDto {
-  id: string;
-  title: string;
-  event_date: string;
-  thumbnail_url: string | null;
-  created_at: string;
-}
+import type { Database } from '@repo/database/types';
 
-export interface GalleryImageDto {
-  id: string;
-  gallery_id: string;
-  storage_path: string;
-  width: number;
-  height: number;
-  created_at: string;
-}
+export type GalleryDto = Database['public']['Tables']['galleries']['Row'];
+export type GalleryImageDto =
+  Database['public']['Tables']['gallery_images']['Row'];

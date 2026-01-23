@@ -1,97 +1,129 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useEffectEvent,
+} from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Event } from '@/entities/event';
-import { FORM_TEXT } from '../config/form';
-import { getDefaultValues } from '../lib/mapper';
-import { createEventAction, updateEventAction } from './actions';
-import { initialState } from './schema';
+import {
+  imageConverter,
+  useImageInput,
+  useToastAndRefresh,
+} from '@/shared/lib';
+import { createEventAction, updateEventAction } from '../api/actions';
+import { getDefaultValues, toFormData } from './mapper';
+import {
+  type CreateEventInput,
+  type UpdateEventInput,
+  createEventSchema,
+  initialState,
+  updateEventSchema,
+} from './schema';
 
-interface UseEventFormProps {
+interface Props {
   event?: Event;
-  onSuccess: () => void;
+  onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useEventForm({ event, onSuccess }: UseEventFormProps) {
-  const isEditMode = !!event;
-  const action = isEditMode
-    ? updateEventAction.bind(null, event.id)
-    : createEventAction;
+export function useEventForm({ event, onSuccess, successMessage }: Props) {
+  const { complete } = useToastAndRefresh(onSuccess);
+  const MODE = event ? 'EDIT' : 'CREATE';
+  const action =
+    MODE === 'EDIT' && event
+      ? updateEventAction.bind(null, event.id)
+      : createEventAction;
 
   const [state, formAction, isPending] = useActionState(action, initialState);
 
-  const [photoFile, setPhotoFile] = useState<{
-    file: File;
-    preview: string;
-  } | null>(null);
-  const [dragActive, setDragActive] = useState(false);
+  const form = useForm({
+    resolver: zodResolver(
+      MODE === 'EDIT' ? updateEventSchema : createEventSchema,
+    ),
+    defaultValues: getDefaultValues(event),
+    mode: 'onChange',
+  });
+  const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
+  const handlePhotoChange = (file: File | null) => {
+    form.setValue('photoFile', file, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    if (!file) {
+      form.clearErrors('photoFile');
+    }
+  };
+  const imageInput = useImageInput({
+    initialUrl: event?.photoUrl,
+    onFileChange: handlePhotoChange,
+  });
 
-  const defaultValues = getDefaultValues(event);
-  const uiText = isEditMode ? FORM_TEXT.EDIT : FORM_TEXT.CREATE;
+  const handleError = useEffectEvent((currentState: typeof state) => {
+    if (currentState && !currentState.success) {
+      if (currentState.message) {
+        form.setError('root', {
+          type: 'server',
+          message: currentState.message,
+        });
+      }
+      if (currentState.fieldErrors) {
+        Object.entries(currentState.fieldErrors).forEach(
+          ([field, messages]) => {
+            if (messages && messages[0]) {
+              form.setError(
+                field as keyof CreateEventInput | keyof UpdateEventInput,
+                {
+                  type: 'server',
+                  message: messages[0],
+                },
+              );
+            }
+          },
+        );
+      }
+    }
+  });
+
+  const handleSuccess = useEffectEvent((currentState: typeof state) => {
+    if (currentState?.success) {
+      complete(successMessage);
+    }
+  });
 
   useEffect(() => {
-    if (state.success) {
-      onSuccess();
-    }
-  }, [state.success, onSuccess]);
+    handleError(state);
+    handleSuccess(state);
+  }, [state]);
 
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      handleFile(files[0]);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      handleFile(files[0]);
-    }
-  };
-
-  const handleFile = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
-
-    const preview = URL.createObjectURL(file);
-    setPhotoFile({ file, preview });
-  };
-
-  const removePhotoFile = () => {
-    if (photoFile?.preview) {
-      URL.revokeObjectURL(photoFile.preview);
-    }
-    setPhotoFile(null);
-  };
+  const handleSubmit = form.handleSubmit(async (data) => {
+    const formData = toFormData(data);
+    const isSuccess = await imageConverter({
+      formData,
+      file: imageInput.rawFile || undefined,
+      title: data.title,
+      setError: form.setError,
+      type: 'image-to-webp',
+    });
+    if (!isSuccess) return;
+    startTransition(() => {
+      formAction(formData);
+    });
+  });
 
   return {
-    state,
-    action: formAction,
-    isPending,
-    defaultValues,
-    uiText,
-    photoFile: {
-      file: photoFile,
-      dragActive,
-      handleDrag,
-      handleDrop,
-      handleFileSelect,
-      removePhotoFile,
+    form,
+    imageUI: imageInput,
+    handler: {
+      submit: handleSubmit,
+    },
+    status: {
+      isPending,
+      mode: MODE,
+      hasChanges,
     },
   };
 }

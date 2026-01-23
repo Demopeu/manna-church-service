@@ -3,6 +3,7 @@
 import { ExternalLink } from 'lucide-react';
 import { DeleteSermonButton, EditSermonButton } from '@/features/sermon';
 import { Sermon } from '@/entities/sermon';
+import { formatRelativeDate } from '@/shared/lib';
 import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
@@ -14,7 +15,7 @@ export function SermonsItem({ sermon }: Props) {
     <TableRow key={sermon.id}>
       <TableCell className="font-medium">{sermon.title}</TableCell>
       <TableCell>{sermon.preacher}</TableCell>
-      <TableCell>{sermon.date}</TableCell>
+      <TableCell>{formatRelativeDate(sermon.date)}</TableCell>
       <TableCell>
         <a
           href={sermon.videoUrl}

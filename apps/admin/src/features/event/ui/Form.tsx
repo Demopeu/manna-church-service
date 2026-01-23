@@ -13,9 +13,11 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
   Textarea,
 } from '@/shared/ui';
 import { useEventForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   event?: Event;
@@ -30,14 +32,28 @@ export function EventForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const { state, action, isPending, defaultValues, uiText, photoFile } =
-    useEventForm({ event, onSuccess });
+  const uiText = getFormText(event);
+
+  const { form, imageUI, handler, status } = useEventForm({
+    event,
+    onSuccess,
+    successMessage: uiText.successDescription,
+  });
+  const { errors, isValid } = form.formState;
 
   const FormContent = (
-    <form action={action} className="space-y-4">
-      {state.message && !state.success && (
+    <form onSubmit={handler.submit} className="space-y-4">
+      <LoadingProgress
+        isPending={status.isPending}
+        message={
+          status.mode === 'EDIT'
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -45,14 +61,13 @@ export function EventForm({
         <Label htmlFor="title">제목 *</Label>
         <Input
           id="title"
-          name="title"
-          defaultValue={defaultValues.title}
-          required
           className="h-12 text-base"
           placeholder="이벤트 제목을 입력하세요"
+          disabled={status.isPending}
+          {...form.register('title')}
         />
-        {state.fieldErrors?.title && (
-          <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
+        {errors.title && (
+          <p className="text-sm text-red-500">{errors.title.message}</p>
         )}
       </div>
 
@@ -60,16 +75,13 @@ export function EventForm({
         <Label htmlFor="startDate">시작 날짜 *</Label>
         <Input
           id="startDate"
-          name="startDate"
           type="date"
-          defaultValue={defaultValues.startDate}
-          required
           className="h-12 text-base"
+          disabled={status.isPending}
+          {...form.register('startDate')}
         />
-        {state.fieldErrors?.startDate && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.startDate[0]}
-          </p>
+        {errors.startDate && (
+          <p className="text-sm text-red-500">{errors.startDate.message}</p>
         )}
       </div>
 
@@ -78,37 +90,40 @@ export function EventForm({
         <div
           className={cn(
             'relative rounded-lg border-2 border-dashed transition-colors',
-            photoFile.dragActive
+            imageUI.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            photoFile.file ? 'p-4' : 'p-8',
+            imageUI.preview ? 'p-4' : 'p-8',
           )}
-          onDragEnter={photoFile.handleDrag}
-          onDragLeave={photoFile.handleDrag}
-          onDragOver={photoFile.handleDrag}
-          onDrop={photoFile.handleDrop}
+          onDragEnter={imageUI.handleDrag}
+          onDragLeave={imageUI.handleDrag}
+          onDragOver={imageUI.handleDrag}
+          onDrop={imageUI.handleDrop}
         >
-          {photoFile.file ? (
-            <div className="flex items-center gap-4">
-              <div className="relative h-24 w-24 shrink-0">
+          {imageUI.preview ? (
+            <div className="flex items-center gap-3">
+              <div className="relative h-40 w-40 shrink-0">
                 <Image
-                  src={photoFile.file.preview}
+                  key={imageUI.preview}
+                  src={imageUI.preview}
                   alt="이벤트 사진 미리보기"
                   fill
                   className="rounded-lg object-cover"
                 />
               </div>
-              <div className="flex-1">
-                <p className="font-medium">{photoFile.file.file.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  {(photoFile.file.file.size / 1024 / 1024).toFixed(2)} MB
+              <div className="w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {imageUI.rawFile
+                    ? imageUI.rawFile.name
+                    : '기존 등록된 이미지'}
                 </p>
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={photoFile.removePhotoFile}
+                className="shrink-0"
+                onClick={imageUI.removeFile}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -118,9 +133,9 @@ export function EventForm({
                 accept="image/*"
                 className="hidden"
                 ref={(input) => {
-                  if (input && photoFile.file) {
+                  if (input && imageUI.rawFile) {
                     const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(photoFile.file.file);
+                    dataTransfer.items.add(imageUI.rawFile);
                     input.files = dataTransfer.files;
                   }
                 }}
@@ -136,48 +151,53 @@ export function EventForm({
                 {uiText.imageHelp}
               </p>
               <input
+                key={`file-input`}
                 type="file"
                 name="photoFile"
                 accept="image/*"
-                onChange={photoFile.handleFileSelect}
+                onChange={imageUI.handleFileSelect}
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
             </div>
           )}
         </div>
-        {state.fieldErrors?.photoFile && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.photoFile[0]}
-          </p>
+        {errors.photoFile && (
+          <p className="text-sm text-red-500">{errors.photoFile.message}</p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">설명 *</Label>
+        <Label htmlFor="description">설명</Label>
         <Textarea
           id="description"
-          name="description"
-          defaultValue={defaultValues.description}
-          required
           className="min-h-32 text-base"
           placeholder="이벤트 설명을 입력하세요"
+          disabled={status.isPending}
+          {...form.register('description')}
         />
-        {state.fieldErrors?.description && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.description[0]}
-          </p>
+        {errors.description && (
+          <p className="text-sm text-red-500">{errors.description.message}</p>
         )}
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <Button type="submit" size="lg" disabled={isPending || !photoFile.file}>
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+        <Button
+          type="submit"
+          size="lg"
+          disabled={
+            status.isPending ||
+            !imageUI.preview ||
+            !isValid ||
+            !status.hasChanges
+          }
+        >
+          {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={status.isPending}
           size="lg"
         >
           취소

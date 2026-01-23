@@ -1,5 +1,6 @@
 'use client';
 
+import { Controller } from 'react-hook-form';
 import Image from 'next/image';
 import { ImageIcon, X } from 'lucide-react';
 import { cn } from '@repo/ui/lib';
@@ -13,6 +14,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
   Select,
   SelectContent,
   SelectItem,
@@ -22,6 +24,7 @@ import {
   Textarea,
 } from '@/shared/ui';
 import { useServantForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   servant?: Servant;
@@ -36,14 +39,29 @@ export function ServantForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const { state, action, isPending, defaultValues, uiText, photoFile } =
-    useServantForm({ servant, onSuccess });
+  const uiText = getFormText(servant);
+
+  const { form, imageUI, handler, status } = useServantForm({
+    servant,
+    onSuccess,
+    successMessage: uiText.successDescription,
+  });
+
+  const { errors, isValid } = form.formState;
 
   const FormContent = (
-    <form action={action} className="space-y-4">
-      {state.message && !state.success && (
+    <form onSubmit={handler.submit} className="space-y-4">
+      <LoadingProgress
+        isPending={status.isPending}
+        message={
+          status.mode === 'EDIT'
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -54,82 +72,56 @@ export function ServantForm({
         <div
           className={cn(
             'relative rounded-lg border-2 border-dashed transition-colors',
-            photoFile.dragActive
+            imageUI.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            photoFile.file ? 'p-4' : 'p-8',
+            imageUI.preview ? 'p-4' : 'p-8',
           )}
-          onDragEnter={photoFile.handleDrag}
-          onDragLeave={photoFile.handleDrag}
-          onDragOver={photoFile.handleDrag}
-          onDrop={photoFile.handleDrop}
+          onDragEnter={imageUI.handleDrag}
+          onDragLeave={imageUI.handleDrag}
+          onDragOver={imageUI.handleDrag}
+          onDrop={imageUI.handleDrop}
         >
-          {photoFile.file ? (
+          {imageUI.preview ? (
             <div className="flex items-center gap-4">
               <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src={photoFile.file.preview}
+                  src={imageUI.preview}
                   alt="프로필 사진 미리보기"
                   fill
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1">
-                <p className="font-medium">{photoFile.file.file.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  {(photoFile.file.file.size / 1024 / 1024).toFixed(2)} MB
+              <div className="w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {imageUI.rawFile?.name}
                 </p>
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={photoFile.removePhotoFile}
+                className="shrink-0"
+                onClick={imageUI.removeFile}
               >
                 <X className="h-4 w-4" />
               </Button>
-              <input
-                type="file"
-                name="photoFile"
-                accept="image/*"
-                className="hidden"
-                ref={(input) => {
-                  if (input && photoFile.file) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(photoFile.file.file);
-                    input.files = dataTransfer.files;
-                  }
-                }}
-              />
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">
               <ImageIcon className="text-muted-foreground mb-4 h-12 w-12" />
-              <p className="mb-1 text-lg font-medium">
-                이미지를 드래그하거나 클릭해서 선택
-              </p>
-              <p className="text-muted-foreground text-sm">
-                💡 JPG, PNG, WebP 파일 (최대 5MB)
-              </p>
+              <p className="mb-1 text-lg font-medium">이미지 선택</p>
               <input
                 type="file"
-                name="photoFile"
                 accept="image/*"
-                onChange={photoFile.handleFileSelect}
+                onChange={imageUI.handleFileSelect}
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
             </div>
           )}
         </div>
-        {state.fieldErrors?.photoFile && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.photoFile[0]}
-          </p>
-        )}
-        {servant?.photoUrl && !photoFile.file && (
-          <p className="text-muted-foreground text-sm">
-            📎 현재 사진: {servant.photoUrl}
-          </p>
+        {errors.photoFile && (
+          <p className="text-sm text-red-500">{errors.photoFile.message}</p>
         )}
       </div>
 
@@ -139,14 +131,13 @@ export function ServantForm({
         </Label>
         <Input
           id="name"
-          name="name"
-          defaultValue={defaultValues.name}
-          placeholder="이름을 입력하세요"
-          required
-          className="h-11"
+          className="h-12 text-base"
+          placeholder="예: 홍길동"
+          disabled={status.isPending}
+          {...form.register('name')}
         />
-        {state.fieldErrors?.name && (
-          <p className="text-sm text-red-500">{state.fieldErrors.name[0]}</p>
+        {errors.name && (
+          <p className="text-sm text-red-500">{errors.name.message}</p>
         )}
       </div>
 
@@ -154,92 +145,111 @@ export function ServantForm({
         <Label htmlFor="role">
           직분 <span className="text-destructive">*</span>
         </Label>
-        <Select name="role" defaultValue={defaultValues.role} required>
-          <SelectTrigger className="h-11">
-            <SelectValue placeholder="직분 선택" />
-          </SelectTrigger>
-          <SelectContent>
-            {POSITION_OPTIONS.map((pos) => (
-              <SelectItem key={pos} value={pos}>
-                {pos}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {state.fieldErrors?.role && (
-          <p className="text-sm text-red-500">{state.fieldErrors.role[0]}</p>
+        <Controller
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              disabled={status.isPending}
+            >
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder="직분을 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {POSITION_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {errors.role && (
+          <p className="text-sm text-red-500">{errors.role.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="sortOrder">
-          정렬 순서 <span className="text-destructive">*</span>
-        </Label>
-        <Input
-          id="sortOrder"
-          name="sortOrder"
-          type="number"
-          min={1}
-          defaultValue={defaultValues.sortOrder}
-          required
-          className="h-11"
-        />
-        <p className="text-muted-foreground text-xs">
-          숫자가 작을수록 먼저 표시됩니다 (1부터 시작)
-        </p>
-        {state.fieldErrors?.sortOrder && (
-          <p className="text-sm text-red-500">
-            {state.fieldErrors.sortOrder[0]}
-          </p>
-        )}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="sortOrder">정렬 순서</Label>
+          <Input
+            id="sortOrder"
+            type="number"
+            min="1"
+            className="h-12 text-base"
+            disabled={status.isPending}
+            {...form.register('sortOrder', { valueAsNumber: true })}
+          />
+          {errors.sortOrder && (
+            <p className="text-sm text-red-500">{errors.sortOrder.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="contact">연락처 (선택)</Label>
+          <Input
+            id="contact"
+            type="tel"
+            className="h-12 text-base"
+            disabled={status.isPending}
+            {...form.register('contact')}
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="contact">연락처 (선택)</Label>
-        <Input
-          id="contact"
-          name="contact"
-          type="tel"
-          defaultValue={defaultValues.contact}
-          placeholder="010-0000-0000"
-          className="h-11"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="introduction">담당 / 소개 (선택)</Label>
+        <Label htmlFor="introduction">담당/소개</Label>
         <Textarea
           id="introduction"
-          name="introduction"
-          defaultValue={defaultValues.introduction}
-          placeholder="담당 업무나 간단한 소개를 작성하세요"
-          rows={3}
+          className="min-h-24 text-base"
+          placeholder="예: 찬양 인도"
+          disabled={status.isPending}
+          {...form.register('introduction')}
         />
+        {errors.introduction && (
+          <p className="text-sm text-red-500">{errors.introduction.message}</p>
+        )}
       </div>
 
-      <div className="flex items-center justify-between rounded-lg border p-4">
-        <div>
-          <Label htmlFor="isPublic">웹사이트 노출</Label>
-          <p className="text-muted-foreground text-xs">
-            활성화하면 웹사이트에 표시됩니다
-          </p>
-        </div>
-        <Switch
-          id="isPublic"
+      <div className="flex items-center space-x-2">
+        <Controller
+          control={form.control}
           name="isPublic"
-          defaultChecked={defaultValues.isPublic}
+          render={({ field }) => (
+            <Switch
+              id="isPublic"
+              checked={!!field.value}
+              onCheckedChange={field.onChange}
+              disabled={status.isPending}
+            />
+          )}
         />
+        <Label htmlFor="isPublic" className="cursor-pointer">
+          웹사이트에 공개
+        </Label>
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <Button type="submit" size="lg" disabled={isPending || !photoFile.file}>
-          {isPending ? '처리 중...' : uiText.submitButton}
+        <Button
+          type="submit"
+          size="lg"
+          disabled={
+            status.isPending ||
+            !imageUI.preview ||
+            !isValid ||
+            !status.hasChanges
+          }
+        >
+          {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={status.isPending}
           size="lg"
         >
           취소

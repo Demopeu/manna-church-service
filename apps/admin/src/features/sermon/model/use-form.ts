@@ -1,21 +1,34 @@
 'use client';
 
-import { useActionState, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useEffectEvent,
+} from 'react';
+import { Control, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Sermon } from '@/entities/sermon';
-import { FORM_TEXT } from '../config/form';
+import { useToastAndRefresh } from '@/shared/lib';
+import { createSermonAction, updateSermonAction } from '../api/actions';
 import { extractVideoId } from '../lib/extract-video-id';
-import { getDefaultValues } from '../lib/mapper';
-import { createSermonAction, updateSermonAction } from './actions';
-import { initialState } from './schema';
+import { getDefaultValues, toFormData } from './mapper';
+import { CreateSermonInput, createSermonSchema, initialState } from './schema';
 
 interface Params {
   sermon?: Sermon;
   onSuccess?: () => void;
+  successMessage: string;
 }
 
-export function useSermonForm({ sermon, onSuccess }: Params) {
-  const router = useRouter();
+function useYoutubePreview(control: Control<CreateSermonInput>) {
+  const url = useWatch({ control, name: 'videoUrl' });
+  const id = extractVideoId(url);
+  return { url, id, isValid: !!id };
+}
+
+export function useSermonForm({ sermon, onSuccess, successMessage }: Params) {
+  const { complete } = useToastAndRefresh(onSuccess);
   const MODE = sermon ? 'EDIT' : 'CREATE';
 
   const actionFn =
@@ -25,32 +38,60 @@ export function useSermonForm({ sermon, onSuccess }: Params) {
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
 
-  const [previewUrl, setPreviewUrl] = useState(sermon?.videoUrl || '');
-  const videoId = extractVideoId(previewUrl);
-  const isValidVideo = !!videoId;
+  const form = useForm<CreateSermonInput>({
+    resolver: zodResolver(createSermonSchema),
+    defaultValues: getDefaultValues(sermon),
+  });
+
+  const preview = useYoutubePreview(form.control);
+  const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
+
+  const handleError = useEffectEvent((currentState: typeof state) => {
+    if (currentState && !currentState.success) {
+      if (currentState.message) {
+        form.setError('root', {
+          type: 'server',
+          message: currentState.message,
+        });
+      }
+      if (currentState.fieldErrors) {
+        Object.entries(currentState.fieldErrors).forEach(
+          ([field, messages]) => {
+            if (messages && messages[0]) {
+              form.setError(field as keyof CreateSermonInput, {
+                type: 'server',
+                message: messages[0],
+              });
+            }
+          },
+        );
+      }
+    }
+  });
+
+  const handleSuccess = useEffectEvent((currentState: typeof state) => {
+    if (currentState?.success) {
+      complete(successMessage);
+    }
+  });
 
   useEffect(() => {
-    if (state.success) {
-      alert(state.message);
-      router.refresh();
-      onSuccess?.();
-    }
-  }, [state.success, state.message, router, onSuccess]);
+    handleError(state);
+    handleSuccess(state);
+  }, [state]);
 
-  const uiText = FORM_TEXT[MODE];
-  const defaultValues = getDefaultValues(sermon);
+  const handleSubmit = form.handleSubmit((data) => {
+    startTransition(() => {
+      action(toFormData(data));
+    });
+  });
 
   return {
-    state,
-    action,
+    form,
+    handleSubmit,
+    isSubmitting: form.formState.isSubmitting || isPending,
     isPending,
-    defaultValues,
-    uiText,
-    preview: {
-      url: previewUrl,
-      setUrl: setPreviewUrl,
-      id: videoId,
-      isValid: isValidVideo,
-    },
+    hasChanges,
+    preview,
   };
 }

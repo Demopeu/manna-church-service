@@ -15,6 +15,7 @@ import {
   Label,
 } from '@/shared/ui';
 import { useGalleryForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   gallery?: GalleryWithImages;
@@ -29,71 +30,49 @@ export function GalleryForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const {
-    state,
-    action,
-    isPending,
-    defaultValues,
-    uiText,
-    dragActive,
-    previews,
-    handleDrag,
-    handleDrop,
-    handleFileSelect,
-    removePreview,
-    setThumbnail,
-  } = useGalleryForm({ gallery, onSuccess });
+  const uiText = getFormText(gallery);
 
-  const thumbnailIndex = previews.findIndex((p) => p.isThumbnail);
+  const { form, imageUI, handler, status } = useGalleryForm({
+    gallery,
+    onSuccess,
+    successMessage: uiText.successDescription,
+  });
+
+  const errors = form.formState.errors;
 
   const FormContent = (
-    <form
-      action={(formData: FormData) => {
-        previews.forEach((preview, idx) => {
-          if (preview.file) {
-            formData.append(`image-${idx}`, preview.file);
-          }
-        });
-        formData.append('thumbnailIndex', thumbnailIndex.toString());
-        action(formData);
-      }}
-      className="space-y-4"
-    >
-      {state.message && !state.success && (
+    <form onSubmit={handler.submit} className="space-y-4">
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="title">앨범 제목 *</Label>
+          <Label htmlFor="title">갤러리 제목 *</Label>
           <Input
             id="title"
-            name="title"
-            defaultValue={defaultValues.title}
-            required
             className="h-12 text-base"
             placeholder="예: 2024 신년 예배"
+            disabled={status.isPending}
+            {...form.register('title')}
           />
-          {state.fieldErrors?.title && (
-            <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
+          {errors.title && (
+            <p className="text-sm text-red-500">{errors.title.message}</p>
           )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="eventDate">날짜 *</Label>
           <Input
             id="eventDate"
-            name="eventDate"
             type="date"
-            defaultValue={defaultValues.eventDate}
-            required
             className="h-12 text-base"
+            disabled={status.isPending}
+            {...form.register('eventDate')}
           />
-          {state.fieldErrors?.eventDate && (
-            <p className="text-sm text-red-500">
-              {state.fieldErrors.eventDate[0]}
-            </p>
+          {errors.eventDate && (
+            <p className="text-sm text-red-500">{errors.eventDate.message}</p>
           )}
         </div>
       </div>
@@ -106,22 +85,24 @@ export function GalleryForm({
         <div
           className={cn(
             'relative rounded-lg border-2 border-dashed transition-colors',
-            dragActive ? 'border-primary bg-primary/5' : 'border-border',
-            previews.length > 0 ? 'p-4' : 'p-8',
+            imageUI.dragActive
+              ? 'border-primary bg-primary/5'
+              : 'border-border',
+            imageUI.previews.length > 0 ? 'p-4' : 'p-8',
           )}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
+          onDragEnter={imageUI.handleDrag}
+          onDragLeave={imageUI.handleDrag}
+          onDragOver={imageUI.handleDrag}
+          onDrop={imageUI.handleDrop}
         >
-          {previews.length > 0 ? (
+          {imageUI.previews.length > 0 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
-                {previews.map((preview) => (
+                {imageUI.previews.map((preview) => (
                   <div key={preview.id} className="group relative">
                     <div className="relative aspect-square w-full">
                       <Image
-                        src={preview.url}
+                        src={preview.preview}
                         alt="사진"
                         fill
                         className={cn(
@@ -142,7 +123,7 @@ export function GalleryForm({
                           ? ''
                           : 'opacity-0 group-hover:opacity-100',
                       )}
-                      onClick={() => setThumbnail(preview.id)}
+                      onClick={() => imageUI.setThumbnail(preview.id)}
                     >
                       <Star
                         className={cn(
@@ -156,7 +137,7 @@ export function GalleryForm({
                       variant="destructive"
                       size="icon"
                       className="absolute -top-2 -right-2 h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                      onClick={() => removePreview(preview.id)}
+                      onClick={() => imageUI.removePreview(preview.id)}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -168,13 +149,13 @@ export function GalleryForm({
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={handleFileSelect}
+                    onChange={imageUI.handleFileSelect}
                     className="hidden"
                   />
                 </label>
               </div>
               <p className="text-muted-foreground text-sm">
-                {previews.length}개 사진 선택됨
+                {imageUI.previews.length}개 사진 선택됨
               </p>
             </div>
           ) : (
@@ -190,14 +171,14 @@ export function GalleryForm({
                 type="file"
                 accept="image/*"
                 multiple
-                onChange={handleFileSelect}
+                onChange={imageUI.handleFileSelect}
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
             </div>
           )}
         </div>
-        {state.fieldErrors?.images && (
-          <p className="text-sm text-red-500">{state.fieldErrors.images[0]}</p>
+        {errors.images && (
+          <p className="text-sm text-red-500">{errors.images.message}</p>
         )}
       </div>
 
@@ -205,15 +186,15 @@ export function GalleryForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isPending || previews.length === 0}
+          disabled={status.isPending || imageUI.previews.length === 0}
         >
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+          {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={status.isPending}
           size="lg"
         >
           취소

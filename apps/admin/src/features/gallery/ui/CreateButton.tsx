@@ -3,9 +3,9 @@
 import { FormTriggerButton } from '@/shared/ui';
 import { GalleryForm } from './Form';
 
-export function CreateAlbumButton() {
+export function CreateGalleryButton() {
   return (
-    <FormTriggerButton title="앨범 만들기">
+    <FormTriggerButton title="갤러리 등록">
       {({ close }) => <GalleryForm onCancel={close} onSuccess={close} />}
     </FormTriggerButton>
   );

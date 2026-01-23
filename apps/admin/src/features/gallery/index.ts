@@ -1,4 +1,3 @@
-export { CreateAlbumButton } from './ui/CreateButton';
-export { DeleteAlbumButton } from './ui/DeleteButton';
-export { EditAlbumButton } from './ui/EditButton';
-export { GalleryForm } from './ui/Form';
+export { CreateGalleryButton } from './ui/CreateButton';
+export { DeleteGalleryButton } from './ui/DeleteButton';
+export { EditGalleryButton } from './ui/EditButton';

@@ -4,21 +4,23 @@ import { getAnnouncements } from '@/entities/announcement';
 import {
   DataTable,
   EmptyState,
+  ListSkeleton,
   Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { ANNOUNCEMENT_UI } from '../config/labels';
 import { AnnouncementsItem } from './AnnouncementsItem';
+import { COLUMNS } from './columns';
+import { ANNOUNCEMENT_UI } from './labels';
 
 interface Props {
   searchQuery: string;
   currentPage: number;
 }
 
-export async function AnnouncementsList({ searchQuery, currentPage }: Props) {
+export async function List({ searchQuery, currentPage }: Props) {
   const { announcements, totalPages } = await getAnnouncements({
     query: searchQuery,
     page: currentPage,
@@ -53,3 +55,13 @@ export async function AnnouncementsList({ searchQuery, currentPage }: Props) {
     </SectionCard>
   );
 }
+
+export const AnnouncementsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={ANNOUNCEMENT_UI.TITLE}
+      description={ANNOUNCEMENT_UI.DESCRIPTION}
+      columns={COLUMNS}
+    />
+  ),
+});

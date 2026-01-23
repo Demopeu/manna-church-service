@@ -17,7 +17,7 @@ interface Props {
   gallery: GalleryWithImages;
 }
 
-export function EditAlbumButton({ gallery }: Props) {
+export function EditGalleryButton({ gallery }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,7 +30,7 @@ export function EditAlbumButton({ gallery }: Props) {
 
       <AlertDialogContent className="sm:max-w-[800px]">
         <AlertDialogHeader>
-          <AlertDialogTitle>앨범 수정</AlertDialogTitle>
+          <AlertDialogTitle>갤러리 수정</AlertDialogTitle>
         </AlertDialogHeader>
 
         <GalleryForm

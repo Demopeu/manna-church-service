@@ -5,6 +5,7 @@ import {
   EditAnnouncementButton,
 } from '@/features/announcement';
 import { Announcement } from '@/entities/announcement';
+import { formatRelativeDate } from '@/shared/lib';
 import { TableCell, TableRow } from '@/shared/ui';
 
 interface Props {
@@ -27,7 +28,7 @@ export function AnnouncementsItem({ announcement }: Props) {
       <TableCell className="text-muted-foreground">
         <span className="line-clamp-2">{announcement.content}</span>
       </TableCell>
-      <TableCell>{announcement.createdAt}</TableCell>
+      <TableCell>{formatRelativeDate(announcement.createdAt)}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
           <EditAnnouncementButton announcement={announcement} />

@@ -2,8 +2,8 @@
 
 import { Loader2 } from 'lucide-react';
 import { Button, Input, Label } from '@/shared/ui';
-import { LOGIN_FORM_FIELDS } from '../config/form-fields';
 import { useLoginForm } from '../model/use-login-form';
+import { LOGIN_FORM_FIELDS } from './form-fields';
 
 export function LoginForm() {
   const { register, handleSubmit, errors, isSubmitting } = useLoginForm();

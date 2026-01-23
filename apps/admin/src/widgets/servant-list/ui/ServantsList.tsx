@@ -4,15 +4,17 @@ import { getServants } from '@/entities/servant';
 import {
   DataTable,
   EmptyState,
+  ListSkeleton,
   Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { SERVANT_UI } from '../config/labels';
 import { ServantsFilters } from './ServantsFilters';
 import { ServantsItem } from './ServantsItem';
+import { COLUMNS } from './columns';
+import { SERVANT_UI } from './labels';
 
 interface Props {
   searchQuery: string;
@@ -21,7 +23,7 @@ interface Props {
   currentPage: number;
 }
 
-export async function ServantsList({
+async function List({
   searchQuery,
   roleFilter,
   isPublicFilter,
@@ -66,3 +68,13 @@ export async function ServantsList({
     </SectionCard>
   );
 }
+
+export const ServantsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={SERVANT_UI.TITLE}
+      description={SERVANT_UI.DESCRIPTION}
+      columns={COLUMNS}
+    />
+  ),
+});

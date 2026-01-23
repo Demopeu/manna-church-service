@@ -4,21 +4,23 @@ import { getEvents } from '@/entities/event';
 import {
   DataTable,
   EmptyState,
+  ListSkeleton,
   Pagination,
   SearchInput,
   SearchInputSkeleton,
   SectionCard,
+  withAsyncBoundary,
 } from '@/shared/ui';
-import { COLUMNS } from '../config/columns';
-import { EVENT_UI } from '../config/labels';
 import { EventsItem } from './EventsItem';
+import { COLUMNS } from './columns';
+import { EVENT_UI } from './labels';
 
 interface Props {
   searchQuery: string;
   currentPage: number;
 }
 
-export async function EventsList({ searchQuery, currentPage }: Props) {
+async function List({ searchQuery, currentPage }: Props) {
   const { events, totalPages } = await getEvents({
     query: searchQuery,
     page: currentPage,
@@ -50,3 +52,13 @@ export async function EventsList({ searchQuery, currentPage }: Props) {
     </SectionCard>
   );
 }
+
+export const EventsList = withAsyncBoundary(List, {
+  loadingFallback: (
+    <ListSkeleton
+      title={EVENT_UI.TITLE}
+      description={EVENT_UI.DESCRIPTION}
+      columns={COLUMNS}
+    />
+  ),
+});

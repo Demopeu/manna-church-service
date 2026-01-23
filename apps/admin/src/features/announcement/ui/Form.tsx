@@ -1,5 +1,6 @@
 'use client';
 
+import { Controller } from 'react-hook-form';
 import { AlertTriangle } from 'lucide-react';
 import { Announcement } from '@/entities/announcement';
 import {
@@ -11,10 +12,12 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
   Switch,
   Textarea,
 } from '@/shared/ui';
 import { useAnnouncementForm } from '../model/use-form';
+import { getFormText } from './form-data';
 
 interface Props {
   announcement?: Announcement;
@@ -29,14 +32,29 @@ export function AnnouncementForm({
   onCancel,
   isDialog = false,
 }: Props) {
-  const { state, action, isPending, defaultValues, uiText, isUrgent } =
-    useAnnouncementForm({ announcement, onSuccess });
+  const uiText = getFormText(announcement);
+
+  const { form, handleSubmit, isSubmitting, isPending, hasChanges } =
+    useAnnouncementForm({
+      announcement,
+      onSuccess,
+      successMessage: uiText.successDescription,
+    });
+  const errors = form.formState.errors;
 
   const FormContent = (
-    <form action={action} className="space-y-4">
-      {state.message && !state.success && (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <LoadingProgress
+        isPending={isPending}
+        message={
+          announcement
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
+      {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
-          ⚠️ {state.message}
+          ⚠️ {errors.root.message}
         </div>
       )}
 
@@ -44,14 +62,13 @@ export function AnnouncementForm({
         <Label htmlFor="title">제목 *</Label>
         <Input
           id="title"
-          name="title"
-          defaultValue={defaultValues.title}
-          required
           className="h-12 text-base"
           placeholder="공지 제목을 입력하세요"
+          disabled={isSubmitting}
+          {...form.register('title')}
         />
-        {state.fieldErrors?.title && (
-          <p className="text-sm text-red-500">{state.fieldErrors.title[0]}</p>
+        {errors.title && (
+          <p className="text-sm text-red-500">{errors.title.message}</p>
         )}
       </div>
 
@@ -59,24 +76,28 @@ export function AnnouncementForm({
         <Label htmlFor="content">내용 *</Label>
         <Textarea
           id="content"
-          name="content"
-          defaultValue={defaultValues.content}
-          required
           className="min-h-32 text-base"
           placeholder="공지 내용을 입력하세요"
+          disabled={isSubmitting}
+          {...form.register('content')}
         />
-        {state.fieldErrors?.content && (
-          <p className="text-sm text-red-500">{state.fieldErrors.content[0]}</p>
+        {errors.content && (
+          <p className="text-sm text-red-500">{errors.content.message}</p>
         )}
       </div>
 
       <div className="bg-muted flex items-center gap-3 rounded-lg p-4">
-        <Switch
-          id="isUrgent"
+        <Controller
+          control={form.control}
           name="isUrgent"
-          checked={isUrgent.value}
-          onCheckedChange={isUrgent.setValue}
-          value={isUrgent.value ? 'true' : 'false'}
+          render={({ field }) => (
+            <Switch
+              id="isUrgent"
+              checked={field.value}
+              onCheckedChange={field.onChange}
+              disabled={isSubmitting}
+            />
+          )}
         />
         <Label
           htmlFor="isUrgent"
@@ -88,14 +109,14 @@ export function AnnouncementForm({
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
-        <Button type="submit" size="lg" disabled={isPending}>
-          {isPending ? uiText.loadingBtn : uiText.submitBtn}
+        <Button type="submit" size="lg" disabled={isSubmitting || !hasChanges}>
+          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isPending}
+          disabled={isSubmitting}
           size="lg"
         >
           취소

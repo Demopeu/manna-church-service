@@ -1,7 +1,5 @@
-import { Suspense } from 'react';
-import { SERVANT_UI, ServantsList } from '@/widgets/servant-list';
+import { ServantsList } from '@/widgets/servant-list';
 import { CreateServantButton } from '@/features/servant';
-import { ListSkeleton } from '@/shared/ui';
 
 export default async function ServantsPage({
   searchParams,
@@ -22,21 +20,13 @@ export default async function ServantsPage({
   return (
     <div className="space-y-6">
       <CreateServantButton />
-      <Suspense
-        fallback={
-          <ListSkeleton
-            title={SERVANT_UI.TITLE}
-            description={SERVANT_UI.DESCRIPTION}
-          />
-        }
-      >
-        <ServantsList
-          searchQuery={searchQuery}
-          roleFilter={roleFilter}
-          isPublicFilter={isPublicFilter}
-          currentPage={currentPage}
-        />
-      </Suspense>
+
+      <ServantsList
+        searchQuery={searchQuery}
+        roleFilter={roleFilter}
+        isPublicFilter={isPublicFilter}
+        currentPage={currentPage}
+      />
     </div>
   );
 }

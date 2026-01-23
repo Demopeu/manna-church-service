@@ -1,7 +1,5 @@
-import { Suspense } from 'react';
-import { AlbumsList, GALLERY_UI } from '@/widgets/gallery-list';
-import { CreateAlbumButton } from '@/features/gallery';
-import { ListSkeleton } from '@/shared/ui';
+import { GalleriesList } from '@/widgets/gallery-list';
+import { CreateGalleryButton } from '@/features/gallery';
 
 export default async function GalleryPage({
   searchParams,
@@ -14,17 +12,8 @@ export default async function GalleryPage({
   const currentPage = Math.max(1, Number(page) || 1);
   return (
     <div className="space-y-6">
-      <CreateAlbumButton />
-      <Suspense
-        fallback={
-          <ListSkeleton
-            title={GALLERY_UI.TITLE}
-            description={GALLERY_UI.DESCRIPTION}
-          />
-        }
-      >
-        <AlbumsList searchQuery={searchQuery} currentPage={currentPage} />
-      </Suspense>
+      <CreateGalleryButton />
+      <GalleriesList searchQuery={searchQuery} currentPage={currentPage} />
     </div>
   );
 }
