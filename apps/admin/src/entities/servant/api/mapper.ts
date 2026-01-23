@@ -6,7 +6,7 @@ export function mapServant(dto: ServantDto): Servant {
     id: dto.id,
     name: dto.name,
     role: dto.role,
-    photoUrl: dto.photo_url || '',
+    photoFile: dto.photo_url || '',
     contact: dto.contact || '',
     introduction: dto.introduction || '',
     isPublic: dto.is_public,

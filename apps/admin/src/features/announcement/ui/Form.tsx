@@ -12,6 +12,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
   Switch,
   Textarea,
 } from '@/shared/ui';
@@ -33,15 +34,24 @@ export function AnnouncementForm({
 }: Props) {
   const uiText = getFormText(announcement);
 
-  const { form, handleSubmit, isSubmitting, hasChanges } = useAnnouncementForm({
-    announcement,
-    onSuccess,
-    successMessage: uiText.successDescription,
-  });
+  const { form, handleSubmit, isSubmitting, isPending, hasChanges } =
+    useAnnouncementForm({
+      announcement,
+      onSuccess,
+      successMessage: uiText.successDescription,
+    });
   const errors = form.formState.errors;
 
   const FormContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <LoadingProgress
+        isPending={isPending}
+        message={
+          announcement
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}

@@ -13,6 +13,6 @@ export function toFormData(data: CreateSermonInput): FormData {
   formData.append('title', data.title);
   formData.append('preacher', data.preacher);
   formData.append('date', data.date);
-  formData.append('youtubeUrl', data.youtubeUrl);
+  formData.append('videoUrl', data.videoUrl);
   return formData;
 }

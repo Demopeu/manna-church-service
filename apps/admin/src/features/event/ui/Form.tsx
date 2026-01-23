@@ -13,6 +13,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
   Textarea,
 } from '@/shared/ui';
 import { useEventForm } from '../model/use-form';
@@ -38,10 +39,18 @@ export function EventForm({
     onSuccess,
     successMessage: uiText.successDescription,
   });
-  const errors = form.formState.errors;
+  const { errors, isValid } = form.formState;
 
   const FormContent = (
     <form onSubmit={handler.submit} className="space-y-4">
+      <LoadingProgress
+        isPending={status.isPending}
+        message={
+          status.mode === 'EDIT'
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -175,7 +184,12 @@ export function EventForm({
         <Button
           type="submit"
           size="lg"
-          disabled={status.isPending || !status.hasChanges || !imageUI.preview}
+          disabled={
+            status.isPending ||
+            !imageUI.preview ||
+            !isValid ||
+            !status.hasChanges
+          }
         >
           {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>

@@ -10,6 +10,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
 } from '@/shared/ui';
 import { useSermonForm } from '../model/use-form';
 import { getFormText } from './form-data';
@@ -28,7 +29,7 @@ export function SermonForm({
   isDialog = false,
 }: Props) {
   const uiText = getFormText(sermon);
-  const { form, handleSubmit, isSubmitting, hasChanges, preview } =
+  const { form, handleSubmit, isSubmitting, isPending, hasChanges, preview } =
     useSermonForm({
       sermon,
       onSuccess,
@@ -38,6 +39,14 @@ export function SermonForm({
 
   const FormContent = (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <LoadingProgress
+        isPending={isPending}
+        message={
+          sermon
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -96,7 +105,7 @@ export function SermonForm({
             className="h-12 text-base"
             placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
             disabled={isSubmitting}
-            {...form.register('youtubeUrl')}
+            {...form.register('videoUrl')}
           />
           <p className="text-muted-foreground text-sm">{uiText.youtubeHelp}</p>
           {preview.id && (
@@ -104,8 +113,8 @@ export function SermonForm({
               ✓ 영상 ID: {preview.id}
             </p>
           )}
-          {errors.youtubeUrl && (
-            <p className="text-sm text-red-500">{errors.youtubeUrl.message}</p>
+          {errors.videoUrl && (
+            <p className="text-sm text-red-500">{errors.videoUrl.message}</p>
           )}
         </div>
       </div>

@@ -16,7 +16,7 @@ export function useDeleteServant(servantId: string) {
       setIsDeleting(true);
       await deleteServantAction(servantId);
       close();
-      toast.success('섬기는 사람이 성공적으로 삭제되었습니다.');
+      toast.success('교인 정보가 성공적으로 삭제되었습니다.');
       router.refresh();
     } catch (error) {
       console.error('섬기는 사람 삭제 실패:', error);

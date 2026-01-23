@@ -17,7 +17,7 @@ export async function createServantAction(
     return authState;
   }
 
-  const photoFile = formData.get('image') as File | null;
+  const photoFile = formData.get('photoFile') as File | null;
 
   const rawData = {
     name: formData.get('name'),
@@ -44,7 +44,7 @@ export async function createServantAction(
 
 export async function updateServantAction(
   id: string,
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const authState = await requireAuth();
@@ -52,7 +52,7 @@ export async function updateServantAction(
     return authState;
   }
 
-  const photoFile = formData.get('image') as File | null;
+  const photoFile = formData.get('photoFile') as File | null;
 
   const rawData = {
     name: formData.get('name'),

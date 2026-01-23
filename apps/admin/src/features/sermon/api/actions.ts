@@ -16,7 +16,7 @@ async function createSermon(
     title: validatedFields.title,
     preacher: validatedFields.preacher,
     preached_at: validatedFields.date,
-    video_url: validatedFields.youtubeUrl,
+    video_url: validatedFields.videoUrl,
   });
 
   if (error) {
@@ -46,7 +46,7 @@ async function updateSermon(
       title: validatedFields.title,
       preacher: validatedFields.preacher,
       preached_at: validatedFields.date,
-      video_url: validatedFields.youtubeUrl,
+      video_url: validatedFields.videoUrl,
     })
     .eq('id', id);
 
@@ -88,7 +88,7 @@ export async function createSermonAction(
     title: formData.get('title'),
     preacher: formData.get('preacher'),
     date: formData.get('date'),
-    youtubeUrl: formData.get('youtubeUrl'),
+    videoUrl: formData.get('videoUrl'),
   };
 
   const validatedFields = createSermonSchema.safeParse(rawData);
@@ -118,7 +118,7 @@ export async function updateSermonAction(
     title: formData.get('title'),
     preacher: formData.get('preacher'),
     date: formData.get('date'),
-    youtubeUrl: formData.get('youtubeUrl'),
+    videoUrl: formData.get('videoUrl'),
   };
 
   const validatedFields = createSermonSchema.safeParse(rawData);

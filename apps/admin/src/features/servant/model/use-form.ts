@@ -3,16 +3,17 @@
 import {
   startTransition,
   useActionState,
-  useCallback,
   useEffect,
   useEffectEvent,
-  useState,
 } from 'react';
-import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Servant } from '@/entities/servant';
-import { imageConverter, useToastAndRefresh } from '@/shared/lib';
+import {
+  imageConverter,
+  useImageInput,
+  useToastAndRefresh,
+} from '@/shared/lib';
 import { createServantAction, updateServantAction } from '../api/actions';
 import { getDefaultValues, toFormData } from './mapper';
 import {
@@ -23,84 +24,44 @@ import {
   updateServantSchema,
 } from './schema';
 
-interface Params {
+interface Props {
   servant?: Servant;
   onSuccess?: () => void;
   successMessage: string;
 }
 
-export function useServantForm({ servant, onSuccess, successMessage }: Params) {
+export function useServantForm({ servant, onSuccess, successMessage }: Props) {
   const { complete } = useToastAndRefresh(onSuccess);
   const MODE = servant ? 'EDIT' : 'CREATE';
-
-  const actionFn =
-    MODE === 'EDIT'
-      ? updateServantAction.bind(null, servant!.id)
+  const action =
+    MODE === 'EDIT' && servant
+      ? updateServantAction.bind(null, servant.id)
       : createServantAction;
 
-  const [state, action, isPending] = useActionState(actionFn, initialState);
+  const [state, formAction, isPending] = useActionState(action, initialState);
 
-  const form = useForm<CreateServantInput | UpdateServantInput>({
+  const form = useForm({
     resolver: zodResolver(
       MODE === 'EDIT' ? updateServantSchema : createServantSchema,
     ),
     defaultValues: getDefaultValues(servant),
+    mode: 'onChange',
   });
 
   const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
-
-  const [photoFile, setPhotoFile] = useState<{
-    file: File;
-    preview: string;
-  } | null>(null);
-  const [imageDragActive, setImageDragActive] = useState(false);
-
-  const handleImageFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
-
-    const preview = URL.createObjectURL(file);
-    setPhotoFile({ file, preview });
-  }, []);
-
-  const handleImageDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setImageDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setImageDragActive(false);
-    }
-  }, []);
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      handleImageFile(files[0]);
+  const handlePhotoChange = (file: File | null) => {
+    form.setValue('photoFile', file, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    if (!file) {
+      form.clearErrors('photoFile');
     }
   };
-
-  const handleImageDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setImageDragActive(false);
-
-      const files = e.dataTransfer.files;
-      if (files && files[0]) {
-        handleImageFile(files[0]);
-      }
-    },
-    [handleImageFile],
-  );
-
-  const removePhotoFile = () => {
-    if (photoFile?.preview) {
-      URL.revokeObjectURL(photoFile.preview);
-    }
-    setPhotoFile(null);
-  };
+  const imageInput = useImageInput({
+    initialUrl: servant?.photoFile ?? undefined,
+    onFileChange: handlePhotoChange,
+  });
 
   const handleError = useEffectEvent((currentState: typeof state) => {
     if (currentState && !currentState.success) {
@@ -141,36 +102,29 @@ export function useServantForm({ servant, onSuccess, successMessage }: Params) {
 
   const handleSubmit = form.handleSubmit(async (data) => {
     const formData = toFormData(data);
-
-    if (photoFile?.file) {
-      const isSuccess = await imageConverter({
-        formData,
-        file: photoFile.file,
-        title: data.name,
-        setError: form.setError,
-        type: 'image-to-webp',
-      });
-
-      if (!isSuccess) return;
-    }
-
+    const isSuccess = await imageConverter({
+      formData,
+      file: imageInput.rawFile || undefined,
+      title: data.name,
+      setError: form.setError,
+      type: 'image-to-webp',
+    });
+    if (!isSuccess) return;
     startTransition(() => {
-      action(formData);
+      formAction(formData);
     });
   });
 
   return {
     form,
-    handleSubmit,
-    isSubmitting: form.formState.isSubmitting || isPending,
-    hasChanges,
-    photoFile: {
-      file: photoFile,
-      dragActive: imageDragActive,
-      handleDrag: handleImageDrag,
-      handleDrop: handleImageDrop,
-      handleFileSelect: handleImageSelect,
-      removePhotoFile,
+    imageUI: imageInput,
+    handler: {
+      submit: handleSubmit,
+    },
+    status: {
+      isPending,
+      mode: MODE,
+      hasChanges,
     },
   };
 }

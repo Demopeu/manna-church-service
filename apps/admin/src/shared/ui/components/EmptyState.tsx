@@ -13,7 +13,9 @@ export function EmptyState({ icon: Icon, title, description }: Props) {
         <Icon className="text-muted-foreground h-8 w-8" />
       </div>
       <h3 className="text-foreground mb-1 text-lg font-medium">{title}</h3>
-      <p className="text-muted-foreground max-w-sm text-sm">{description}</p>
+      <p className="text-muted-foreground max-w-sm text-sm text-balance break-keep">
+        {description}
+      </p>
     </div>
   );
 }

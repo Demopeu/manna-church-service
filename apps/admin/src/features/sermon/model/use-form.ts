@@ -22,7 +22,7 @@ interface Params {
 }
 
 function useYoutubePreview(control: Control<CreateSermonInput>) {
-  const url = useWatch({ control, name: 'youtubeUrl' });
+  const url = useWatch({ control, name: 'videoUrl' });
   const id = extractVideoId(url);
   return { url, id, isValid: !!id };
 }
@@ -90,6 +90,7 @@ export function useSermonForm({ sermon, onSuccess, successMessage }: Params) {
     form,
     handleSubmit,
     isSubmitting: form.formState.isSubmitting || isPending,
+    isPending,
     hasChanges,
     preview,
   };

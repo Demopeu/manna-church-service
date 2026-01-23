@@ -1,5 +1,6 @@
 'use client';
 
+import { Controller } from 'react-hook-form';
 import Image from 'next/image';
 import { ImageIcon, X } from 'lucide-react';
 import { cn } from '@repo/ui/lib';
@@ -13,6 +14,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
   Select,
   SelectContent,
   SelectItem,
@@ -39,16 +41,24 @@ export function ServantForm({
 }: Props) {
   const uiText = getFormText(servant);
 
-  const { form, handleSubmit, isSubmitting, photoFile } = useServantForm({
+  const { form, imageUI, handler, status } = useServantForm({
     servant,
     onSuccess,
     successMessage: uiText.successDescription,
   });
 
-  const errors = form.formState.errors;
+  const { errors, isValid } = form.formState;
 
   const FormContent = (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handler.submit} className="space-y-4">
+      <LoadingProgress
+        isPending={status.isPending}
+        message={
+          status.mode === 'EDIT'
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -62,68 +72,49 @@ export function ServantForm({
         <div
           className={cn(
             'relative rounded-lg border-2 border-dashed transition-colors',
-            photoFile.dragActive
+            imageUI.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            photoFile.file ? 'p-4' : 'p-8',
+            imageUI.preview ? 'p-4' : 'p-8',
           )}
-          onDragEnter={photoFile.handleDrag}
-          onDragLeave={photoFile.handleDrag}
-          onDragOver={photoFile.handleDrag}
-          onDrop={photoFile.handleDrop}
+          onDragEnter={imageUI.handleDrag}
+          onDragLeave={imageUI.handleDrag}
+          onDragOver={imageUI.handleDrag}
+          onDrop={imageUI.handleDrop}
         >
-          {photoFile.file ? (
+          {imageUI.preview ? (
             <div className="flex items-center gap-4">
               <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src={photoFile.file.preview}
+                  src={imageUI.preview}
                   alt="프로필 사진 미리보기"
                   fill
                   className="object-cover"
                 />
               </div>
-              <div className="flex-1">
-                <p className="font-medium">{photoFile.file.file.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  {(photoFile.file.file.size / 1024 / 1024).toFixed(2)} MB
+              <div className="w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {imageUI.rawFile?.name}
                 </p>
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={photoFile.removePhotoFile}
+                className="shrink-0"
+                onClick={imageUI.removeFile}
               >
                 <X className="h-4 w-4" />
               </Button>
-              <input
-                type="file"
-                name="photoFile"
-                accept="image/*"
-                className="hidden"
-                ref={(input) => {
-                  if (input && photoFile.file) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(photoFile.file.file);
-                    input.files = dataTransfer.files;
-                  }
-                }}
-              />
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">
               <ImageIcon className="text-muted-foreground mb-4 h-12 w-12" />
-              <p className="mb-1 text-lg font-medium">
-                이미지를 드래그하거나 클릭해서 선택
-              </p>
-              <p className="text-muted-foreground text-sm">
-                💡 JPG, PNG, WebP 파일 (최대 5MB)
-              </p>
+              <p className="mb-1 text-lg font-medium">이미지 선택</p>
               <input
                 type="file"
-                name="photoFile"
                 accept="image/*"
-                onChange={photoFile.handleFileSelect}
+                onChange={imageUI.handleFileSelect}
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
             </div>
@@ -131,11 +122,6 @@ export function ServantForm({
         </div>
         {errors.photoFile && (
           <p className="text-sm text-red-500">{errors.photoFile.message}</p>
-        )}
-        {servant?.photoUrl && !photoFile.file && (
-          <p className="text-muted-foreground text-sm">
-            📎 현재 사진: {servant.photoUrl}
-          </p>
         )}
       </div>
 
@@ -147,7 +133,7 @@ export function ServantForm({
           id="name"
           className="h-12 text-base"
           placeholder="예: 홍길동"
-          disabled={isSubmitting}
+          disabled={status.isPending}
           {...form.register('name')}
         />
         {errors.name && (
@@ -159,24 +145,28 @@ export function ServantForm({
         <Label htmlFor="role">
           직분 <span className="text-destructive">*</span>
         </Label>
-        <Select
-          disabled={isSubmitting}
-          value={form.watch('role')}
-          onValueChange={(value) =>
-            form.setValue('role', value, { shouldDirty: true })
-          }
-        >
-          <SelectTrigger className="h-12">
-            <SelectValue placeholder="직분을 선택하세요" />
-          </SelectTrigger>
-          <SelectContent>
-            {POSITION_OPTIONS.map((option) => (
-              <SelectItem key={option} value={option}>
-                {option}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Controller
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              disabled={status.isPending}
+            >
+              <SelectTrigger className="h-12">
+                <SelectValue placeholder="직분을 선택하세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {POSITION_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.role && (
           <p className="text-sm text-red-500">{errors.role.message}</p>
         )}
@@ -190,7 +180,7 @@ export function ServantForm({
             type="number"
             min="1"
             className="h-12 text-base"
-            disabled={isSubmitting}
+            disabled={status.isPending}
             {...form.register('sortOrder', { valueAsNumber: true })}
           />
           {errors.sortOrder && (
@@ -204,7 +194,7 @@ export function ServantForm({
             id="contact"
             type="tel"
             className="h-12 text-base"
-            disabled={isSubmitting}
+            disabled={status.isPending}
             {...form.register('contact')}
           />
         </div>
@@ -216,7 +206,7 @@ export function ServantForm({
           id="introduction"
           className="min-h-24 text-base"
           placeholder="예: 찬양 인도"
-          disabled={isSubmitting}
+          disabled={status.isPending}
           {...form.register('introduction')}
         />
         {errors.introduction && (
@@ -225,13 +215,17 @@ export function ServantForm({
       </div>
 
       <div className="flex items-center space-x-2">
-        <Switch
-          id="isPublic"
-          checked={form.watch('isPublic')}
-          onCheckedChange={(checked) =>
-            form.setValue('isPublic', checked, { shouldDirty: true })
-          }
-          disabled={isSubmitting}
+        <Controller
+          control={form.control}
+          name="isPublic"
+          render={({ field }) => (
+            <Switch
+              id="isPublic"
+              checked={!!field.value}
+              onCheckedChange={field.onChange}
+              disabled={status.isPending}
+            />
+          )}
         />
         <Label htmlFor="isPublic" className="cursor-pointer">
           웹사이트에 공개
@@ -242,15 +236,20 @@ export function ServantForm({
         <Button
           type="submit"
           size="lg"
-          disabled={isSubmitting || !photoFile.file}
+          disabled={
+            status.isPending ||
+            !imageUI.preview ||
+            !isValid ||
+            !status.hasChanges
+          }
         >
-          {isSubmitting ? uiText.loadingBtn : uiText.submitBtn}
+          {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={isSubmitting}
+          disabled={status.isPending}
           size="lg"
         >
           취소

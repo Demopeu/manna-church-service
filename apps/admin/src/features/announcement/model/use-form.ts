@@ -93,6 +93,7 @@ export function useAnnouncementForm({
     form,
     handleSubmit,
     isSubmitting: form.formState.isSubmitting || isPending,
+    isPending,
     hasChanges,
   };
 }
