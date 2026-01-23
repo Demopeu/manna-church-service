@@ -70,21 +70,21 @@ export function BulletinForm({
             pdfFile.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            pdfFile.file ? 'p-4' : 'p-8',
+            pdfFile.rawFile ? 'p-4' : 'p-8',
           )}
           onDragEnter={pdfFile.handleDrag}
           onDragLeave={pdfFile.handleDrag}
           onDragOver={pdfFile.handleDrag}
           onDrop={pdfFile.handleDrop}
         >
-          {pdfFile.file ? (
+          {pdfFile.rawFile ? (
             <div className="flex items-center gap-4">
               <div className="flex flex-1 items-center gap-3">
                 <div className="bg-primary/10 rounded-lg p-3">
                   <FileText className="text-primary h-8 w-8" />
                 </div>
                 <div>
-                  <p className="font-medium">{pdfFile.file.name}</p>
+                  <p className="font-medium">{pdfFile.fileName}</p>
                   <p className="text-muted-foreground text-sm">PDF 파일</p>
                 </div>
               </div>
@@ -92,23 +92,10 @@ export function BulletinForm({
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={pdfFile.removePdfFile}
+                onClick={pdfFile.removeFile}
               >
                 <X className="h-4 w-4" />
               </Button>
-              <input
-                type="file"
-                name="pdfFile"
-                accept="application/pdf"
-                className="hidden"
-                ref={(input) => {
-                  if (input && pdfFile.file) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(pdfFile.file.file);
-                    input.files = dataTransfer.files;
-                  }
-                }}
-              />
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">
@@ -140,50 +127,36 @@ export function BulletinForm({
             coverImageFile.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            coverImageFile.file ? 'p-4' : 'p-8',
+            coverImageFile.rawFile ? 'p-4' : 'p-8',
           )}
           onDragEnter={coverImageFile.handleDrag}
           onDragLeave={coverImageFile.handleDrag}
           onDragOver={coverImageFile.handleDrag}
           onDrop={coverImageFile.handleDrop}
         >
-          {coverImageFile.file ? (
+          {coverImageFile.preview ? (
             <div className="flex items-center gap-4">
               <div className="relative h-24 w-24 shrink-0">
                 <Image
-                  src={coverImageFile.file.preview}
+                  src={coverImageFile.preview}
                   alt="주보 표지 미리보기"
                   fill
                   className="rounded-lg object-cover"
                 />
               </div>
               <div className="flex-1">
-                <p className="font-medium">{coverImageFile.file.file.name}</p>
-                <p className="text-muted-foreground text-sm">
-                  {(coverImageFile.file.file.size / 1024 / 1024).toFixed(2)} MB
-                </p>
+                {coverImageFile.rawFile && (
+                  <p className="font-medium">{coverImageFile.rawFile.name}</p>
+                )}
               </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                onClick={coverImageFile.removeCoverImageFile}
+                onClick={coverImageFile.removeFile}
               >
                 <X className="h-4 w-4" />
               </Button>
-              <input
-                type="file"
-                name="coverImageFile"
-                accept="image/*"
-                className="hidden"
-                ref={(input) => {
-                  if (input && coverImageFile.file) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(coverImageFile.file.file);
-                    input.files = dataTransfer.files;
-                  }
-                }}
-              />
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">
@@ -209,7 +182,7 @@ export function BulletinForm({
             {errors.coverImageFile.message}
           </p>
         )}
-        {bulletin?.coverImageUrl && !coverImageFile.file && (
+        {bulletin?.coverImageUrl && !coverImageFile.rawFile && (
           <p className="text-muted-foreground text-sm">
             📎 현재 표지: {bulletin.coverImageUrl}
           </p>
@@ -222,8 +195,7 @@ export function BulletinForm({
           size="lg"
           disabled={
             status.isPending ||
-            !pdfFile.file ||
-            !coverImageFile.file ||
+            !pdfFile.rawFile ||
             !isValid ||
             !status.hasChanges
           }

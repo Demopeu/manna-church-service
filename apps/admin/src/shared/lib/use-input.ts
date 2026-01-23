@@ -86,3 +86,71 @@ export function useImageInput({ initialUrl, onFileChange }: ImageInputProps) {
     removeFile,
   };
 }
+
+interface PdfInputProps {
+  initialFileName?: string;
+  onFileChange?: (file: File | null) => void;
+}
+
+export function usePdfInput({ initialFileName, onFileChange }: PdfInputProps) {
+  const [dragActive, setDragActive] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(
+    initialFileName || null,
+  );
+  const [rawFile, setRawFile] = useState<File | null>(null);
+
+  const handleFile = (file: File) => {
+    if (file.type !== 'application/pdf') {
+      console.warn('PDF 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    setRawFile(file);
+    setFileName(file.name);
+    onFileChange?.(file);
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files?.[0]) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      handleFile(e.target.files[0]);
+    }
+    e.target.value = '';
+  };
+
+  const removeFile = () => {
+    setRawFile(null);
+    setFileName(null);
+    onFileChange?.(null);
+  };
+
+  return {
+    fileName,
+    rawFile,
+    dragActive,
+    handleDrag,
+    handleDrop,
+    handleFileSelect,
+    removeFile,
+  };
+}

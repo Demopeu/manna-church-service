@@ -30,7 +30,7 @@ const bulletinBaseSchema = z.object({
 });
 
 export const createBulletinSchema = bulletinBaseSchema.extend({
-  coverImageFile: coverImageFileSchema,
+  coverImageFile: coverImageFileSchema.optional().nullable(),
   pdfFile: pdfFileSchema,
 });
 
