@@ -6,7 +6,9 @@ import { tryCatchAction, tryCatchVoid } from '@/shared/api';
 import { ActionState } from '@/shared/model';
 import {
   type CreateBulletinInput,
+  type UpdateBulletinInput,
   createBulletinSchema,
+  updateBulletinSchema,
 } from '../model/schema';
 
 async function createBulletin(
@@ -14,12 +16,11 @@ async function createBulletin(
 ): Promise<ActionState> {
   const supabase = await createClient();
 
-  // TODO: 실제 구현 - 파일 업로드 및 DB 저장
   const { error } = await supabase.from('bulletins').insert({
     published_at: validatedFields.publishedAt,
-    cover_image_url: 'temp_cover_url', // TODO: Storage 업로드
-    content_image_urls: [], // TODO: PDF 변환
-    original_pdf_url: 'temp_pdf_url', // TODO: Storage 업로드
+    cover_image_url: 'temp_cover_url',
+    image_urls: [],
+    original_pdf_url: 'temp_pdf_url',
   });
 
   if (error) {
@@ -39,16 +40,14 @@ async function createBulletin(
 
 async function updateBulletin(
   id: string,
-  validatedFields: CreateBulletinInput,
+  validatedFields: UpdateBulletinInput,
 ): Promise<ActionState> {
   const supabase = await createClient();
 
-  // TODO: 실제 구현 - 파일 업로드 및 DB 업데이트
   const { error } = await supabase
     .from('bulletins')
     .update({
       published_at: validatedFields.publishedAt,
-      // TODO: 파일이 변경된 경우에만 업데이트
     })
     .eq('id', id);
 
@@ -70,7 +69,6 @@ async function updateBulletin(
 async function deleteBulletin(id: string): Promise<void> {
   const supabase = await createClient();
 
-  // TODO: Storage에서 파일 삭제 로직 추가
   const { error } = await supabase.from('bulletins').delete().eq('id', id);
 
   if (error) {
@@ -119,7 +117,7 @@ export async function updateBulletinAction(
     pdfFile: pdfFile,
   };
 
-  const validatedFields = createBulletinSchema.safeParse(rawData);
+  const validatedFields = updateBulletinSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
     return {

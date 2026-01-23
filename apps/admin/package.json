@@ -23,7 +23,8 @@
     "use-debounce": "10.1.0",
     "zod": "4.3.5",
     "date-fns": "4.1.0",
-    "browser-image-compression": "2.0.2"
+    "browser-image-compression": "2.0.2",
+    "pdfjs-dist": "5.4.530"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

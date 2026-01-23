@@ -21,7 +21,7 @@ export async function getBulletins({
     .order('published_at', { ascending: false });
 
   if (query) {
-    queryBuilder = queryBuilder.ilike('published_at', `%${query}%`);
+    queryBuilder = queryBuilder.ilike('published_at::text', `%${query}%`);
   }
 
   const from = (page - 1) * pageSize;
@@ -49,14 +49,10 @@ export async function getLatestBulletin(): Promise<Bulletin | null> {
     .select('*')
     .order('published_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      return null;
-    }
     throw new Error(`Failed to fetch latest bulletin: ${error.message}`);
   }
-
   return data ? mapBulletin(data) : null;
 }

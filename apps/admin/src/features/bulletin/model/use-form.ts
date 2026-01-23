@@ -14,12 +14,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Bulletin } from '@/entities/bulletin';
 import { useToastAndRefresh } from '@/shared/lib';
 import { createBulletinAction, updateBulletinAction } from '../api/actions';
-import { getDefaultValues, toFormData } from '../lib/mapper';
 import { validatePdfFile } from '../lib/validate-pdf';
+import { getDefaultValues, toFormData } from './mapper';
 import {
-  CreateBulletinInput,
+  type CreateBulletinInput,
+  type UpdateBulletinInput,
   createBulletinSchema,
   initialState,
+  updateBulletinSchema,
 } from './schema';
 
 interface Params {
@@ -43,8 +45,10 @@ export function useBulletinForm({
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
 
-  const form = useForm<CreateBulletinInput>({
-    resolver: zodResolver(createBulletinSchema),
+  const form = useForm({
+    resolver: zodResolver(
+      MODE === 'EDIT' ? updateBulletinSchema : createBulletinSchema,
+    ),
     defaultValues: getDefaultValues(bulletin),
   });
 
@@ -151,10 +155,13 @@ export function useBulletinForm({
         Object.entries(currentState.fieldErrors).forEach(
           ([field, messages]) => {
             if (messages && messages[0]) {
-              form.setError(field as keyof CreateBulletinInput, {
-                type: 'server',
-                message: messages[0],
-              });
+              form.setError(
+                field as keyof CreateBulletinInput | keyof UpdateBulletinInput,
+                {
+                  type: 'server',
+                  message: messages[0],
+                },
+              );
             }
           },
         );
@@ -181,9 +188,13 @@ export function useBulletinForm({
 
   return {
     form,
-    handleSubmit,
-    isSubmitting: form.formState.isSubmitting || isPending,
-    hasChanges,
+    status: {
+      isPending,
+      hasChanges,
+    },
+    handler: {
+      submit: handleSubmit,
+    },
     pdfFile: {
       file: pdfFile,
       dragActive,

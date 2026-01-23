@@ -1,13 +1,16 @@
 import { Bulletin } from '@/entities/bulletin';
-import { CreateBulletinInput } from '../model/schema';
 
-export const getDefaultValues = (bulletin?: Bulletin): CreateBulletinInput => ({
-  publishedAt: bulletin?.publishedAt ?? '',
-  coverImageFile: null as unknown as File,
-  pdfFile: null as unknown as File,
+export const getDefaultValues = (bulletin?: Bulletin) => ({
+  publishedAt: bulletin?.publishedAt || '',
+  coverImageFile: undefined as File | undefined,
+  pdfFile: undefined as File | undefined,
 });
 
-export function toFormData(data: CreateBulletinInput): FormData {
+export function toFormData(data: {
+  publishedAt: string;
+  coverImageFile?: File | null;
+  pdfFile?: File | null;
+}): FormData {
   const formData = new FormData();
   formData.append('publishedAt', data.publishedAt);
   if (data.coverImageFile) {

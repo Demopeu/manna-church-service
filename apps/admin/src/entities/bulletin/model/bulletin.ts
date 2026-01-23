@@ -1,8 +1,8 @@
 export interface Bulletin {
   id: string;
   publishedAt: string;
-  coverImageUrl: string;
-  contentImageUrls: string[];
-  originalPdfUrl: string;
+  imageUrls: string[];
+  coverImageUrl: string | null;
+  originalPdfUrl: string | null;
   createdAt: string;
 }
