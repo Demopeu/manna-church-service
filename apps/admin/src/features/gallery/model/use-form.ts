@@ -9,8 +9,12 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GalleryWithImages } from '@/entities/gallery';
-import { imageConverter, useToastAndRefresh } from '@/shared/lib';
+import { type GalleryWithImages } from '@/entities/gallery';
+import {
+  type ImageItem,
+  imageConverter,
+  useToastAndRefresh,
+} from '@/shared/lib';
 import { createGalleryAction, updateGalleryAction } from '../api/actions';
 import { useGalleryImages } from '../lib/use-gallery-images';
 import { getDefaultValues, toFormData } from './mapper';
@@ -22,23 +26,18 @@ import {
   updateGallerySchema,
 } from './schema';
 
-interface UseGalleryFormProps {
+interface Props {
   gallery?: GalleryWithImages;
   onSuccess?: () => void;
   successMessage: string;
 }
 
-export function useGalleryForm({
-  gallery,
-  onSuccess,
-  successMessage,
-}: UseGalleryFormProps) {
+export function useGalleryForm({ gallery, onSuccess, successMessage }: Props) {
   const { complete } = useToastAndRefresh(onSuccess);
   const MODE = gallery ? 'EDIT' : 'CREATE';
-  const action =
-    MODE === 'EDIT'
-      ? updateGalleryAction.bind(null, gallery!.id)
-      : createGalleryAction;
+  const action = gallery
+    ? updateGalleryAction.bind(null, gallery.id)
+    : createGalleryAction;
 
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [isConverting, setIsConverting] = useState(false);
@@ -53,22 +52,23 @@ export function useGalleryForm({
 
   const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
+  const handlePhotoChange = (newImages: ImageItem[]) => {
+    const formImages = newImages.map((img) => ({
+      file: img.file,
+      isThumbnail: img.isThumbnail,
+      id: img.id,
+      preview: img.preview,
+    }));
+
+    form.setValue('images', formImages, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
   const { images, dragActive, handlers } = useGalleryImages({
     initialData: gallery,
-    onImagesChange: (newImages) => {
-      const formImages = newImages
-        .filter((img) => img.file !== null)
-        .map((img) => ({
-          file: img.file as File,
-          isThumbnail: img.isThumbnail,
-        }));
-
-      form.setValue('images', formImages, {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-    },
+    onImagesChange: handlePhotoChange,
   });
 
   const handleError = useEffectEvent((currentState: typeof state) => {
@@ -115,16 +115,15 @@ export function useGalleryForm({
       keepImageIds,
     );
 
-    const newImageFiles = images.filter((p) => p.file);
+    const newImageFiles = images.filter(
+      (p): p is ImageItem & { file: File } => p.file !== null,
+    );
 
     try {
       setIsConverting(true);
 
       if (newImageFiles.length > 0) {
-        let imageIndex = 0;
-        for (const preview of newImageFiles) {
-          if (!preview.file) continue;
-
+        for (const [index, preview] of newImageFiles.entries()) {
           const isSuccess = await imageConverter({
             formData,
             file: preview.file,
@@ -140,15 +139,13 @@ export function useGalleryForm({
           if (convertedImage) {
             formData.delete('image');
 
-            const targetKey = `image-${imageIndex}`;
+            const targetKey = `image-${index}`;
             if (formData.has(targetKey)) {
               formData.delete(targetKey);
             }
 
             formData.append(targetKey, convertedImage);
           }
-
-          imageIndex++;
         }
       }
     } catch (error) {

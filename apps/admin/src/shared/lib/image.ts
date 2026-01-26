@@ -15,7 +15,7 @@ export const imageToWebpConverter = async ({
   }
 
   const options = {
-    maxSizeMB: 0.3,
+    maxSizeMB: 0.1,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: 'image/webp',

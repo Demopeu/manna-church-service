@@ -3,31 +3,40 @@ import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
 import { UpdateGalleryInput } from '../model/schema';
 
+interface UploadResult {
+  url: string;
+  fileName: string;
+  isThumbnail: boolean;
+}
+
 export async function updateGallery(
-  id: string,
   validatedFields: UpdateGalleryInput,
 ): Promise<ActionState> {
   const supabase = await createClient();
-
   const newlyUploadedPaths: string[] = [];
 
   try {
     const { data: existingImages, error: fetchError } = await supabase
       .from('gallery_images')
       .select('*')
-      .eq('gallery_id', id);
+      .eq('gallery_id', validatedFields.id);
 
-    if (fetchError) {
+    if (fetchError || !existingImages) {
       throw new Error('기존 갤러리 정보를 불러오는 데 실패했습니다.');
     }
+    const survivingIds = new Set(
+      validatedFields.images
+        .filter((img) => !img.file && img.id)
+        .map((img) => img.id!),
+    );
 
-    const keepImageIds = new Set(validatedFields.keepImageIds || []);
-    const imagesToDelete = (existingImages || []).filter(
-      (img) => !keepImageIds.has(img.id),
+    const imagesToDelete = existingImages.filter(
+      (img) => !survivingIds.has(img.id),
     );
 
     if (imagesToDelete.length > 0) {
       const deleteIds = imagesToDelete.map((img) => img.id);
+
       const { error: deleteDbError } = await supabase
         .from('gallery_images')
         .delete()
@@ -41,13 +50,10 @@ export async function updateGallery(
         .map((img) => {
           try {
             const fileUrl = new URL(img.storage_path);
-            // Extract path after /gallery/ in the URL
             const bucketPath = fileUrl.pathname.split('/gallery/')[1];
             return bucketPath ? decodeURIComponent(bucketPath) : null;
           } catch {
-            // Fallback for non-URL format
-            const fileName = img.storage_path.split('/').pop();
-            return fileName || null;
+            return null;
           }
         })
         .filter((path): path is string => path !== null);
@@ -58,109 +64,121 @@ export async function updateGallery(
           .remove(pathsToDelete);
 
         if (storageRemoveError) {
-          console.error(
-            '스토리지 이미지 삭제 실패(고아 파일 발생 가능):',
-            storageRemoveError,
-          );
+          console.error('스토리지 파일 삭제 실패:', storageRemoveError);
         }
       }
     }
 
-    let uploadedImages: {
-      url: string;
-      fileName: string;
-      isThumbnail: boolean;
-    }[] = [];
+    const newFiles = validatedFields.images.filter(
+      (img): img is typeof img & { file: File } => img.file !== null,
+    );
 
-    if (validatedFields.images && validatedFields.images.length > 0) {
-      const uploadPromises = validatedFields.images.map(async (imageData) => {
-        const fileName = `${Date.now()}_${crypto.randomUUID()}.webp`;
+    const uploadedResults: UploadResult[] = [];
 
-        const { error: uploadError } = await supabase.storage
-          .from('gallery')
-          .upload(fileName, imageData.file, { upsert: false });
+    if (newFiles.length > 0) {
+      const uploadPromises = newFiles.map(
+        async (imageData): Promise<UploadResult> => {
+          const fileName = `${Date.now()}_${crypto.randomUUID()}.webp`;
 
-        if (uploadError) {
-          throw new Error(`이미지 업로드 실패: ${fileName}`);
+          const { error: uploadError } = await supabase.storage
+            .from('gallery')
+            .upload(fileName, imageData.file, { upsert: false });
+
+          if (uploadError) {
+            throw new Error(`이미지 업로드 실패: ${fileName}`);
+          }
+
+          const { data: urlData } = supabase.storage
+            .from('gallery')
+            .getPublicUrl(fileName);
+
+          return {
+            url: urlData.publicUrl,
+            fileName,
+            isThumbnail: imageData.isThumbnail,
+          };
+        },
+      );
+
+      const results = await Promise.allSettled(uploadPromises);
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          uploadedResults.push(result.value);
+          newlyUploadedPaths.push(result.value.fileName);
+        } else {
+          throw new Error('일부 이미지 업로드 실패');
         }
+      }
 
-        newlyUploadedPaths.push(fileName);
-
-        const { data } = supabase.storage
-          .from('gallery')
-          .getPublicUrl(fileName);
-
-        return {
-          url: data.publicUrl,
-          fileName,
-          isThumbnail: imageData.isThumbnail,
-        };
-      });
-
-      uploadedImages = await Promise.all(uploadPromises);
-
-      const imageRows = uploadedImages.map((img) => ({
-        gallery_id: id,
+      const imageRows = uploadedResults.map((img) => ({
+        gallery_id: validatedFields.id,
         storage_path: img.url,
         width: 0,
         height: 0,
       }));
 
-      const { error: imagesInsertError } = await supabase
+      const { error: insertError } = await supabase
         .from('gallery_images')
         .insert(imageRows);
 
-      if (imagesInsertError) {
+      if (insertError) {
         throw new Error('새 이미지를 DB에 저장하는 데 실패했습니다.');
       }
     }
 
-    const { data: allCurrentImages } = await supabase
-      .from('gallery_images')
-      .select('storage_path')
-      .eq('gallery_id', id)
-      .order('created_at', { ascending: true });
-    const safeImages = allCurrentImages ?? [];
-    let thumbnailUrl: string | undefined;
-    const targetIndex = validatedFields.thumbnailIndex;
-    if (targetIndex !== undefined && safeImages[targetIndex]) {
-      thumbnailUrl = safeImages[targetIndex].storage_path;
-    } else if (safeImages.length > 0) {
-      thumbnailUrl = safeImages[0]?.storage_path;
+    let finalThumbnailUrl = '';
+    const thumbnailItem = validatedFields.images.find((img) => img.isThumbnail);
+
+    if (thumbnailItem) {
+      if (thumbnailItem.file) {
+        const target = uploadedResults.find((r) => r.isThumbnail);
+        finalThumbnailUrl = target ? target.url : '';
+      } else if (thumbnailItem.id) {
+        const target = existingImages.find(
+          (img) => img.id === thumbnailItem.id,
+        );
+        finalThumbnailUrl = target ? target.storage_path : '';
+      }
     }
 
-    const updateData: {
-      title: string;
-      event_date: string;
-      thumbnail_url?: string;
-    } = {
-      title: validatedFields.title,
-      event_date: validatedFields.eventDate,
-    };
-    if (thumbnailUrl) {
-      updateData.thumbnail_url = thumbnailUrl;
+    if (!finalThumbnailUrl) {
+      const deleteIdSet = new Set(imagesToDelete.map((img) => img.id));
+
+      const survivor = existingImages.find((img) => !deleteIdSet.has(img.id));
+
+      if (survivor) {
+        finalThumbnailUrl = survivor.storage_path;
+      }
+
+      if (!finalThumbnailUrl && uploadedResults.length > 0) {
+        const firstNewImage = uploadedResults[0];
+        if (firstNewImage) {
+          finalThumbnailUrl = firstNewImage.url;
+        }
+      }
     }
 
     const { error: updateGalleryError } = await supabase
       .from('galleries')
-      .update(updateData)
-      .eq('id', id);
+      .update({
+        title: validatedFields.title,
+        event_date: validatedFields.eventDate,
+        thumbnail_url: finalThumbnailUrl,
+      })
+      .eq('id', validatedFields.id);
 
     if (updateGalleryError) {
       throw new Error('갤러리 정보를 수정하는 데 실패했습니다.');
     }
 
     revalidatePath('/gallery');
-
     return { success: true };
   } catch (error) {
     console.error('갤러리 수정 중 오류 발생:', error);
 
     if (newlyUploadedPaths.length > 0) {
-      console.warn(
-        '에러 발생으로 인한 신규 업로드 파일 롤백:',
-        newlyUploadedPaths,
-      );
+      console.warn('롤백 진행:', newlyUploadedPaths);
       await supabase.storage.from('gallery').remove(newlyUploadedPaths);
     }
 

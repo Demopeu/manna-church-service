@@ -1,16 +1,13 @@
 'use client';
 
 import { useEffect, useEffectEvent, useState } from 'react';
+import { toast } from 'sonner';
 import { GalleryWithImages } from '@/entities/gallery';
 import { ImageItem } from '@/shared/lib';
 
-export interface GalleryFormImage extends ImageItem {
-  isThumbnail: boolean;
-}
-
 interface UseGalleryImagesProps {
   initialData?: GalleryWithImages;
-  onImagesChange?: (images: GalleryFormImage[]) => void;
+  onImagesChange?: (images: ImageItem[]) => void;
 }
 
 export function useGalleryImages({
@@ -18,13 +15,15 @@ export function useGalleryImages({
   onImagesChange,
 }: UseGalleryImagesProps = {}) {
   const [dragActive, setDragActive] = useState(false);
-  const [images, setImages] = useState<GalleryFormImage[]>(
+  const [images, setImages] = useState<ImageItem[]>(
     initialData
       ? initialData.images.map((img, index) => ({
           id: img.id,
           file: null,
           preview: img.storagePath,
-          isThumbnail: index === 0,
+          isThumbnail: initialData.thumbnailUrl
+            ? img.storagePath === initialData.thumbnailUrl
+            : index === 0,
         }))
       : [],
   );
@@ -43,7 +42,7 @@ export function useGalleryImages({
     };
   }, []);
 
-  const updateImages = (newImages: GalleryFormImage[]) => {
+  const updateImages = (newImages: ImageItem[]) => {
     setImages(newImages);
     onImagesChange?.(newImages);
   };
@@ -59,10 +58,14 @@ export function useGalleryImages({
   };
 
   const addFiles = (files: File[]) => {
+    if (images.length + files.length > 10) {
+      toast.error('이미지는 최대 10장까지만 등록할 수 있습니다.');
+      return;
+    }
     const validFiles = files.filter((f) => f.type.startsWith('image/'));
     if (validFiles.length === 0) return;
 
-    const newItems: GalleryFormImage[] = validFiles.map((file) => ({
+    const newItems: ImageItem[] = validFiles.map((file) => ({
       id: crypto.randomUUID(),
       file,
       preview: URL.createObjectURL(file),
@@ -106,13 +109,15 @@ export function useGalleryImages({
     }
 
     const filtered = images.filter((p) => p.id !== id);
-    const firstItem = filtered[0];
 
-    if (isRemovingThumbnail && firstItem) {
-      firstItem.isThumbnail = true;
+    if (isRemovingThumbnail && filtered.length > 0) {
+      const nextImages = filtered.map((img, index) =>
+        index === 0 ? { ...img, isThumbnail: true } : img,
+      );
+      updateImages(nextImages);
+    } else {
+      updateImages(filtered);
     }
-
-    updateImages(filtered);
   };
 
   const setThumbnail = (id: string) => {

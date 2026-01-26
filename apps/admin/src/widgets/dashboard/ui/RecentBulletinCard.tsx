@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { AlertCircle, ArrowRight, FileImage } from 'lucide-react';
-import { getLatestBulletin } from '@/entities/bulletin';
+import { getThisWeekBulletin } from '@/entities/bulletin';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 import { withAsyncBoundary } from '@/shared/ui';
 import { CardError } from './CardError';
 import { CardSkeleton } from './CardSkeleton';
 
 export async function BulletinCard() {
-  const hasBulletin = await getLatestBulletin();
+  const hasBulletin = await getThisWeekBulletin();
   if (hasBulletin) {
     return null;
   }

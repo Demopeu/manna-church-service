@@ -198,7 +198,12 @@ export function GalleryForm({
         <Button
           type="submit"
           size="lg"
-          disabled={status.isPending || status.isConverting || !isValid}
+          disabled={
+            status.isPending ||
+            status.isConverting ||
+            !isValid ||
+            !status.hasChanges
+          }
         >
           {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
