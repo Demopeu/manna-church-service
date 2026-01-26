@@ -1,8 +1,7 @@
 'use client';
 
 import { Trash2 } from 'lucide-react';
-import { Button, DeleteDialog } from '@/shared/ui';
-import { LoadingProgress } from '@/shared/ui';
+import { Button, DeleteDialog, LoadingProgress } from '@/shared/ui';
 import { useDeleteBulletin } from '../model/use-delete';
 
 interface Props {

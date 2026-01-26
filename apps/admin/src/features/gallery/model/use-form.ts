@@ -3,7 +3,6 @@
 import {
   startTransition,
   useActionState,
-  useCallback,
   useEffect,
   useEffectEvent,
   useState,
@@ -11,12 +10,9 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GalleryWithImages } from '@/entities/gallery';
-import {
-  type ImageItem,
-  imageConverter,
-  useToastAndRefresh,
-} from '@/shared/lib';
+import { imageConverter, useToastAndRefresh } from '@/shared/lib';
 import { createGalleryAction, updateGalleryAction } from '../api/actions';
+import { useGalleryImages } from '../lib/use-gallery-images';
 import { getDefaultValues, toFormData } from './mapper';
 import {
   type CreateGalleryInput,
@@ -25,10 +21,6 @@ import {
   initialState,
   updateGallerySchema,
 } from './schema';
-
-export interface GalleryFormImage extends ImageItem {
-  isThumbnail: boolean;
-}
 
 interface UseGalleryFormProps {
   gallery?: GalleryWithImages;
@@ -49,97 +41,35 @@ export function useGalleryForm({
       : createGalleryAction;
 
   const [state, formAction, isPending] = useActionState(action, initialState);
+  const [isConverting, setIsConverting] = useState(false);
 
   const form = useForm<CreateGalleryInput | UpdateGalleryInput>({
     resolver: zodResolver(
       MODE === 'EDIT' ? updateGallerySchema : createGallerySchema,
     ),
     defaultValues: getDefaultValues(gallery),
+    mode: 'onChange',
   });
 
   const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
-  const [dragActive, setDragActive] = useState(false);
-  const [previews, setPreviews] = useState<GalleryFormImage[]>(
-    gallery
-      ? gallery.images.map((img, index) => ({
-          id: img.id,
-          file: null,
-          preview: img.storagePath,
-          isThumbnail: index === 0,
-        }))
-      : [],
-  );
+  const { images, dragActive, handlers } = useGalleryImages({
+    initialData: gallery,
+    onImagesChange: (newImages) => {
+      const formImages = newImages
+        .filter((img) => img.file !== null)
+        .map((img) => ({
+          file: img.file as File,
+          isThumbnail: img.isThumbnail,
+        }));
 
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    const files = Array.from(e.dataTransfer.files).filter((f) =>
-      f.type.startsWith('image/'),
-    );
-    files.forEach((file) => {
-      const preview = URL.createObjectURL(file);
-      const newImage: GalleryFormImage = {
-        id: crypto.randomUUID(),
-        file,
-        preview,
-        isThumbnail: false,
-      };
-      setPreviews((prev) => {
-        if (prev.length === 0) {
-          return [{ ...newImage, isThumbnail: true }];
-        }
-        return [...prev, newImage];
+      form.setValue('images', formImages, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
       });
-    });
-  }, []);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).filter((f) =>
-      f.type.startsWith('image/'),
-    );
-    files.forEach((file) => {
-      const preview = URL.createObjectURL(file);
-      const newPreview: GalleryFormImage = {
-        id: crypto.randomUUID(),
-        file,
-        preview,
-        isThumbnail: previews.length === 0,
-      };
-      setPreviews((prev) => [...prev, newPreview]);
-    });
-  };
-
-  const removePreview = (id: string) => {
-    setPreviews((prev) => {
-      const preview = prev.find((p) => p.id === id);
-      if (preview?.preview.startsWith('blob:')) {
-        URL.revokeObjectURL(preview.preview);
-      }
-      return prev.filter((p) => p.id !== id);
-    });
-  };
-
-  const setThumbnail = (id: string) => {
-    setPreviews((prev) =>
-      prev.map((p) => ({
-        ...p,
-        isThumbnail: p.id === id,
-      })),
-    );
-  };
+    },
+  });
 
   const handleError = useEffectEvent((currentState: typeof state) => {
     if (currentState && !currentState.success) {
@@ -155,10 +85,7 @@ export function useGalleryForm({
             if (messages && messages[0]) {
               form.setError(
                 field as keyof CreateGalleryInput | keyof UpdateGalleryInput,
-                {
-                  type: 'server',
-                  message: messages[0],
-                },
+                { type: 'server', message: messages[0] },
               );
             }
           },
@@ -179,8 +106,8 @@ export function useGalleryForm({
   }, [state]);
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const keepImageIds = previews.filter((p) => !p.file).map((p) => p.id);
-    const thumbnailIndex = previews.findIndex((p) => p.isThumbnail);
+    const keepImageIds = images.filter((p) => !p.file).map((p) => p.id);
+    const thumbnailIndex = images.findIndex((p) => p.isThumbnail);
 
     const formData = toFormData(
       data,
@@ -188,31 +115,51 @@ export function useGalleryForm({
       keepImageIds,
     );
 
-    const newImageFiles = previews.filter((p) => p.file);
+    const newImageFiles = images.filter((p) => p.file);
 
-    if (newImageFiles.length > 0) {
-      let imageIndex = 0;
-      for (const preview of newImageFiles) {
-        if (!preview.file) continue;
+    try {
+      setIsConverting(true);
 
-        const isSuccess = await imageConverter({
-          formData,
-          file: preview.file,
-          title: data.title,
-          setError: form.setError,
-          type: 'image-to-webp',
-        });
+      if (newImageFiles.length > 0) {
+        let imageIndex = 0;
+        for (const preview of newImageFiles) {
+          if (!preview.file) continue;
 
-        if (!isSuccess) return;
+          const isSuccess = await imageConverter({
+            formData,
+            file: preview.file,
+            title: data.title,
+            setError: form.setError,
+            type: 'image-to-webp',
+            fieldKey: 'image',
+          });
 
-        const convertedImage = formData.get('image');
-        if (convertedImage) {
-          formData.delete('image');
-          formData.append(`image-${imageIndex}`, convertedImage);
+          if (!isSuccess) return;
+
+          const convertedImage = formData.get('image');
+          if (convertedImage) {
+            formData.delete('image');
+
+            const targetKey = `image-${imageIndex}`;
+            if (formData.has(targetKey)) {
+              formData.delete(targetKey);
+            }
+
+            formData.append(targetKey, convertedImage);
+          }
+
+          imageIndex++;
         }
-
-        imageIndex++;
       }
+    } catch (error) {
+      console.error(error);
+      form.setError('root', {
+        type: 'server',
+        message: '이미지 변환 중 오류가 발생했습니다.',
+      });
+      return;
+    } finally {
+      setIsConverting(false);
     }
 
     startTransition(() => {
@@ -223,13 +170,13 @@ export function useGalleryForm({
   return {
     form,
     imageUI: {
-      previews,
+      previews: images,
       dragActive,
-      handleDrag,
-      handleDrop,
-      handleFileSelect,
-      removePreview,
-      setThumbnail,
+      handleDrag: handlers.handleDrag,
+      handleDrop: handlers.handleDrop,
+      handleFileSelect: handlers.handleFileSelect,
+      removePreview: handlers.removeImage,
+      setThumbnail: handlers.setThumbnail,
     },
     handler: {
       submit: handleSubmit,
@@ -238,6 +185,7 @@ export function useGalleryForm({
       isPending,
       mode: MODE,
       hasChanges,
+      isConverting,
     },
   };
 }

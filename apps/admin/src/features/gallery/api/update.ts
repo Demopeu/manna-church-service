@@ -38,8 +38,19 @@ export async function updateGallery(
       }
 
       const pathsToDelete = imagesToDelete
-        .map((img) => img.storage_path.split('/').pop())
-        .filter((path): path is string => !!path);
+        .map((img) => {
+          try {
+            const fileUrl = new URL(img.storage_path);
+            // Extract path after /gallery/ in the URL
+            const bucketPath = fileUrl.pathname.split('/gallery/')[1];
+            return bucketPath ? decodeURIComponent(bucketPath) : null;
+          } catch {
+            // Fallback for non-URL format
+            const fileName = img.storage_path.split('/').pop();
+            return fileName || null;
+          }
+        })
+        .filter((path): path is string => path !== null);
 
       if (pathsToDelete.length > 0) {
         const { error: storageRemoveError } = await supabase.storage
