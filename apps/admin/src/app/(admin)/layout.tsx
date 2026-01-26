@@ -5,6 +5,8 @@ interface Props {
   children: React.ReactNode;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function layout({ children }: Props) {
   const profile = await getMyProfile();
   return (

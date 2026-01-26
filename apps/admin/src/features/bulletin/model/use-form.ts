@@ -3,23 +3,28 @@
 import {
   startTransition,
   useActionState,
-  useCallback,
   useEffect,
   useEffectEvent,
   useState,
 } from 'react';
-import type React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bulletin } from '@/entities/bulletin';
-import { useToastAndRefresh } from '@/shared/lib';
-import { createBulletinAction, updateBulletinAction } from '../api/actions';
-import { getDefaultValues, toFormData } from '../lib/mapper';
-import { validatePdfFile } from '../lib/validate-pdf';
 import {
-  CreateBulletinInput,
+  imageConverter,
+  pdfToWebpConverter,
+  useImageInput,
+  usePdfInput,
+  useToastAndRefresh,
+} from '@/shared/lib';
+import { createBulletinAction, updateBulletinAction } from '../api/actions';
+import { getDefaultValues, toFormData } from './mapper';
+import {
+  type CreateBulletinInput,
+  type UpdateBulletinInput,
   createBulletinSchema,
   initialState,
+  updateBulletinSchema,
 } from './schema';
 
 interface Params {
@@ -33,7 +38,7 @@ export function useBulletinForm({
   onSuccess,
   successMessage,
 }: Params) {
-  const { complete } = useToastAndRefresh(onSuccess);
+  const { complete, errorToast } = useToastAndRefresh(onSuccess);
   const MODE = bulletin ? 'EDIT' : 'CREATE';
 
   const actionFn =
@@ -42,102 +47,58 @@ export function useBulletinForm({
       : createBulletinAction;
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
-
-  const form = useForm<CreateBulletinInput>({
-    resolver: zodResolver(createBulletinSchema),
+  const [isConverting, setIsConverting] = useState(false);
+  const form = useForm({
+    resolver: zodResolver(
+      MODE === 'EDIT' ? updateBulletinSchema : createBulletinSchema,
+    ),
     defaultValues: getDefaultValues(bulletin),
+    mode: 'onChange',
   });
 
   const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
-  const [dragActive, setDragActive] = useState(false);
-  const [pdfFile, setPdfFile] = useState<{ name: string; file: File } | null>(
-    null,
-  );
-  const [coverImageFile, setCoverImageFile] = useState<{
-    file: File;
-    preview: string;
-  } | null>(null);
-  const [imageDragActive, setImageDragActive] = useState(false);
+  const hasExistingPdf =
+    !!bulletin?.originalPdfUrl ||
+    (bulletin?.imageUrls && bulletin.imageUrls.length > 0);
 
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    const file = e.dataTransfer.files?.[0];
-    if (file && validatePdfFile(file)) {
-      setPdfFile({ name: file.name, file });
-    }
-  }, []);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && validatePdfFile(file)) {
-      setPdfFile({ name: file.name, file });
-    }
-  };
-
-  const removePdfFile = () => {
-    setPdfFile(null);
-  };
-
-  const handleImageDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setImageDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setImageDragActive(false);
-    }
-  }, []);
-
-  const handleImageFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) {
-      return;
-    }
-
-    const preview = URL.createObjectURL(file);
-    setCoverImageFile({ file, preview });
-  }, []);
-
-  const handleImageDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setImageDragActive(false);
-
-      const files = e.dataTransfer.files;
-      if (files && files[0]) {
-        handleImageFile(files[0]);
+  const handlePdfChange = (file: File | null) => {
+    form.setValue('pdfFile', file, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    if (!file) {
+      if (!hasExistingPdf) {
+        form.setError('pdfFile', {
+          type: 'required',
+          message: 'PDF 파일은 필수입니다.',
+        });
       }
-    },
-    [handleImageFile],
-  );
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files[0]) {
-      handleImageFile(files[0]);
+    } else {
+      form.clearErrors('pdfFile');
     }
   };
 
-  const removeCoverImageFile = () => {
-    if (coverImageFile?.preview) {
-      URL.revokeObjectURL(coverImageFile.preview);
+  const pdfInput = usePdfInput({
+    initialFileName: hasExistingPdf ? '기존 등록된 주보 (변환됨)' : undefined,
+    onFileChange: handlePdfChange,
+  });
+
+  const handleCoverImageChange = (file: File | null | string) => {
+    form.setValue('coverImageFile', file, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    if (!file || file === 'null') {
+      form.clearErrors('coverImageFile');
     }
-    setCoverImageFile(null);
   };
+
+  const coverImageInput = useImageInput({
+    initialUrl: bulletin?.coverImageUrl || undefined,
+    onFileChange: handleCoverImageChange,
+  });
 
   const handleError = useEffectEvent((currentState: typeof state) => {
     if (currentState && !currentState.success) {
@@ -151,10 +112,13 @@ export function useBulletinForm({
         Object.entries(currentState.fieldErrors).forEach(
           ([field, messages]) => {
             if (messages && messages[0]) {
-              form.setError(field as keyof CreateBulletinInput, {
-                type: 'server',
-                message: messages[0],
-              });
+              form.setError(
+                field as keyof CreateBulletinInput | keyof UpdateBulletinInput,
+                {
+                  type: 'server',
+                  message: messages[0],
+                },
+              );
             }
           },
         );
@@ -173,32 +137,57 @@ export function useBulletinForm({
     handleSuccess(state);
   }, [state]);
 
-  const handleSubmit = form.handleSubmit((data) => {
+  const handleSubmit = form.handleSubmit(async (data) => {
+    const formData = toFormData(data);
+    if (data.coverImageFile === null) {
+      formData.set('coverImageFile', 'null');
+    } else if (data.coverImageFile === undefined) {
+      formData.delete('coverImageFile');
+    }
+    try {
+      setIsConverting(true);
+      const isCoverSuccess = await imageConverter({
+        formData,
+        file: coverImageInput.rawFile || undefined,
+        title: data.coverImageFile?.name || '',
+        setError: form.setError,
+        type: 'image-to-webp',
+        fieldKey: 'coverImageFile',
+      });
+      if (!isCoverSuccess) return;
+      if (data.pdfFile instanceof File) {
+        const baseName = data.pdfFile.name.split('.')[0];
+        const webpBlobs = await pdfToWebpConverter(data.pdfFile);
+        webpBlobs.forEach((blob, index) => {
+          const fileName = `${baseName}_page_${index + 1}.webp`;
+          formData.append('imageFiles', blob, fileName);
+        });
+        formData.delete('pdfFile');
+      }
+    } catch (error) {
+      errorToast('이미지 변환 에러');
+      console.error('이미지 변환 에러:', error);
+      return;
+    } finally {
+      setIsConverting(false);
+    }
+
     startTransition(() => {
-      action(toFormData(data));
+      action(formData);
     });
   });
 
   return {
     form,
-    handleSubmit,
-    isSubmitting: form.formState.isSubmitting || isPending,
-    hasChanges,
-    pdfFile: {
-      file: pdfFile,
-      dragActive,
-      handleDrag,
-      handleDrop,
-      handleFileSelect,
-      removePdfFile,
+    status: {
+      mode: MODE,
+      isPending: isPending || isConverting,
+      hasChanges,
     },
-    coverImageFile: {
-      file: coverImageFile,
-      dragActive: imageDragActive,
-      handleDrag: handleImageDrag,
-      handleDrop: handleImageDrop,
-      handleFileSelect: handleImageSelect,
-      removeCoverImageFile,
+    handler: {
+      submit: handleSubmit,
     },
+    pdfFile: pdfInput,
+    coverImageFile: coverImageInput,
   };
 }

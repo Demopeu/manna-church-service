@@ -15,7 +15,7 @@ export const imageToWebpConverter = async ({
   }
 
   const options = {
-    maxSizeMB: 0.3,
+    maxSizeMB: 0.1,
     maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: 'image/webp',
@@ -48,6 +48,7 @@ interface ImageConverterParams<T extends FieldValues> {
   title: string;
   setError: UseFormSetError<T>;
   type: ConverterType;
+  fieldKey?: string;
 }
 
 export async function imageConverter<T extends FieldValues>({
@@ -56,6 +57,7 @@ export async function imageConverter<T extends FieldValues>({
   title,
   setError,
   type,
+  fieldKey = 'photoFile',
 }: ImageConverterParams<T>): Promise<boolean> {
   if (!file) return true;
 
@@ -74,7 +76,7 @@ export async function imageConverter<T extends FieldValues>({
       title,
     });
 
-    formData.set('photoFile', compressedFile);
+    formData.set(fieldKey, compressedFile);
     return true;
   } catch (error) {
     console.error('이미지 압축 에러:', error);

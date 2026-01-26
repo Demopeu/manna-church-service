@@ -3,7 +3,11 @@
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
 import { requireAuth } from '@/shared/lib';
 import { ActionState } from '@/shared/model';
-import { createGallerySchema, updateGallerySchema } from '../model/schema';
+import {
+  type ImageObject,
+  createGallerySchema,
+  updateGallerySchema,
+} from '../model/schema';
 import { createGallery } from './create';
 import { deleteGallery } from './delete';
 import { updateGallery } from './update';
@@ -20,20 +24,19 @@ export async function createGalleryAction(
   const title = formData.get('title');
   const eventDate = formData.get('eventDate');
 
-  const imageFiles: File[] = [];
+  const images: ImageObject[] = [];
   const thumbnailIndex = Number(formData.get('thumbnailIndex') || '0');
 
   let idx = 0;
   while (formData.has(`image-${idx}`)) {
     const file = formData.get(`image-${idx}`) as File;
-    imageFiles.push(file);
+    images.push({
+      file,
+      isThumbnail: idx === thumbnailIndex,
+    });
+
     idx++;
   }
-
-  const images = imageFiles.map((file, index) => ({
-    file,
-    isThumbnail: index === thumbnailIndex,
-  }));
 
   const rawData = {
     title,
@@ -55,41 +58,53 @@ export async function createGalleryAction(
 }
 
 export async function updateGalleryAction(
-  id: string,
-  prevState: ActionState,
+  id: string, // bind로 넘어온 ID
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const authState = await requireAuth();
-  if (authState) {
-    return authState;
-  }
+  if (authState) return authState;
 
-  const title = formData.get('title');
-  const eventDate = formData.get('eventDate');
-  const thumbnailIndex = formData.get('thumbnailIndex');
-  const keepImageIdsStr = formData.get('keepImageIds');
+  const title = formData.get('title')?.toString() || '';
+  const eventDate = formData.get('eventDate')?.toString() || '';
+  const thumbnailIndex = Number(formData.get('thumbnailIndex') || '0');
 
-  const imageFiles: File[] = [];
+  const combinedImages: ImageObject[] = [];
+
+  const keepImageIds = formData.getAll('keepImageIds').map(String);
+
+  keepImageIds.forEach((keepId) => {
+    combinedImages.push({
+      file: null,
+      id: keepId,
+      isThumbnail: false,
+    });
+  });
 
   let idx = 0;
   while (formData.has(`image-${idx}`)) {
     const file = formData.get(`image-${idx}`) as File;
-    imageFiles.push(file);
+    combinedImages.push({
+      file,
+      isThumbnail: false,
+    });
     idx++;
   }
 
-  const thumbnailIdx = Number(formData.get('thumbnailIndex') || '0');
-  const images = imageFiles.map((file, index) => ({
-    file,
-    isThumbnail: index === thumbnailIdx,
-  }));
+  const targetImage = combinedImages[thumbnailIndex];
+
+  if (targetImage) {
+    targetImage.isThumbnail = true;
+  } else if (combinedImages.length > 0) {
+    const firstImage = combinedImages[0];
+    if (firstImage) firstImage.isThumbnail = true;
+  }
 
   const rawData = {
+    id,
     title,
     eventDate,
-    images: images.length > 0 ? images : undefined,
-    keepImageIds: keepImageIdsStr ? JSON.parse(keepImageIdsStr as string) : [],
-    thumbnailIndex: thumbnailIndex ? Number(thumbnailIndex) : undefined,
+    images: combinedImages,
   };
 
   const validatedFields = updateGallerySchema.safeParse(rawData);
@@ -102,7 +117,7 @@ export async function updateGalleryAction(
     };
   }
 
-  return await tryCatchAction(() => updateGallery(id, validatedFields.data));
+  return await tryCatchAction(() => updateGallery(validatedFields.data));
 }
 
 export async function deleteGalleryAction(id: string): Promise<void> {

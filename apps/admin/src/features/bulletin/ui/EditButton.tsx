@@ -4,6 +4,7 @@ import { Pencil } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -30,6 +31,9 @@ export function EditBulletinButton({ bulletin }: Props) {
       <AlertDialogContent className="sm:max-w-[600px]">
         <AlertDialogHeader>
           <AlertDialogTitle>주보 수정</AlertDialogTitle>
+          <AlertDialogDescription className="sr-only">
+            주보 정보를 수정하는 폼입니다. 내용을 변경하고 저장하세요.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <BulletinForm

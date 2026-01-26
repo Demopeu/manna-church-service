@@ -127,19 +127,6 @@ export function EventForm({
               >
                 <X className="h-4 w-4" />
               </Button>
-              <input
-                type="file"
-                name="photoFile"
-                accept="image/*"
-                className="hidden"
-                ref={(input) => {
-                  if (input && imageUI.rawFile) {
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(imageUI.rawFile);
-                    input.files = dataTransfer.files;
-                  }
-                }}
-              />
             </div>
           ) : (
             <div className="flex flex-col items-center text-center">

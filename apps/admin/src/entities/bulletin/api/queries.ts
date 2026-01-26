@@ -1,3 +1,4 @@
+import { addHours, endOfWeek, startOfWeek, subHours } from 'date-fns';
 import { createClient } from '@repo/database/client';
 import type { Bulletin } from '../model/bulletin';
 import { mapBulletin } from './mapper';
@@ -21,7 +22,7 @@ export async function getBulletins({
     .order('published_at', { ascending: false });
 
   if (query) {
-    queryBuilder = queryBuilder.ilike('published_at', `%${query}%`);
+    queryBuilder = queryBuilder.ilike('published_at::text', `%${query}%`);
   }
 
   const from = (page - 1) * pageSize;
@@ -41,21 +42,29 @@ export async function getBulletins({
   };
 }
 
-export async function getLatestBulletin(): Promise<Bulletin | null> {
+export async function getThisWeekBulletin(): Promise<Bulletin | null> {
   const supabase = await createClient();
+  const nowUtc = new Date();
+  const nowKst = addHours(nowUtc, 9);
+
+  const startKst = startOfWeek(nowKst, { weekStartsOn: 0 });
+  const endKst = endOfWeek(nowKst, { weekStartsOn: 0 });
+  const startUtc = subHours(startKst, 9);
+  const endUtc = subHours(endKst, 9);
 
   const { data, error } = await supabase
     .from('bulletins')
     .select('*')
+    .gte('published_at', startUtc.toISOString())
+    .lte('published_at', endUtc.toISOString())
     .order('published_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === 'PGRST116') {
-      return null;
-    }
-    throw new Error(`Failed to fetch latest bulletin: ${error.message}`);
+    throw new Error(
+      `이번 주 주보를 불러오는 데 실패했습니다: ${error.message}`,
+    );
   }
 
   return data ? mapBulletin(data) : null;

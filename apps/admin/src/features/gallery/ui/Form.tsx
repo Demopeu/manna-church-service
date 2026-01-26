@@ -13,6 +13,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
 } from '@/shared/ui';
 import { useGalleryForm } from '../model/use-form';
 import { getFormText } from './form-data';
@@ -38,10 +39,20 @@ export function GalleryForm({
     successMessage: uiText.successDescription,
   });
 
-  const errors = form.formState.errors;
+  const { errors, isValid } = form.formState;
 
   const FormContent = (
     <form onSubmit={handler.submit} className="space-y-4">
+      <LoadingProgress
+        isPending={status.isPending || status.isConverting}
+        message={
+          status.isConverting
+            ? '이미지를 변환하고 있습니다...'
+            : status.mode === 'EDIT'
+              ? '수정된 정보를 서버에 저장하고 있습니다...'
+              : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -55,7 +66,7 @@ export function GalleryForm({
             id="title"
             className="h-12 text-base"
             placeholder="예: 2024 신년 예배"
-            disabled={status.isPending}
+            disabled={status.isPending || status.isConverting}
             {...form.register('title')}
           />
           {errors.title && (
@@ -68,7 +79,7 @@ export function GalleryForm({
             id="eventDate"
             type="date"
             className="h-12 text-base"
-            disabled={status.isPending}
+            disabled={status.isPending || status.isConverting}
             {...form.register('eventDate')}
           />
           {errors.eventDate && (
@@ -111,6 +122,7 @@ export function GalleryForm({
                             ? 'border-primary'
                             : 'border-transparent',
                         )}
+                        sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 16vw"
                       />
                     </div>
                     <Button
@@ -186,7 +198,12 @@ export function GalleryForm({
         <Button
           type="submit"
           size="lg"
-          disabled={status.isPending || imageUI.previews.length === 0}
+          disabled={
+            status.isPending ||
+            status.isConverting ||
+            !isValid ||
+            !status.hasChanges
+          }
         >
           {status.isPending ? uiText.loadingBtn : uiText.submitBtn}
         </Button>
@@ -194,7 +211,7 @@ export function GalleryForm({
           type="button"
           variant="outline"
           onClick={onCancel}
-          disabled={status.isPending}
+          disabled={status.isPending || status.isConverting}
           size="lg"
         >
           취소

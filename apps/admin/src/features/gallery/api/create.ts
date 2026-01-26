@@ -15,7 +15,7 @@ export async function createGallery(
 
       const { error: uploadError } = await supabase.storage
         .from('gallery')
-        .upload(fileName, imageData.file, {
+        .upload(fileName, imageData.file!, {
           upsert: false,
         });
 
@@ -32,7 +32,16 @@ export async function createGallery(
         isThumbnail: imageData.isThumbnail,
       };
     });
-    const uploadedImages = await Promise.all(uploadPromises);
+    const results = await Promise.allSettled(uploadPromises);
+    const failed = results.filter((r) => r.status === 'rejected');
+    if (failed.length > 0) {
+      throw new Error('일부 이미지 업로드 실패');
+    }
+
+    const uploadedImages = results
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => r.value);
+
     const thumbnailUrl =
       uploadedImages.find((img) => img.isThumbnail)?.url ||
       uploadedImages[0]?.url ||

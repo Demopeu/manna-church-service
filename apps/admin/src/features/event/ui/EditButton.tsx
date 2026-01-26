@@ -5,6 +5,7 @@ import { Event } from '@/entities/event';
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -30,6 +31,9 @@ export function EditEventButton({ event }: Props) {
       <AlertDialogContent className="sm:max-w-[600px]">
         <AlertDialogHeader>
           <AlertDialogTitle>이벤트 수정</AlertDialogTitle>
+          <AlertDialogDescription className="sr-only">
+            이벤트 정보를 수정하는 폼입니다. 내용을 변경하고 저장하세요.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <EventForm

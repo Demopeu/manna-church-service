@@ -41,7 +41,7 @@ export function LoadingProgress({
   return (
     <div
       className={cn(
-        'bg-background/80 animate-in fade-in-0 absolute inset-0 z-50 flex flex-col items-center justify-center p-8 backdrop-blur-sm',
+        'bg-background/80 animate-in fade-in-0 fixed inset-0 z-50 flex flex-col items-center justify-center p-8 backdrop-blur-sm',
         className,
       )}
     >
