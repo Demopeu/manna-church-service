@@ -5,11 +5,18 @@ import {
   useActionState,
   useEffect,
   useEffectEvent,
+  useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Bulletin } from '@/entities/bulletin';
-import { useImageInput, usePdfInput, useToastAndRefresh } from '@/shared/lib';
+import {
+  imageConverter,
+  pdfToWebpConverter,
+  useImageInput,
+  usePdfInput,
+  useToastAndRefresh,
+} from '@/shared/lib';
 import { createBulletinAction, updateBulletinAction } from '../api/actions';
 import { getDefaultValues, toFormData } from './mapper';
 import {
@@ -31,7 +38,7 @@ export function useBulletinForm({
   onSuccess,
   successMessage,
 }: Params) {
-  const { complete } = useToastAndRefresh(onSuccess);
+  const { complete, errorToast } = useToastAndRefresh(onSuccess);
   const MODE = bulletin ? 'EDIT' : 'CREATE';
 
   const actionFn =
@@ -40,7 +47,7 @@ export function useBulletinForm({
       : createBulletinAction;
 
   const [state, action, isPending] = useActionState(actionFn, initialState);
-
+  const [isConverting, setIsConverting] = useState(false);
   const form = useForm({
     resolver: zodResolver(
       MODE === 'EDIT' ? updateBulletinSchema : createBulletinSchema,
@@ -51,28 +58,39 @@ export function useBulletinForm({
 
   const hasChanges = MODE === 'CREATE' || form.formState.isDirty;
 
+  const hasExistingPdf =
+    !!bulletin?.originalPdfUrl ||
+    (bulletin?.imageUrls && bulletin.imageUrls.length > 0);
+
   const handlePdfChange = (file: File | null) => {
-    form.setValue('pdfFile', file as File, {
+    form.setValue('pdfFile', file, {
       shouldValidate: true,
       shouldDirty: true,
     });
     if (!file) {
+      if (!hasExistingPdf) {
+        form.setError('pdfFile', {
+          type: 'required',
+          message: 'PDF 파일은 필수입니다.',
+        });
+      }
+    } else {
       form.clearErrors('pdfFile');
     }
   };
 
   const pdfInput = usePdfInput({
-    initialFileName: bulletin?.originalPdfUrl ? '기존 PDF 파일' : undefined,
+    initialFileName: hasExistingPdf ? '기존 등록된 주보 (변환됨)' : undefined,
     onFileChange: handlePdfChange,
   });
 
-  const handleCoverImageChange = (file: File | null) => {
+  const handleCoverImageChange = (file: File | null | string) => {
     form.setValue('coverImageFile', file, {
       shouldValidate: true,
       shouldDirty: true,
     });
 
-    if (!file) {
+    if (!file || file === 'null') {
       form.clearErrors('coverImageFile');
     }
   };
@@ -119,16 +137,51 @@ export function useBulletinForm({
     handleSuccess(state);
   }, [state]);
 
-  const handleSubmit = form.handleSubmit((data) => {
+  const handleSubmit = form.handleSubmit(async (data) => {
+    const formData = toFormData(data);
+    if (data.coverImageFile === null) {
+      formData.set('coverImageFile', 'null');
+    } else if (data.coverImageFile === undefined) {
+      formData.delete('coverImageFile');
+    }
+    try {
+      setIsConverting(true);
+      const isCoverSuccess = await imageConverter({
+        formData,
+        file: coverImageInput.rawFile || undefined,
+        title: data.coverImageFile?.name || '',
+        setError: form.setError,
+        type: 'image-to-webp',
+        fieldKey: 'coverImageFile',
+      });
+      if (!isCoverSuccess) return;
+      if (data.pdfFile instanceof File) {
+        const baseName = data.pdfFile.name.split('.')[0];
+        const webpBlobs = await pdfToWebpConverter(data.pdfFile);
+        webpBlobs.forEach((blob, index) => {
+          const fileName = `${baseName}_page_${index + 1}.webp`;
+          formData.append('imageFiles', blob, fileName);
+        });
+        formData.delete('pdfFile');
+      }
+    } catch (error) {
+      errorToast('이미지 변환 에러');
+      console.error('이미지 변환 에러:', error);
+      return;
+    } finally {
+      setIsConverting(false);
+    }
+
     startTransition(() => {
-      action(toFormData(data));
+      action(formData);
     });
   });
 
   return {
     form,
     status: {
-      isPending,
+      mode: MODE,
+      isPending: isPending || isConverting,
       hasChanges,
     },
     handler: {

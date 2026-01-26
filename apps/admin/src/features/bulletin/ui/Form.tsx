@@ -13,6 +13,7 @@ import {
   CardTitle,
   Input,
   Label,
+  LoadingProgress,
 } from '@/shared/ui';
 import { useBulletinForm } from '../model/use-form';
 import { getFormText } from './form-data';
@@ -42,6 +43,14 @@ export function BulletinForm({
 
   const FormContent = (
     <form onSubmit={handler.submit} className="space-y-4">
+      <LoadingProgress
+        isPending={status.isPending}
+        message={
+          status.mode === 'EDIT'
+            ? '수정된 정보를 서버에 저장하고 있습니다...'
+            : '정보를 서버에 등록하고 있습니다...'
+        }
+      />
       {errors.root && (
         <div className="rounded-md bg-red-50 p-3 text-sm text-red-500">
           ⚠️ {errors.root.message}
@@ -70,14 +79,14 @@ export function BulletinForm({
             pdfFile.dragActive
               ? 'border-primary bg-primary/5'
               : 'border-border',
-            pdfFile.rawFile ? 'p-4' : 'p-8',
+            pdfFile.fileName ? 'p-4' : 'p-8',
           )}
           onDragEnter={pdfFile.handleDrag}
           onDragLeave={pdfFile.handleDrag}
           onDragOver={pdfFile.handleDrag}
           onDrop={pdfFile.handleDrop}
         >
-          {pdfFile.rawFile ? (
+          {pdfFile.fileName ? (
             <div className="flex items-center gap-4">
               <div className="flex flex-1 items-center gap-3">
                 <div className="bg-primary/10 rounded-lg p-3">
@@ -85,7 +94,9 @@ export function BulletinForm({
                 </div>
                 <div>
                   <p className="font-medium">{pdfFile.fileName}</p>
-                  <p className="text-muted-foreground text-sm">PDF 파일</p>
+                  <p className="text-muted-foreground text-sm">
+                    {pdfFile.rawFile ? 'PDF 파일' : '기존 등록된 PDF'}
+                  </p>
                 </div>
               </div>
               <Button
@@ -142,12 +153,15 @@ export function BulletinForm({
                   alt="주보 표지 미리보기"
                   fill
                   className="rounded-lg object-cover"
+                  sizes="96px"
                 />
               </div>
-              <div className="flex-1">
-                {coverImageFile.rawFile && (
-                  <p className="font-medium">{coverImageFile.rawFile.name}</p>
-                )}
+              <div className="w-0 flex-1">
+                <p className="truncate text-sm font-medium">
+                  {coverImageFile.rawFile
+                    ? coverImageFile.rawFile.name
+                    : '기존 등록된 표지 이미지'}
+                </p>
               </div>
               <Button
                 type="button"
@@ -165,7 +179,7 @@ export function BulletinForm({
                 이미지를 드래그하거나 클릭해서 선택
               </p>
               <p className="text-muted-foreground text-sm">
-                💡 JPG, PNG, WebP 파일 (최대 5MB)
+                💡 JPG, PNG, WebP 파일 (최대 10MB)
               </p>
               <input
                 type="file"
@@ -182,11 +196,6 @@ export function BulletinForm({
             {errors.coverImageFile.message}
           </p>
         )}
-        {bulletin?.coverImageUrl && !coverImageFile.rawFile && (
-          <p className="text-muted-foreground text-sm">
-            📎 현재 표지: {bulletin.coverImageUrl}
-          </p>
-        )}
       </div>
 
       <div className="flex justify-end gap-3 pt-4">
@@ -195,7 +204,7 @@ export function BulletinForm({
           size="lg"
           disabled={
             status.isPending ||
-            !pdfFile.rawFile ||
+            !pdfFile.fileName ||
             !isValid ||
             !status.hasChanges
           }

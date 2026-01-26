@@ -5,6 +5,7 @@ import { Sermon } from '@/entities/sermon';
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -30,6 +31,9 @@ export function EditSermonButton({ sermon }: Props) {
       <AlertDialogContent className="sm:max-w-[600px]">
         <AlertDialogHeader>
           <AlertDialogTitle>설교 수정</AlertDialogTitle>
+          <AlertDialogDescription className="sr-only">
+            설교 정보를 수정하는 폼입니다. 내용을 변경하고 저장하세요.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <SermonForm

@@ -33,3 +33,4 @@ export * from './SectionCard';
 export * from './DataTable';
 export * from './Toaster';
 export * from './ImageDialog';
+export * from './MultiImageDialog';

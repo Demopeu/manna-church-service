@@ -16,23 +16,20 @@ export async function pdfToWebpConverter(
     return [];
   }
   const pdfjsLib = await import('pdfjs-dist');
-  const { scale = 2.0, quality = 0.8 } = options;
+  const { scale = 1.5, quality = 0.7 } = options;
   if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
   }
 
   try {
     const arrayBuffer = await file.arrayBuffer();
-
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     const totalPages = pdf.numPages;
-
     const conversionPromises = Array.from({ length: totalPages }, (_, i) =>
       renderPageToWebp(pdf, i + 1, scale, quality),
     );
 
     const results = await Promise.all(conversionPromises);
-
     return results.filter((blob): blob is Blob => blob !== null);
   } catch (error) {
     console.error('❌ PDF 변환 실패:', error);

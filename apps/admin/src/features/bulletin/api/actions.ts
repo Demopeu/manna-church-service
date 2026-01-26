@@ -1,96 +1,35 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import { createClient } from '@repo/database/client';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
+import { requireAuth } from '@/shared/lib';
 import { ActionState } from '@/shared/model';
 import {
-  type CreateBulletinInput,
-  type UpdateBulletinInput,
-  createBulletinSchema,
+  createBulletinActionSchema,
   updateBulletinSchema,
 } from '../model/schema';
-
-async function createBulletin(
-  validatedFields: CreateBulletinInput,
-): Promise<ActionState> {
-  const supabase = await createClient();
-
-  const { error } = await supabase.from('bulletins').insert({
-    published_at: validatedFields.publishedAt,
-    cover_image_url: 'temp_cover_url',
-    image_urls: [],
-    original_pdf_url: 'temp_pdf_url',
-  });
-
-  if (error) {
-    console.error('주보 등록 실패:', error);
-    return {
-      success: false,
-      message: '주보 등록에 실패했습니다.',
-    };
-  }
-
-  revalidatePath('/bulletins');
-
-  return {
-    success: true,
-  };
-}
-
-async function updateBulletin(
-  id: string,
-  validatedFields: UpdateBulletinInput,
-): Promise<ActionState> {
-  const supabase = await createClient();
-
-  const { error } = await supabase
-    .from('bulletins')
-    .update({
-      published_at: validatedFields.publishedAt,
-    })
-    .eq('id', id);
-
-  if (error) {
-    console.error('주보 수정 실패:', error);
-    return {
-      success: false,
-      message: '주보 수정에 실패했습니다.',
-    };
-  }
-
-  revalidatePath('/bulletins');
-
-  return {
-    success: true,
-  };
-}
-
-async function deleteBulletin(id: string): Promise<void> {
-  const supabase = await createClient();
-
-  const { error } = await supabase.from('bulletins').delete().eq('id', id);
-
-  if (error) {
-    console.error('주보 삭제 실패:', error);
-    throw new Error('주보 삭제에 실패했습니다.');
-  }
-}
+import { createBulletin } from './create';
+import { deleteBulletin } from './delete';
+import { updateBulletin } from './update';
 
 export async function createBulletinAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const coverImageFile = formData.get('coverImageFile') as File | null;
-  const pdfFile = formData.get('pdfFile') as File | null;
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
+  }
 
   const rawData = {
     publishedAt: formData.get('publishedAt'),
-    coverImageFile: coverImageFile,
-    pdfFile: pdfFile,
+    coverImageFile: formData.get('coverImageFile'),
+    imageFiles: formData.getAll('imageFiles'),
+    pdfFile: formData.get('pdfFile'),
   };
 
-  const validatedFields = createBulletinSchema.safeParse(rawData);
+  console.log('rawData', rawData);
+
+  const validatedFields = createBulletinActionSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
     return {
@@ -108,13 +47,25 @@ export async function updateBulletinAction(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const coverImageFile = formData.get('coverImageFile') as File | null;
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
+  }
+  const rawCover = formData.get('coverImageFile');
+  const coverImageFile =
+    rawCover === 'null'
+      ? null
+      : rawCover instanceof File
+        ? rawCover
+        : undefined;
   const pdfFile = formData.get('pdfFile') as File | null;
+  const imageFiles = formData.getAll('imageFiles') as File[];
 
   const rawData = {
     publishedAt: formData.get('publishedAt'),
     coverImageFile: coverImageFile,
     pdfFile: pdfFile,
+    imageFiles: imageFiles.length > 0 ? imageFiles : undefined,
   };
 
   const validatedFields = updateBulletinSchema.safeParse(rawData);
@@ -131,5 +82,6 @@ export async function updateBulletinAction(
 }
 
 export async function deleteBulletinAction(id: string): Promise<void> {
+  await requireAuth(true);
   await tryCatchVoid(() => deleteBulletin(id));
 }

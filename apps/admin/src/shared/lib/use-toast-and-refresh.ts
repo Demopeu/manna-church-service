@@ -12,5 +12,9 @@ export function useToastAndRefresh(onSuccess?: () => void) {
     onSuccess?.();
   };
 
-  return { complete };
+  const errorToast = (message: string) => {
+    toast.error(message);
+  };
+
+  return { complete, errorToast };
 }

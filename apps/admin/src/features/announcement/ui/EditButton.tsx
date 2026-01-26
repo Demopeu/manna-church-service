@@ -5,6 +5,7 @@ import { Announcement } from '@/entities/announcement';
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -30,6 +31,9 @@ export function EditAnnouncementButton({ announcement }: Props) {
       <AlertDialogContent className="sm:max-w-[600px]">
         <AlertDialogHeader>
           <AlertDialogTitle>공지 수정</AlertDialogTitle>
+          <AlertDialogDescription className="sr-only">
+            공지 정보를 수정하는 폼입니다. 내용을 변경하고 저장하세요.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <AnnouncementForm
