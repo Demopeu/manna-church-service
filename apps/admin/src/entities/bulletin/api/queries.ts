@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { addHours, endOfWeek, startOfWeek, subHours } from 'date-fns';
 import { createClient } from '@repo/database/client';
 import type { Bulletin } from '../model/bulletin';
@@ -9,40 +10,45 @@ interface GetBulletinsParams {
   pageSize?: number;
 }
 
-export async function getBulletins({
-  query,
-  page,
-  pageSize = 10,
-}: GetBulletinsParams): Promise<{ bulletins: Bulletin[]; totalPages: number }> {
-  const supabase = await createClient();
+export const getBulletins = cache(
+  async ({
+    query,
+    page,
+    pageSize = 10,
+  }: GetBulletinsParams): Promise<{
+    bulletins: Bulletin[];
+    totalPages: number;
+  }> => {
+    const supabase = await createClient();
 
-  let queryBuilder = supabase
-    .from('bulletins')
-    .select('*', { count: 'exact' })
-    .order('published_at', { ascending: false });
+    let queryBuilder = supabase
+      .from('bulletins')
+      .select('*', { count: 'exact' })
+      .order('published_at', { ascending: false });
 
-  if (query) {
-    queryBuilder = queryBuilder.ilike('published_at::text', `%${query}%`);
-  }
+    if (query) {
+      queryBuilder = queryBuilder.ilike('published_at::text', `%${query}%`);
+    }
 
-  const from = (page - 1) * pageSize;
-  const to = from + pageSize - 1;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
 
-  const { data, error, count } = await queryBuilder.range(from, to);
+    const { data, error, count } = await queryBuilder.range(from, to);
 
-  if (error) {
-    throw new Error(`Failed to fetch bulletins: ${error.message}`);
-  }
+    if (error) {
+      throw new Error(`Failed to fetch bulletins: ${error.message}`);
+    }
 
-  const totalPages = count ? Math.ceil(count / pageSize) : 0;
+    const totalPages = count ? Math.ceil(count / pageSize) : 0;
 
-  return {
-    bulletins: (data || []).map(mapBulletin),
-    totalPages,
-  };
-}
+    return {
+      bulletins: (data || []).map(mapBulletin),
+      totalPages,
+    };
+  },
+);
 
-export async function getThisWeekBulletin(): Promise<Bulletin | null> {
+export const getThisWeekBulletin = cache(async (): Promise<Bulletin | null> => {
   const supabase = await createClient();
   const nowUtc = new Date();
   const nowKst = addHours(nowUtc, 9);
@@ -68,4 +74,4 @@ export async function getThisWeekBulletin(): Promise<Bulletin | null> {
   }
 
   return data ? mapBulletin(data) : null;
-}
+});

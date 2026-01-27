@@ -90,6 +90,7 @@ export function ServantForm({
                   alt="프로필 사진 미리보기"
                   fill
                   className="object-cover"
+                  sizes="96px"
                 />
               </div>
               <div className="w-0 flex-1">

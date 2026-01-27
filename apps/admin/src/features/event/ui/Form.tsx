@@ -109,6 +109,7 @@ export function EventForm({
                   alt="이벤트 사진 미리보기"
                   fill
                   className="rounded-lg object-cover"
+                  sizes="160px"
                 />
               </div>
               <div className="w-0 flex-1">

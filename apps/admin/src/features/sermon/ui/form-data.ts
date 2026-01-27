@@ -1,5 +1,3 @@
-'use client';
-
 import { Sermon } from '@/entities/sermon';
 
 const FORM_TEXT = {

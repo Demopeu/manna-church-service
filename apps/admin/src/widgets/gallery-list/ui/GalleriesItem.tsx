@@ -52,6 +52,7 @@ export function GalleriesItem({ gallery }: Props) {
                       alt={`${gallery.title} ${index + 1}`}
                       fill
                       className={`rounded-lg border-2 object-cover ${index === 0 ? 'border-primary' : 'border-transparent'}`}
+                      sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, 150px"
                     />
                   </div>
                   {index === 0 && (

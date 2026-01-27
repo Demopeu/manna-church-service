@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useEffectEvent, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@repo/ui/lib';
 import { Progress } from '@/shared/ui';
@@ -18,21 +18,24 @@ export function LoadingProgress({
 }: Props) {
   const [progress, setProgress] = useState(13);
 
-  useEffect(() => {
-    if (!isPending) return;
+  const resetProgress = useEffectEvent(() => {
+    setProgress(13);
+  });
 
+  useEffect(() => {
+    if (!isPending) {
+      resetProgress();
+      return;
+    }
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 95) {
-          clearInterval(interval);
-          return prev;
+          return 95;
         }
-
         const jump = Math.random() * 15;
         return Math.min(prev + jump, 95);
       });
     }, 800);
-
     return () => clearInterval(interval);
   }, [isPending]);
 

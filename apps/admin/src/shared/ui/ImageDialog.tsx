@@ -8,6 +8,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -28,6 +29,9 @@ export function ImageDialog({ src, alt, children }: ImageDialogProps) {
       <DialogContent className="max-w-4xl overflow-hidden border-none bg-transparent p-0 shadow-none [&>button:last-child]:hidden">
         <DialogHeader>
           <DialogTitle className="sr-only">이미지 상세 보기</DialogTitle>
+          <DialogDescription className="sr-only">
+            선택한 이미지를 크게 확대하여 보여주는 창입니다.
+          </DialogDescription>
         </DialogHeader>
         <DialogClose asChild>
           <Button

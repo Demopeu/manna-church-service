@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Pencil } from 'lucide-react';
+import { Bulletin } from '@/entities/bulletin';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -9,8 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
   Button,
-} from '@repo/ui/shadcn';
-import { Bulletin } from '@/entities/bulletin';
+} from '@/shared/ui';
 import { BulletinForm } from './Form';
 
 interface Props {

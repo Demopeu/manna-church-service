@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { ArrowRight, LucideIcon } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
 
-interface Prop {
+interface Props {
   title: string;
   icon: LucideIcon;
   href: string;
@@ -14,7 +14,7 @@ export function DashboardCardWrapper({
   icon: Icon,
   href,
   children,
-}: Prop) {
+}: Props) {
   return (
     <Card>
       <CardHeader>

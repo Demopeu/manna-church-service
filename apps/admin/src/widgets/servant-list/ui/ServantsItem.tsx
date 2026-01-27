@@ -21,6 +21,7 @@ export function ServantsItem({ servant }: Props) {
             alt={servant.name}
             fill
             className="object-cover"
+            sizes="48px"
           />
         </div>
       </TableCell>
