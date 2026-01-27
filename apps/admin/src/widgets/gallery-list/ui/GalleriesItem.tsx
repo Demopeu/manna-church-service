@@ -1,7 +1,5 @@
 'use client';
 
-import Image from 'next/image';
-import { Star } from 'lucide-react';
 import { DeleteGalleryButton, EditGalleryButton } from '@/features/gallery';
 import { GalleryWithImages } from '@/entities/gallery';
 import {
@@ -10,8 +8,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  MultiImageDialog,
 } from '@/shared/ui';
+import { GalleriesImage } from './GalleriesImage';
 
 interface Props {
   gallery: GalleryWithImages;
@@ -38,38 +36,11 @@ export function GalleriesItem({ gallery }: Props) {
         </div>
       </CardHeader>
       <CardContent>
-        <MultiImageDialog
-          images={gallery.images.map((img) => img.storagePath)}
-          title={`${gallery.title} 갤러리`}
-        >
-          <div className="cursor-pointer">
-            <div className="grid grid-cols-4 gap-2">
-              {gallery.images.slice(0, 4).map((image, index) => (
-                <div key={image.id} className="relative">
-                  <div className="relative aspect-square w-full">
-                    <Image
-                      src={image.storagePath}
-                      alt={`${gallery.title} ${index + 1}`}
-                      fill
-                      className={`rounded-lg border-2 object-cover ${index === 0 ? 'border-primary' : 'border-transparent'}`}
-                      sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, 150px"
-                    />
-                  </div>
-                  {index === 0 && (
-                    <div className="bg-primary absolute top-1 left-1 flex h-5 w-5 items-center justify-center rounded">
-                      <Star className="text-primary-foreground h-2.5 w-2.5 fill-current" />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            {gallery.images.length > 4 && (
-              <p className="text-muted-foreground mt-2 text-sm">
-                +{gallery.images.length - 4}장 더 보기
-              </p>
-            )}
-          </div>
-        </MultiImageDialog>
+        <GalleriesImage
+          images={gallery.images}
+          thumbnailUrl={gallery.thumbnailUrl}
+          galleryTitle={gallery.title}
+        />
       </CardContent>
     </Card>
   );
