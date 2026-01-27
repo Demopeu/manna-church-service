@@ -1,6 +1,7 @@
+import { cache } from 'react';
 import { createClient } from '@repo/database/client';
 
-export async function getMyProfile() {
+export const getMyProfile = cache(async () => {
   try {
     const supabase = await createClient();
 
@@ -18,4 +19,4 @@ export async function getMyProfile() {
     console.error('Error fetching profile:', error);
     return { name: null };
   }
-}
+});

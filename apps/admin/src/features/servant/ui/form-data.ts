@@ -1,5 +1,3 @@
-'use client';
-
 import { Servant } from '@/entities/servant';
 
 const FORM_TEXT = {

@@ -1,5 +1,3 @@
-'use client';
-
 import { Bulletin } from '@/entities/bulletin';
 
 const FORM_TEXT = {

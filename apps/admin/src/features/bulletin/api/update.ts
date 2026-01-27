@@ -1,6 +1,10 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
+import {
+  extractBucketPath,
+  extractBucketPaths,
+} from '../lib/parse-storage-url';
 import { UpdateBulletinInput } from '../model/schema';
 
 export async function updateBulletin(
@@ -27,35 +31,15 @@ export async function updateBulletin(
     let newImageUrls: string[] | undefined;
     let newCoverImageUrl: string | null | undefined;
 
-    // Debug logging
-    console.log('🔍 validatedFields:', {
-      coverImageFile: validatedFields.coverImageFile,
-      imageFiles: validatedFields.imageFiles?.length || 0,
-      publishedAt: validatedFields.publishedAt,
-    });
-    console.log('🔍 existingBulletin:', {
-      cover_image_url: existingBulletin.cover_image_url,
-      image_urls_count: existingBulletin.image_urls?.length || 0,
-    });
-
     if (validatedFields.imageFiles && validatedFields.imageFiles.length > 0) {
       if (
         existingBulletin.image_urls &&
         existingBulletin.image_urls.length > 0
       ) {
-        const oldPaths = existingBulletin.image_urls
-          .map((url: string) => {
-            try {
-              const fileUrl = new URL(url);
-              const bucketPath = fileUrl.pathname.split('/bulletins/')[1];
-              return bucketPath ? decodeURIComponent(bucketPath) : null;
-            } catch {
-              const fileName = url.split('/').pop();
-              return fileName ? `pages/${fileName}` : null;
-            }
-          })
-          .filter((path): path is string => path !== null);
-
+        const oldPaths = extractBucketPaths(
+          existingBulletin.image_urls,
+          'pages',
+        );
         pathsToDelete.push(...oldPaths);
       }
 
@@ -87,67 +71,25 @@ export async function updateBulletin(
       newImageUrls = imageUrls;
     }
 
-    console.log('🔍 커버 이미지 처리 시작');
-    console.log('📝 coverImageFile 값:', validatedFields.coverImageFile);
-    console.log(
-      '📝 coverImageFile === null:',
-      validatedFields.coverImageFile === null,
-    );
-    console.log(
-      '📝 coverImageFile instanceof File:',
-      validatedFields.coverImageFile instanceof File,
-    );
-
     if (validatedFields.coverImageFile === null) {
-      // null = 삭제 신호
-      console.log('✅ 커버 이미지 삭제 조건 충족 (null)');
       if (existingBulletin.cover_image_url) {
-        console.log(
-          '✅ 기존 커버 이미지 URL 존재:',
+        const path = extractBucketPath(
           existingBulletin.cover_image_url,
+          'covers',
         );
-        console.log(
-          '🗑️ 커버 이미지 삭제 시도:',
-          existingBulletin.cover_image_url,
-        );
-        try {
-          const fileUrl = new URL(existingBulletin.cover_image_url);
-          // Extract path after /bulletins/ in the URL
-          const bucketPath = fileUrl.pathname.split('/bulletins/')[1];
-          if (bucketPath) {
-            const decodedPath = decodeURIComponent(bucketPath);
-            console.log('📁 추출된 삭제 경로:', decodedPath);
-            pathsToDelete.push(decodedPath);
-          } else {
-            console.log('❌ bucketPath 추출 실패 - URL:', fileUrl.pathname);
-          }
-        } catch (error) {
-          console.log('⚠️ URL 파싱 실패, 폴백 사용:', error);
-          const fileName = existingBulletin.cover_image_url.split('/').pop();
-          if (fileName) {
-            const fallbackPath = `covers/${fileName}`;
-            console.log('📁 폴백 삭제 경로:', fallbackPath);
-            pathsToDelete.push(fallbackPath);
-          }
+        if (path) {
+          pathsToDelete.push(path);
         }
       }
       newCoverImageUrl = null;
-    } else if (validatedFields.coverImageFile === undefined) {
-      // undefined = 변경 없음 신호 (기존 이미지 유지)
-      console.log('📌 커버 이미지 변경 없음 (undefined) - 기존 이미지 유지');
     } else if (validatedFields.coverImageFile instanceof File) {
       if (existingBulletin.cover_image_url) {
-        try {
-          const fileUrl = new URL(existingBulletin.cover_image_url);
-          const bucketPath = fileUrl.pathname.split('/bulletins/')[1];
-          if (bucketPath) {
-            pathsToDelete.push(decodeURIComponent(bucketPath));
-          }
-        } catch {
-          const fileName = existingBulletin.cover_image_url.split('/').pop();
-          if (fileName) {
-            pathsToDelete.push(`covers/${fileName}`);
-          }
+        const path = extractBucketPath(
+          existingBulletin.cover_image_url,
+          'covers',
+        );
+        if (path) {
+          pathsToDelete.push(path);
         }
       }
 
@@ -188,18 +130,14 @@ export async function updateBulletin(
     if (error) throw error;
 
     if (pathsToDelete.length > 0) {
-      console.log('🗑️ 삭제할 파일 목록:', pathsToDelete);
       const { data, error } = await supabase.storage
         .from(BUCKET_NAME)
         .remove(pathsToDelete);
       if (error) {
         console.error('❌ Storage 삭제 실패:', error);
-        console.log('📋 삭제 시도한 경로들:', pathsToDelete);
       } else {
         console.log('✅ Storage 삭제 성공:', data);
       }
-    } else {
-      console.log('📝 삭제할 파일이 없음');
     }
 
     revalidatePath('/bulletins');

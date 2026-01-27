@@ -1,5 +1,3 @@
-'use client';
-
 import { Announcement } from '@/entities/announcement';
 
 const FORM_TEXT = {

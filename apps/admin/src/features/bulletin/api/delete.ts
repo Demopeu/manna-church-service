@@ -1,5 +1,9 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@repo/database/client';
+import {
+  extractBucketPath,
+  extractBucketPaths,
+} from '../lib/parse-storage-url';
 
 export async function deleteBulletin(id: string): Promise<void> {
   const supabase = await createClient();
@@ -18,18 +22,14 @@ export async function deleteBulletin(id: string): Promise<void> {
   const filesToDelete: string[] = [];
 
   if (bulletin.image_urls && bulletin.image_urls.length > 0) {
-    const imageFileNames = bulletin.image_urls
-      .map((url: string) => url.split('/').pop())
-      .filter((fileName): fileName is string => Boolean(fileName))
-      .map((fileName: string) => `pages/${fileName}`);
-
-    filesToDelete.push(...imageFileNames);
+    const imagePaths = extractBucketPaths(bulletin.image_urls, 'pages');
+    filesToDelete.push(...imagePaths);
   }
 
   if (bulletin.cover_image_url) {
-    const coverFileName = bulletin.cover_image_url.split('/').pop();
-    if (coverFileName) {
-      filesToDelete.push(`covers/${coverFileName}`);
+    const coverPath = extractBucketPath(bulletin.cover_image_url, 'covers');
+    if (coverPath) {
+      filesToDelete.push(coverPath);
     }
   }
 

@@ -1,5 +1,3 @@
-'use client';
-
 import { GalleryWithImages } from '@/entities/gallery';
 
 const FORM_TEXT = {

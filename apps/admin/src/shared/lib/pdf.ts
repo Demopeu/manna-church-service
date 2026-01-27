@@ -43,13 +43,16 @@ async function renderPageToWebp(
   scale: number,
   quality: number,
 ): Promise<Blob | null> {
+  const canvas = document.createElement('canvas');
   try {
     const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale });
-    const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
 
-    if (!context) return null;
+    if (!context) {
+      canvas.remove();
+      return null;
+    }
 
     canvas.width = viewport.width;
     canvas.height = viewport.height;
@@ -72,6 +75,7 @@ async function renderPageToWebp(
           }
           canvas.width = 0;
           canvas.height = 0;
+          canvas.remove();
         },
         'image/webp',
         quality,
@@ -79,6 +83,9 @@ async function renderPageToWebp(
     });
   } catch (error) {
     console.error(`${pageNumber}페이지 렌더링 실패:`, error);
+    canvas.width = 0;
+    canvas.height = 0;
+    canvas.remove();
     return null;
   }
 }
