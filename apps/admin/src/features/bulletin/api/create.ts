@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache';
+import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
 import { type CreateBulletinActionInput } from '../model/schema';
@@ -65,6 +66,7 @@ export async function createBulletin(
     revalidatePath('/bulletins');
     return { success: true };
   } catch (error) {
+    Sentry.captureException(error);
     if (uploadedPaths.length > 0) {
       console.log('🗑️ 에러 발생으로 인한 파일 롤백 시작...');
       await supabase.storage.from(BUCKET_NAME).remove(uploadedPaths);

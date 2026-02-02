@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { logoutAction } from '../api/actions';
 
 export function useLogout() {
@@ -5,6 +6,7 @@ export function useLogout() {
     try {
       await logoutAction();
     } catch (error) {
+      Sentry.captureException(error);
       console.error('로그아웃 실패', error);
     }
   };

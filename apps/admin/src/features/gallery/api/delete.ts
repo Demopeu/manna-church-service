@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache';
+import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@repo/database/client';
 
 export async function deleteGallery(id: string): Promise<void> {
@@ -31,7 +32,8 @@ export async function deleteGallery(id: string): Promise<void> {
           const fileUrl = new URL(img.storage_path);
           const bucketPath = fileUrl.pathname.split('/gallery/')[1];
           return bucketPath ? decodeURIComponent(bucketPath) : null;
-        } catch {
+        } catch (error) {
+          Sentry.captureException(error);
           const fileName = img.storage_path.split('/').pop();
           return fileName || null;
         }

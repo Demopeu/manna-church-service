@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache';
+import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
 import { UpdateGalleryInput } from '../model/schema';
@@ -52,7 +53,8 @@ export async function updateGallery(
             const fileUrl = new URL(img.storage_path);
             const bucketPath = fileUrl.pathname.split('/gallery/')[1];
             return bucketPath ? decodeURIComponent(bucketPath) : null;
-          } catch {
+          } catch (error) {
+            Sentry.captureException(error);
             return null;
           }
         })
@@ -175,6 +177,7 @@ export async function updateGallery(
     revalidatePath('/gallery');
     return { success: true };
   } catch (error) {
+    Sentry.captureException(error);
     console.error('갤러리 수정 중 오류 발생:', error);
 
     if (newlyUploadedPaths.length > 0) {

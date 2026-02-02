@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import * as Sentry from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useDialog } from '@/shared/lib';
 import { deleteSermonAction } from '../api/actions';
@@ -19,6 +20,7 @@ export function useDeleteSermon(sermonId: string) {
       toast.success('설교가 성공적으로 삭제되었습니다.');
       router.refresh();
     } catch (error) {
+      Sentry.captureException(error);
       console.error('설교 삭제 실패:', error);
       toast.error('설교 삭제에 실패했습니다.');
     } finally {

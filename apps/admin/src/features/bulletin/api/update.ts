@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache';
+import * as Sentry from '@sentry/nextjs';
 import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
 import {
@@ -143,6 +144,7 @@ export async function updateBulletin(
     revalidatePath('/bulletins');
     return { success: true };
   } catch (error) {
+    Sentry.captureException(error);
     if (uploadedPaths.length > 0) {
       await supabase.storage.from(BUCKET_NAME).remove(uploadedPaths);
     }
