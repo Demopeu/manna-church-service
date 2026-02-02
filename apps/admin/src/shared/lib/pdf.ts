@@ -1,5 +1,6 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
@@ -32,6 +33,7 @@ export async function pdfToWebpConverter(
     const results = await Promise.all(conversionPromises);
     return results.filter((blob): blob is Blob => blob !== null);
   } catch (error) {
+    Sentry.captureException(error);
     console.error('❌ PDF 변환 실패:', error);
     throw new Error('PDF 변환 중 오류가 발생했습니다.');
   }
@@ -82,6 +84,7 @@ async function renderPageToWebp(
       );
     });
   } catch (error) {
+    Sentry.captureException(error);
     console.error(`${pageNumber}페이지 렌더링 실패:`, error);
     canvas.width = 0;
     canvas.height = 0;

@@ -1,19 +1,17 @@
 'use client';
 
 import { useEffect, useEffectEvent, useState } from 'react';
+import * as Sentry from '@sentry/react';
 import { toast } from 'sonner';
 import { GalleryWithImages } from '@/entities/gallery';
 import { ImageItem } from '@/shared/lib';
 
-interface UseGalleryImagesProps {
+interface Props {
   initialData?: GalleryWithImages;
   onImagesChange?: (images: ImageItem[]) => void;
 }
 
-export function useGalleryImages({
-  initialData,
-  onImagesChange,
-}: UseGalleryImagesProps = {}) {
+export function useGalleryImages({ initialData, onImagesChange }: Props = {}) {
   const [dragActive, setDragActive] = useState(false);
   const [images, setImages] = useState<ImageItem[]>(
     initialData
@@ -57,7 +55,7 @@ export function useGalleryImages({
     }
   };
 
-  const addFiles = (files: File[]) => {
+  const addFiles = async (files: File[]) => {
     if (images.length + files.length > 10) {
       toast.error('이미지는 최대 10장까지만 등록할 수 있습니다.');
       return;
@@ -65,22 +63,56 @@ export function useGalleryImages({
     const validFiles = files.filter((f) => f.type.startsWith('image/'));
     if (validFiles.length === 0) return;
 
-    const newItems: ImageItem[] = validFiles.map((file) => ({
-      id: crypto.randomUUID(),
-      file,
-      preview: URL.createObjectURL(file),
-      isThumbnail: false,
-    }));
+    const toastId =
+      validFiles.length > 1
+        ? toast.loading(`이미지 ${validFiles.length}장을 순서대로 처리 중...`)
+        : undefined;
 
-    const hasExistingThumbnail = images.some((p) => p.isThumbnail);
-    const firstNewItem = newItems[0];
+    let successCount = 0;
+    let failedCount = 0;
 
-    if (!hasExistingThumbnail && firstNewItem) {
-      firstNewItem.isThumbnail = true;
+    const newItems: ImageItem[] = [];
+
+    for (const file of validFiles) {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
+        const preview = URL.createObjectURL(file);
+        const hasExistingThumbnail = images.some((p) => p.isThumbnail);
+        const isFirstInBatch = newItems.length === 0;
+
+        const newItem: ImageItem = {
+          id: crypto.randomUUID(),
+          file,
+          preview,
+          isThumbnail: !hasExistingThumbnail && isFirstInBatch,
+        };
+
+        newItems.push(newItem);
+        successCount++;
+      } catch (error) {
+        console.error(`파일 처리 실패: ${file.name}`, error);
+        Sentry.captureException(error);
+        failedCount++;
+      }
     }
 
-    const nextImages = [...images, ...newItems];
-    updateImages(nextImages);
+    if (newItems.length > 0) {
+      const nextImages = [...images, ...newItems];
+      updateImages(nextImages);
+    }
+
+    if (toastId) {
+      toast.dismiss(toastId);
+    }
+
+    if (successCount === 0 && failedCount > 0) {
+      toast.error('이미지를 불러올 수 없습니다.');
+    } else if (failedCount > 0) {
+      toast.warning(`${successCount}장 추가 완료 (${failedCount}장 실패)`);
+    } else if (validFiles.length > 1) {
+      toast.success(`이미지 ${successCount}장이 추가되었습니다.`);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {

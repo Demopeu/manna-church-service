@@ -1,4 +1,5 @@
 import { FieldValues, UseFormSetError } from 'react-hook-form';
+import * as Sentry from '@sentry/nextjs';
 import imageCompression from 'browser-image-compression';
 
 interface imageToWebpConverterParams {
@@ -31,6 +32,7 @@ export const imageToWebpConverter = async ({
       lastModified: new Date().getTime(),
     });
   } catch (error) {
+    Sentry.captureException(error);
     console.error('❌ 이미지 압축 실패 (원본 사용):', error);
     return file;
   }
@@ -79,6 +81,7 @@ export async function imageConverter<T extends FieldValues>({
     formData.set(fieldKey, compressedFile);
     return true;
   } catch (error) {
+    Sentry.captureException(error);
     console.error('이미지 압축 에러:', error);
 
     setError('root', {
