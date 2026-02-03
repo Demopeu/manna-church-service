@@ -3,11 +3,7 @@ import { createClient } from '@repo/database/client';
 import type { Banner } from '../model/banner';
 import { mapBanner } from './mapper';
 
-interface GetBannersResult {
-  banners: Banner[];
-}
-
-export const getBanners = cache(async (): Promise<GetBannersResult> => {
+export const getBanners = cache(async (): Promise<Banner[]> => {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -20,7 +16,5 @@ export const getBanners = cache(async (): Promise<GetBannersResult> => {
     throw new Error(`Failed to fetch banners: ${error.message}`);
   }
 
-  return {
-    banners: (data || []).map(mapBanner),
-  };
+  return data.map(mapBanner) || [];
 });

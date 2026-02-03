@@ -33,6 +33,11 @@
   --sidebar-border: oklch(0.9 0.01 250);
   --sidebar-ring: oklch(0.45 0.12 250);
   --manna: oklch(0.5185 0.1425 249.61);
+  --manna-yellow: oklch(0.9542 0.1562 108.64);
+  --manna-mint: oklch(0.7702 0.147353 173.3904);
+  --manna-cyan: oklch(0.7043 0.1231 212.84);
+  --manna-dark-blue: oklch(0.5096 0.1499 255.06);
+  --manna-green: oklch(0.8532 0.1654 142.95);
 }
 
 @theme inline {
@@ -58,6 +63,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-manna: var(--manna);
+  --color-manna-yellow: var(--manna-yellow);
+  --color-manna-mint: var(--manna-mint);
+  --color-manna-cyan: var(--manna-cyan);
+  --color-manna-green: var(--manna-green);
+  --color-manna-dark-blue: var(--manna-dark-blue);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
