@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { type Event } from '@/entities/event';
-import { Button, Card } from '@/shared/ui';
+import { Button, Card, ReadMoreButton, SectionWrapper } from '@/shared/ui';
 
 interface Props {
   events: Event[];
@@ -13,18 +13,13 @@ export function EventsMarquee({ events }: Props) {
   const loopedEvents = Array(5).fill(events).flat();
 
   return (
-    <section className="bg-manna-mint/15 overflow-hidden py-12 md:py-16">
+    <SectionWrapper className="bg-manna-mint/15 overflow-hidden">
       <div className="mx-auto mb-8 max-w-7xl px-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-foreground text-xl font-bold">이벤트</h3>
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="text-church-blue border-church-blue hover:bg-church-blue/10 bg-white"
-          >
-            <Link href="/events">+ 더 보기</Link>
-          </Button>
+          <h3 className="text-foreground text-2xl font-bold md:text-4xl">
+            이벤트
+          </h3>
+          <ReadMoreButton href="/events" variant="manna" />
         </div>
       </div>
 
@@ -66,6 +61,6 @@ export function EventsMarquee({ events }: Props) {
           ))}
         </div>
       </div>
-    </section>
+    </SectionWrapper>
   );
 }

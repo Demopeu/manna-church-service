@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { type Announcement } from '@/entities/announcement';
 import { formatKoreanDate } from '@/shared/lib';
-import { Badge, Button } from '@/shared/ui';
+import { Badge, ReadMoreButton } from '@/shared/ui';
 
 export function AnnouncementsSection({
   announcements,
@@ -9,20 +9,15 @@ export function AnnouncementsSection({
   announcements: Announcement[];
 }) {
   return (
-    <div className="flex aspect-video w-full flex-col">
-      <div className="mb-4 flex shrink-0 items-center justify-between">
-        <h3 className="text-foreground text-xl font-bold">공지사항</h3>
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          className="text-church-blue border-church-blue hover:bg-church-blue/10 bg-transparent"
-        >
-          <Link href="/announcements">+ 더 보기</Link>
-        </Button>
+    <div className="flex w-full flex-col lg:aspect-video">
+      <div className="mx-4 mb-4 flex shrink-0 items-center justify-between">
+        <h3 className="text-foreground text-xl font-bold md:text-2xl">
+          공지사항
+        </h3>
+        <ReadMoreButton href="/announcements" variant="transparent" />
       </div>
-      <div className="flex-1 overflow-hidden rounded-xl bg-white shadow-lg">
-        <div className="h-full overflow-y-auto">
+      <div className="rounded-xl bg-white shadow-lg lg:flex-1 lg:overflow-hidden">
+        <div className="lg:h-full lg:overflow-y-auto">
           <ul className="divide-border divide-y">
             {announcements.map((item) => (
               <li key={item.id}>

@@ -11,13 +11,13 @@ export function MainFooter() {
   return (
     <footer className="bg-slate-800 py-8 text-white">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-6 lg:flex-row">
           <div className="flex items-center gap-2">
             <Image src="/logo.svg" alt="logo" width={32} height={32} />
             <span className="text-lg font-bold">{title}</span>
           </div>
 
-          <div className="flex flex-col items-center gap-4 text-sm text-slate-300 sm:flex-row">
+          <div className="flex flex-col items-center gap-4 text-sm text-slate-300 md:flex-row">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               <span>{address}</span>
