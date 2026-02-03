@@ -75,6 +75,7 @@
     "@radix-ui/react-switch": "1.2.6",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "embla-carousel-react": "8.6.0",
     "lucide-react": "0.546.0",
     "react-hook-form": "7.70.0",
     "tailwind-merge": "3.3.1",

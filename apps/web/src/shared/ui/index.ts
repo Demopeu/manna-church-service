@@ -21,4 +21,14 @@ export {
   SheetDescription,
 } from './base/Sheet';
 
+export {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  useCarousel,
+} from './base/Carousel';
+
 export { Button } from './base/Button';
