@@ -129,8 +129,11 @@ importers:
       '@sentry/nextjs':
         specifier: 10.36.0
         version: 10.36.0(@opentelemetry/context-async-hooks@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.5.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.5.0(@opentelemetry/api@1.9.0))(next@16.1.1(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.104.1)
+      date-fns:
+        specifier: 4.1.0
+        version: 4.1.0
       embla-carousel-autoplay:
-        specifier: ^8.6.0
+        specifier: 8.6.0
         version: 8.6.0(embla-carousel@8.6.0)
       lucide-react:
         specifier: 0.546.0
