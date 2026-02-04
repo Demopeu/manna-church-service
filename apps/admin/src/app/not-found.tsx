@@ -11,8 +11,6 @@ export default function NotFound() {
             <Church className="text-primary h-12 w-12" />
           </div>
         </div>
-
-        {/* 404 텍스트 */}
         <h1 className="text-primary mb-2 text-8xl font-bold">404</h1>
         <h2 className="text-foreground mb-4 text-2xl font-semibold">
           페이지를 찾을 수 없습니다
