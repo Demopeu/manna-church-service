@@ -17,16 +17,18 @@ interface Props {
   title: string;
   description: string;
   columns?: readonly Column[];
+  action?: React.ReactNode;
 }
 
-export function ListSkeleton({ title, description, columns }: Props) {
+export function ListSkeleton({
+  title,
+  description,
+  columns,
+  action = <SearchInputSkeleton />,
+}: Props) {
   if (!columns || columns.length === 0) {
     return (
-      <SectionCard
-        title={title}
-        description={description}
-        action={<SearchInputSkeleton />}
-      >
+      <SectionCard title={title} description={description} action={action}>
         <div className="space-y-4 p-4">
           <Skeleton className="h-10 w-full rounded-md" />
 
@@ -40,11 +42,7 @@ export function ListSkeleton({ title, description, columns }: Props) {
     );
   }
   return (
-    <SectionCard
-      title={title}
-      description={description}
-      action={<SearchInputSkeleton />}
-    >
+    <SectionCard title={title} description={description} action={action}>
       <DataTable columns={columns}>
         {Array.from({ length: 10 }).map((_, i) => (
           <TableRow key={i}>
