@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Items } from '../const/Item';
+import { Items } from '@/shared/config';
 
 export function QuickMenu() {
   return (

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { menuData } from '@/shared/config';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -9,7 +10,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '@/shared/ui';
-import { menuData } from './data';
 
 export function MainNavigationMenu() {
   return (
