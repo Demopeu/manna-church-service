@@ -38,7 +38,7 @@ export function PastorGreetingIntro() {
             ))}
           </div>
 
-          <div className="border-border mt-8 flex items-end justify-end gap-2 border-t pt-6">
+          <div className="border-border mt-8 flex items-center justify-end gap-2 border-t pt-6">
             <p className="text-manna-dark-blue font-semibold">{profile.role}</p>
             {profile.signature ? (
               <div className="relative h-12 w-32 md:h-14 md:w-40">
