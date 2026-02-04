@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { socialData } from './data';
+import { socialData } from '@/shared/config';
 
 export function Icon() {
   return (

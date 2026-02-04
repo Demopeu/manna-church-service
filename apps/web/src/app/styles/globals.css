@@ -81,6 +81,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --animate-marquee: marquee 40s linear infinite;
+  --text-korean-pretty: text-pretty break-keep;
 
   @keyframes marquee {
     from {

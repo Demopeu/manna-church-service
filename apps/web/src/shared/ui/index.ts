@@ -12,3 +12,5 @@ export * from './utils/aspect-ratio';
 // components
 export * from './SectionWrapper';
 export * from './ReadMoreButtion';
+export * from './NotImage';
+export * from './HeroBanner';
