@@ -42,7 +42,10 @@ export const getBulletins = cache(
     const { data, error, count } = await queryBuilder.range(from, to);
 
     if (error) {
-      throw new Error(`Failed to fetch bulletins: ${error.message}`);
+      console.error('주보 목록 조회 중 Supabase 에러 발생:', error);
+      throw new Error(
+        `[주보 목록 로딩 실패] 서버 응답 오류입니다. (${error.message})`,
+      );
     }
 
     const totalPages = count ? Math.ceil(count / pageSize) : 0;
