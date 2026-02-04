@@ -5,20 +5,14 @@ import type { Bulletin } from '../model/bulletin';
 import { mapBulletin } from './mapper';
 
 interface GetBulletinsParams {
-  query: string;
+  year: number;
+  month: number;
   page: number;
   pageSize?: number;
 }
 
 export const getBulletins = cache(
-  async ({
-    query,
-    page,
-    pageSize = 10,
-  }: GetBulletinsParams): Promise<{
-    bulletins: Bulletin[];
-    totalPages: number;
-  }> => {
+  async ({ year, month, page, pageSize = 10 }: GetBulletinsParams) => {
     const supabase = await createClient();
 
     let queryBuilder = supabase
@@ -26,8 +20,20 @@ export const getBulletins = cache(
       .select('*', { count: 'exact' })
       .order('published_at', { ascending: false });
 
-    if (query) {
-      queryBuilder = queryBuilder.ilike('published_at::text', `%${query}%`);
+    if (year > 0 && month > 0) {
+      const startDate = new Date(year, month - 1, 1).toISOString();
+      const endDate = new Date(year, month, 1).toISOString();
+
+      queryBuilder = queryBuilder
+        .gte('published_at', startDate)
+        .lt('published_at', endDate);
+    } else if (year > 0) {
+      const startDate = new Date(year, 0, 1).toISOString();
+      const endDate = new Date(year + 1, 0, 1).toISOString();
+
+      queryBuilder = queryBuilder
+        .gte('published_at', startDate)
+        .lt('published_at', endDate);
     }
 
     const from = (page - 1) * pageSize;
@@ -36,7 +42,10 @@ export const getBulletins = cache(
     const { data, error, count } = await queryBuilder.range(from, to);
 
     if (error) {
-      throw new Error(`Failed to fetch bulletins: ${error.message}`);
+      console.error('주보 목록 조회 중 Supabase 에러 발생:', error);
+      throw new Error(
+        `[주보 목록 로딩 실패] 서버 응답 오류입니다. (${error.message})`,
+      );
     }
 
     const totalPages = count ? Math.ceil(count / pageSize) : 0;

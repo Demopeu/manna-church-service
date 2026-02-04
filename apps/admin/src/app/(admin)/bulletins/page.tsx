@@ -1,19 +1,23 @@
 import { BulletinsList } from '@/widgets/bulletin-list';
 import { CreateBulletinButton } from '@/features/bulletin';
+import { getCurrentYearMonth } from '@/shared/lib';
 
 export default async function BulletinsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: Promise<{ year?: string; month?: string; page?: string }>;
 }) {
-  const { q, page } = await searchParams;
+  const { year: yearParam, month: monthParam, page } = await searchParams;
 
-  const searchQuery = q || '';
+  const { year: currentYear, month: currentMonth } = getCurrentYearMonth();
+  const year = yearParam !== undefined ? Number(yearParam) : currentYear;
+  const month = monthParam !== undefined ? Number(monthParam) : currentMonth;
   const currentPage = Math.max(1, Number(page) || 1);
+
   return (
     <div className="space-y-6">
       <CreateBulletinButton />
-      <BulletinsList searchQuery={searchQuery} currentPage={currentPage} />
+      <BulletinsList year={year} month={month} currentPage={currentPage} />
     </div>
   );
 }

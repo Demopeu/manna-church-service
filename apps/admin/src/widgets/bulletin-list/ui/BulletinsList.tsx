@@ -1,13 +1,13 @@
 import { Suspense } from 'react';
 import { Megaphone } from 'lucide-react';
+import { YearMonthSelect } from '@/features/bulletin/ui/YearMonthSelect';
+import { YearMonthSelectSkeleton } from '@/features/bulletin/ui/YearMonthSelectSkeleton';
 import { getBulletins } from '@/entities/bulletin';
 import {
   DataTable,
   EmptyState,
   ListSkeleton,
   Pagination,
-  SearchInput,
-  SearchInputSkeleton,
   SectionCard,
   withAsyncBoundary,
 } from '@/shared/ui';
@@ -16,13 +16,15 @@ import { COLUMNS } from './columns';
 import { BULLETIN_UI } from './labels';
 
 interface Props {
-  searchQuery: string;
+  year: number;
+  month: number;
   currentPage: number;
 }
 
-async function List({ searchQuery, currentPage }: Props) {
+async function List({ year, month, currentPage }: Props) {
   const { bulletins, totalPages } = await getBulletins({
-    query: searchQuery,
+    year,
+    month,
     page: currentPage,
   });
   return (
@@ -30,8 +32,8 @@ async function List({ searchQuery, currentPage }: Props) {
       title={BULLETIN_UI.TITLE}
       description={BULLETIN_UI.DESCRIPTION}
       action={
-        <Suspense fallback={<SearchInputSkeleton />}>
-          <SearchInput placeholder={BULLETIN_UI.SEARCH_PLACEHOLDER} />
+        <Suspense fallback={<YearMonthSelectSkeleton />}>
+          <YearMonthSelect year={year} month={month} />
         </Suspense>
       }
     >
@@ -59,6 +61,7 @@ export const BulletinsList = withAsyncBoundary(List, {
       title={BULLETIN_UI.TITLE}
       description={BULLETIN_UI.DESCRIPTION}
       columns={COLUMNS}
+      action={<YearMonthSelectSkeleton />}
     />
   ),
 });

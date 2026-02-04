@@ -4,6 +4,8 @@ import {
   differenceInMinutes,
   differenceInSeconds,
   format,
+  getMonth,
+  getYear,
   parseISO,
 } from 'date-fns';
 import { ko } from 'date-fns/locale';
@@ -50,4 +52,12 @@ export function formatRelativeDate(
     return `${diffDays}일 전`;
   }
   return format(date, 'yyyy.MM.dd', { locale: ko });
+}
+
+export function getCurrentYearMonth(): { year: number; month: number } {
+  const now = new Date();
+  return {
+    year: getYear(now),
+    month: getMonth(now) + 1,
+  };
 }
