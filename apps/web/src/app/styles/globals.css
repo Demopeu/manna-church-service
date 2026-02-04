@@ -100,3 +100,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .text-korean-pretty {
+    @apply text-pretty break-keep;
+  }
+}

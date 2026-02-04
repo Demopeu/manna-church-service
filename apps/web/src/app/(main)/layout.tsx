@@ -1,4 +1,4 @@
-import { MainFooter, MainHeader } from '@/widgets/main-layout';
+import { MainFooter, MainHeader, ScrollFAB } from '@/widgets/main-layout';
 
 export default function layout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,6 +6,7 @@ export default function layout({ children }: { children: React.ReactNode }) {
       <MainHeader />
       {children}
       <MainFooter />
+      <ScrollFAB />
     </div>
   );
 }

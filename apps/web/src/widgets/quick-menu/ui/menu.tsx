@@ -34,7 +34,7 @@ export function QuickMenu() {
                     sizes="80vw"
                   />
                 </div>
-                <span className="text-foreground text-center text-xs font-extrabold md:text-base">
+                <span className="text-foreground text-korean-pretty text-center text-xs font-extrabold md:text-base">
                   {item.label}
                 </span>
               </Link>
