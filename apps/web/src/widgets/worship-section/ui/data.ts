@@ -64,7 +64,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
   {
     id: 'weekday',
     title: '주중 예배 및 기도회',
-    accentColor: 'blue',
+    accentColor: 'cyan',
     items: [
       {
         name: '새벽 기도회',
@@ -72,7 +72,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
         location: '본당',
         days: '월~토 (주일 제외)',
         icon: Sunrise,
-        iconColor: 'blue',
+        iconColor: 'cyan',
       },
       {
         name: '수요 저녁 기도회',
@@ -80,7 +80,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
         location: '본당',
         days: '수요일',
         icon: Moon,
-        iconColor: 'blue',
+        iconColor: 'cyan',
       },
       {
         name: '저녁 기도회',
@@ -88,21 +88,21 @@ export const WORSHIP_DATA: WorshipCategory[] = [
         location: '본당',
         days: '월, 화, 목, 금',
         icon: Moon,
-        iconColor: 'blue',
+        iconColor: 'cyan',
       },
       {
         name: '구역 모임',
         time: '2,4주차 오후 2:00',
         location: '각 구역',
         icon: Users,
-        iconColor: 'blue',
+        iconColor: 'cyan',
       },
     ],
   },
   {
     id: 'nextgen',
     title: '다음세대 예배',
-    accentColor: 'cyan',
+    accentColor: 'blue',
     items: [
       {
         name: '유년부 예배',
@@ -110,7 +110,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
         location: '유년부실',
         days: '주일',
         icon: BookOpen,
-        iconColor: 'cyan',
+        iconColor: 'blue',
       },
       {
         name: '청소년부 예배',
@@ -118,7 +118,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
         location: '유년부실',
         days: '주일',
         icon: Calendar,
-        iconColor: 'cyan',
+        iconColor: 'blue',
       },
       {
         name: '청년부 예배',
@@ -126,7 +126,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
         location: '유년부실',
         days: '주일',
         icon: Users,
-        iconColor: 'cyan',
+        iconColor: 'blue',
       },
     ],
   },

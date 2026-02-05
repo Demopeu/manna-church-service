@@ -27,12 +27,12 @@ export function GallerySection({ galleries }: Props) {
           <h3 className="text-foreground text-2xl font-bold md:text-4xl">
             갤러리
           </h3>
-          <ReadMoreButton href="/gallery" variant="manna" />
+          <ReadMoreButton href="/news/gallery" variant="manna" />
         </div>
 
         <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
           {galleries.slice(0, 4).map((item) => (
-            <Link key={item.id} href={`/gallery/${item.id}`}>
+            <Link key={item.id} href={`/news/gallery/${item.id}`}>
               <Card className="group cursor-pointer overflow-hidden border-0 p-0 shadow-md transition-all duration-300 hover:shadow-lg">
                 <CardContent className="p-0">
                   <AspectRatio ratio={4 / 3}>

@@ -1,10 +1,11 @@
-export type AccentColor = 'blue' | 'cyan' | 'green' | 'manna';
+export type AccentColor = 'blue' | 'cyan' | 'green' | 'manna' | 'yellow';
 
 export const titleBorderColorMap: Record<AccentColor, string> = {
   blue: 'border-manna-dark-blue',
   cyan: 'border-manna-cyan',
   green: 'border-manna-green',
   manna: 'border-manna',
+  yellow: 'border-manna-yellow',
 };
 
 export const titleTextColorMap: Record<AccentColor, string> = {
@@ -12,6 +13,7 @@ export const titleTextColorMap: Record<AccentColor, string> = {
   cyan: 'text-manna-cyan',
   green: 'text-manna-green',
   manna: 'text-manna',
+  yellow: 'text-manna-yellow',
 };
 
 export const cardBorderColorMap: Record<AccentColor, string> = {
@@ -19,6 +21,7 @@ export const cardBorderColorMap: Record<AccentColor, string> = {
   cyan: 'border-l-manna-cyan',
   green: 'border-l-manna-green',
   manna: 'border-l-manna',
+  yellow: 'border-l-manna-yellow',
 };
 
 export const iconColorMap: Record<AccentColor, string> = {
@@ -26,4 +29,5 @@ export const iconColorMap: Record<AccentColor, string> = {
   cyan: 'text-manna-cyan',
   green: 'text-manna-green',
   manna: 'text-manna',
+  yellow: 'text-manna-yellow',
 };

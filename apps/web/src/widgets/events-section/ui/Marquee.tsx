@@ -19,7 +19,7 @@ export function EventsMarquee({ events }: Props) {
           <h3 className="text-foreground text-2xl font-bold md:text-4xl">
             이벤트
           </h3>
-          <ReadMoreButton href="/events" variant="manna" />
+          <ReadMoreButton href="/news/events" variant="manna" />
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export function EventsMarquee({ events }: Props) {
                     size="sm"
                     className="border-white/60 bg-transparent text-white hover:bg-white/20"
                   >
-                    <Link href={`/events/${event.id}`}>자세히 보기</Link>
+                    <Link href={`/news/events/${event.id}`}>자세히 보기</Link>
                   </Button>
                 </div>
               </div>

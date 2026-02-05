@@ -14,3 +14,4 @@ export * from './SectionWrapper';
 export * from './ReadMoreButtion';
 export * from './NotImage';
 export * from './HeroBanner';
+export * from './MainWrapper';

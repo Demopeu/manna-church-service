@@ -3,17 +3,19 @@ import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
 import { NotImage } from '@/shared/ui';
 
+export interface HeroBannerProps {
+  title: string;
+  subtitle: string;
+  breadcrumbs: { label: string; href?: string }[];
+  backgroundImage?: string;
+}
+
 export function HeroBanner({
   title,
   subtitle,
   breadcrumbs,
   backgroundImage,
-}: {
-  title: string;
-  subtitle: string;
-  breadcrumbs: { label: string; href?: string }[];
-  backgroundImage?: string;
-}) {
+}: HeroBannerProps) {
   return (
     <div className="relative h-[250px] overflow-hidden rounded-2xl">
       {backgroundImage ? (
