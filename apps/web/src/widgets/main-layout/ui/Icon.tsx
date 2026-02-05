@@ -1,12 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { socialData } from '@/shared/config';
+import { churchData } from '@/shared/config';
 
 export function Icon() {
   return (
     <div className="flex items-center gap-1">
       <Link
-        href={socialData.youtube}
+        href={churchData.youtube}
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"
@@ -15,7 +15,7 @@ export function Icon() {
         <span className="sr-only">YouTube</span>
       </Link>
       <Link
-        href={socialData.instagram}
+        href={churchData.instagram}
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"

@@ -11,10 +11,7 @@ export function MainHeader() {
         <MainNavigationMenu />
         <div className="flex shrink-0 items-center gap-1">
           <Icon />
-          <MobileMenu
-            address="경기도 성남시 분당구 양현로 353"
-            phone="010-1234-5678"
-          />
+          <MobileMenu />
         </div>
       </nav>
     </header>
