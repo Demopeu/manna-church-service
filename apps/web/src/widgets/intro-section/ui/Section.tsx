@@ -8,14 +8,14 @@ export function PastorGreetingIntro() {
     <section className="space-y-8">
       <div className="flex flex-col items-start gap-8 sm:flex-row">
         <div className="w-full shrink-0 sm:w-48 md:w-56 lg:w-64">
-          <div className="bg-manna-mint/20 relative mx-16 aspect-4/5 overflow-hidden rounded-2xl shadow-lg sm:mx-0">
+          <div className="bg-manna-dark-blue/20 relative mx-16 aspect-4/5 overflow-hidden rounded-2xl shadow-lg sm:mx-0">
             <Image
               src={profile.image}
               alt={`${profile.role} ${profile.name}`}
               fill
               className="object-cover object-top"
               priority
-              sizes="70vw"
+              sizes="100vw"
             />
           </div>
           <p className="text-manna-dark-blue mt-3 text-center font-medium">

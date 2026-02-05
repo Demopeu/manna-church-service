@@ -12,7 +12,7 @@ export const pastorData = {
   profile: {
     name: '김정환',
     role: '담임목사',
-    image: '/youtube_imageUrl.png',
+    image: '/LEADPASTOR.webp',
     signature: '/signature.png',
   },
   greeting: {

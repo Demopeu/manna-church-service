@@ -1,3 +1,5 @@
+import { churchData } from './data';
+
 export const menuData = {
   교회소개: [
     { title: '만나교회 소개', href: '/about/intro', icon: 'Church' },
@@ -5,7 +7,7 @@ export const menuData = {
     { title: '주보', href: '/about/bulletins', icon: 'BookOpen' },
     { title: '예배 안내', href: '/about/worship', icon: 'Calendar' },
     { title: '섬기는 사람들', href: '/about/servants', icon: 'Users' },
-    { title: '설교 영상', href: 'https://www.youtube.com', icon: 'Video' },
+    { title: '설교 영상', href: churchData.youtube, icon: 'Video' },
     { title: '선교사 후원', href: '/about/missionary', icon: 'Plane' },
   ],
   만나소식: [
@@ -15,10 +17,6 @@ export const menuData = {
   ],
 };
 
-export const socialData = {
-  instagram: 'https://instagram.com',
-  youtube: 'https://youtube.com',
-};
 export const Items = [
   {
     icon: '/icons/church.png',
@@ -28,7 +26,7 @@ export const Items = [
   {
     icon: '/icons/sermon.png',
     label: '설교영상',
-    href: 'https://www.youtube.com',
+    href: churchData.youtube,
   },
   {
     icon: '/icons/bulletin.png',

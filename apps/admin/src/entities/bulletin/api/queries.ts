@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { addHours, endOfWeek, startOfWeek, subHours } from 'date-fns';
+import { addHours, endOfDay, setDay, startOfDay, subHours } from 'date-fns';
 import { createClient } from '@repo/database/client';
 import type { Bulletin } from '../model/bulletin';
 import { mapBulletin } from './mapper';
@@ -59,13 +59,26 @@ export const getBulletins = cache(
 
 export const getThisWeekBulletin = cache(async (): Promise<Bulletin | null> => {
   const supabase = await createClient();
-  const nowUtc = new Date();
-  const nowKst = addHours(nowUtc, 9);
 
-  const startKst = startOfWeek(nowKst, { weekStartsOn: 0 });
-  const endKst = endOfWeek(nowKst, { weekStartsOn: 0 });
-  const startUtc = subHours(startKst, 9);
-  const endUtc = subHours(endKst, 9);
+  // 1. 현재 한국 시간 계산
+  const nowUtc = new Date();
+  const nowKst = addHours(nowUtc, 9); // 한국 시간 기준
+
+  // 2. "이번 주 일요일" 계산 (핵심)
+  // setDay(날짜, 0, { weekStartsOn: 1 })
+  // -> 월요일(1)을 한 주의 시작으로 보고, 이번 주의 일요일(0)을 찾습니다.
+  // 예: 2월 5일(목) -> 2월 8일(일) 반환
+  // 예: 2월 1일(일) -> 2월 1일(일) 반환 (일요일 당일이면 당일 주보)
+  const targetSundayKst = setDay(nowKst, 0, { weekStartsOn: 1 });
+
+  // 3. 검색 범위 설정 (일요일 00:00:00 ~ 23:59:59 KST)
+  // 주 전체를 검색하지 않고, 딱 주보가 발행되는 "일요일 하루"만 타겟팅합니다.
+  const startOfSundayKst = startOfDay(targetSundayKst);
+  const endOfSundayKst = endOfDay(targetSundayKst);
+
+  // 4. DB 검색을 위해 UTC로 변환
+  const startUtc = subHours(startOfSundayKst, 9);
+  const endUtc = subHours(endOfSundayKst, 9);
 
   const { data, error } = await supabase
     .from('bulletins')

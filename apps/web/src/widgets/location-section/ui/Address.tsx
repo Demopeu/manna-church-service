@@ -1,10 +1,8 @@
 import { MapPin, Phone } from 'lucide-react';
+import { churchData } from '@/shared/config';
 
 export function AddressSection() {
-  const { address, phone } = {
-    address: '부산광역시 사하구 다대로429번길 23, 4층(만나교회)',
-    phone: '010-4125-9186',
-  };
+  const { address, phone } = churchData;
   return (
     <section className="bg-card border-border/50 rounded-2xl border p-6 shadow-sm">
       <div className="flex flex-col gap-6 sm:flex-row">

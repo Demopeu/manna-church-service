@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MapPin, Menu, Phone } from 'lucide-react';
 import { menuData } from '@/shared/config';
+import { churchData } from '@/shared/config';
 import {
   Button,
   Sheet,
@@ -14,12 +15,7 @@ import {
   SheetTrigger,
 } from '@/shared/ui';
 
-interface Props {
-  address: string;
-  phone: string;
-}
-
-export function MobileMenu({ address, phone }: Props) {
+export function MobileMenu() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -77,16 +73,16 @@ export function MobileMenu({ address, phone }: Props) {
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-2">
               <MapPin className="h-4 w-4 shrink-0 text-gray-400" />
-              <span>{address}</span>
+              <span>{churchData.address}</span>
             </div>
 
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 shrink-0 text-gray-400" />
-              <span>{phone}</span>
+              <span>{churchData.phone}</span>
             </div>
 
             <div className="mt-2 text-[10px] text-gray-400">
-              © 2026 Manna Church. All rights reserved.
+              © 2026 {churchData.copyright} All rights reserved.
             </div>
           </div>
         </div>

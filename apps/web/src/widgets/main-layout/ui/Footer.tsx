@@ -1,13 +1,9 @@
 import Image from 'next/image';
 import { MapPin, Phone } from 'lucide-react';
+import { churchData } from '@/shared/config';
 
 export function MainFooter() {
-  const { title, address, copyright, phone } = {
-    title: '만나교회',
-    address: '부산광역시 사하구 다대로429번길 23',
-    copyright: 'Demopeu',
-    phone: '010-4125-9186',
-  };
+  const { title, address, copyright, phone } = churchData;
   return (
     <footer className="bg-slate-800 py-8 text-white">
       <div className="container mx-auto px-4">

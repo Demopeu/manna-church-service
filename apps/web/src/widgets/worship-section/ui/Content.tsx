@@ -1,8 +1,9 @@
+import { churchData } from '@/shared/config';
 import { WorshipSection } from './Section';
 import { WORSHIP_DATA } from './data';
 
 export function WorshipContent() {
-  const { phone } = { phone: '010-4125-9186' };
+  const { phone } = churchData;
   return (
     <div className="space-y-10">
       {WORSHIP_DATA.map((category) => (
