@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { ActionState } from '../model';
 
 export async function tryCatchAction<T>(
@@ -7,7 +7,7 @@ export async function tryCatchAction<T>(
   try {
     return await operation();
   } catch (err) {
-    Sentry.captureException(err);
+    captureException(err);
     console.error('System Error:', err);
     return {
       success: false,
@@ -22,7 +22,7 @@ export async function tryCatchVoid(
   try {
     await operation();
   } catch (err) {
-    Sentry.captureException(err);
+    captureException(err);
     console.error('System Error:', err);
     throw new Error('일시적인 시스템 오류입니다. 잠시 후 다시 시도해주세요.');
   }

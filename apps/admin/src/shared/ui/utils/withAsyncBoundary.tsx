@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 
 interface BoundaryOptions {
   errorFallback?: React.ReactNode;
@@ -16,7 +16,7 @@ export function withAsyncBoundary<T extends object>(
     try {
       return await Component(props);
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error('ErrorBoundary Error:', error);
       return <>{errorFallback}</>;
     }

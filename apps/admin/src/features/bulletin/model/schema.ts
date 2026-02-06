@@ -51,7 +51,7 @@ export const createBulletinSchema = bulletinBaseSchema.extend({
 
 export const createBulletinActionSchema = bulletinBaseSchema.extend({
   coverImageFile: coverImageFileSchema.optional().nullable(),
-  pdfFile: z.any().optional(),
+  pdfFile: z.instanceof(File).optional(),
   imageFiles: imageFilesSchema,
 });
 

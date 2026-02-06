@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useDialog } from '@/shared/lib';
 import { deleteGalleryAction } from '../api/actions';
@@ -20,7 +20,7 @@ export function useDeleteGallery(galleryId: string) {
       toast.success('갤러리가 성공적으로 삭제되었습니다.');
       router.refresh();
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error('갤러리 삭제 실패:', error);
       toast.error('갤러리 삭제에 실패했습니다.');
     } finally {

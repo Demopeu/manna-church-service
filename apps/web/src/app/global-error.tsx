@@ -6,7 +6,7 @@ import { AlertTriangle, Home, Phone, RefreshCcw } from 'lucide-react';
 import { churchData } from '@/shared/config';
 import { Button } from '@/shared/ui';
 
-// import * as Sentry from '@sentry/nextjs';
+// import { captureException } from '@sentry/nextjs';
 
 export default function GlobalError({
   error,
@@ -16,7 +16,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Sentry.captureException(error);
+    // captureException(error);
     console.error(error);
   }, [error]);
 

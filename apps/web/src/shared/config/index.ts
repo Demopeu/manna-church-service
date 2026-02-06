@@ -1,2 +1,2 @@
-export * from './route';
-export * from './data';
+export { menuData, Items } from './route';
+export { churchData } from './data';

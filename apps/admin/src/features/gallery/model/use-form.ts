@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { type GalleryWithImages } from '@/entities/gallery';
 import {
   type ImageItem,
@@ -150,7 +150,7 @@ export function useGalleryForm({ gallery, onSuccess, successMessage }: Props) {
         }
       }
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error(error);
       form.setError('root', {
         type: 'server',

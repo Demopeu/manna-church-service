@@ -12,7 +12,7 @@ import { deleteBulletin } from './delete';
 import { updateBulletin } from './update';
 
 export async function createBulletinAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const authState = await requireAuth();
@@ -26,8 +26,6 @@ export async function createBulletinAction(
     imageFiles: formData.getAll('imageFiles'),
     pdfFile: formData.get('pdfFile'),
   };
-
-  console.log('rawData', rawData);
 
   const validatedFields = createBulletinActionSchema.safeParse(rawData);
 
@@ -44,7 +42,7 @@ export async function createBulletinAction(
 
 export async function updateBulletinAction(
   id: string,
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
   const authState = await requireAuth();

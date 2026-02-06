@@ -1,5 +1,5 @@
 import { revalidatePath } from 'next/cache';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { createClient } from '@repo/database/client';
 import { ActionState } from '@/shared/model';
 import { CreateGalleryInput } from '../model/schema';
@@ -85,7 +85,7 @@ export async function createGallery(
       success: true,
     };
   } catch (error) {
-    Sentry.captureException(error);
+    captureException(error);
     if (uploadedPaths.length > 0) {
       console.warn(
         '에러 발생으로 인한 업로드 파일 롤백(삭제) 진행:',

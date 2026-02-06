@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { X } from 'lucide-react';
-import { Church } from 'lucide-react';
+import { Church, X } from 'lucide-react';
 import { Button } from '@/shared/ui';
 import { useSidebar } from '../model/context';
 

@@ -1,2 +1,2 @@
-export { UserProfile } from './ui/UserProfile';
+export { UserProfile, ProfileSkeletion } from './ui/UserProfile';
 export { getMyProfile } from './api/queries';

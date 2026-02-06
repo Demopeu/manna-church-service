@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { Bulletin } from '@/entities/bulletin';
 import {
   imageConverter,
@@ -166,7 +166,7 @@ export function useBulletinForm({
         formData.delete('pdfFile');
       }
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       errorToast('이미지 변환 에러');
       console.error('이미지 변환 에러:', error);
       return;
