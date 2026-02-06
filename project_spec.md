@@ -59,29 +59,31 @@
 
 ### Core Framework
 
-- **Runtime:** Node.js (Latest LTS)
-- **Monorepo:** Turborepo 2.7.2(`pnpm` workspace)
-- **Framework:** **Next.js 16 (Stable)**
-  - _Strategy:_ SSG/ISR을 기본으로 하여 서버 부하 최소화 및 빠른 FCP 보장.
-- **Library:** **React 19 (Stable)**
-  - _Strategy:_ React Compiler를 통한 자동 렌더링 최적화, Server Actions를 통한 API 개발 생산성 증대.
+- **Runtime:** Node.js >= 25.0.0
+- **Package Manager:** pnpm 10.25.0
+- **Monorepo:** Turborepo 2.7.2 (`pnpm` workspace)
+- **Framework:** **Next.js 16.1.1 (Stable)**
+  - _Strategy:_ Admin은 `force-dynamic` + Server Actions 위주, Web은 SSG/ISR 위주.
+- **Library:** **React 19.2.3 (Stable)**
+  - _Strategy:_ React Compiler(`babel-plugin-react-compiler`)를 통한 자동 렌더링 최적화, `useActionState` + `useEffectEvent` 등 React 19 훅 활용, Server Actions를 통한 API 개발 생산성 증대.
+- **TypeScript:** 5.9.3 (Strict Mode)
 
 ### Infrastructure & Database
 
 - **BaaS:** Supabase (PostgreSQL, Auth, Storage)
+- **Monitoring:** Sentry (`@sentry/nextjs` 10.36.0)
 - **Deployment:** Vercel (Production)
 
 ### State Management & Data Fetching
 
-- **Client State (Global):** **Zustand** (with `persist` middleware)
-  - _Reason:_ 폰트 크기(Font Scale) 등 사용자 UI 설정의 영속성 보장.
-- **Data Fetching Strategy (Server):** **Native Fetch (RSC) + ISR**
+- **Client State:** 전역 상태 관리 라이브러리 미사용. 컴포넌트 로컬 `useState` + `useActionState`로 충분.
+  - _(참고: 초기 계획의 Zustand는 `apps/web`에서만 사용 예정 — Work in Progress)_
+- **Data Fetching Strategy (Admin):** **Supabase Client (`@repo/database/client`) + `React.cache()`**
   - **Read Strategy:**
-    - `fetch` 사용 시 `next: { revalidate: N }` 옵션을 명시하여 캐싱 정책을 제어한다.
-    - **Notices / Main Page:** `revalidate = 60` (1분). 긴급 공지나 주보 변경 사항이 빠르게 반영되도록 설정.
-    - **Sermons / Galleries:** `revalidate = 3600` (1시간). 데이터 변경 빈도가 낮으므로 긴 캐싱 시간 적용.
+    - Server Component에서 `createClient()`로 Supabase 클라이언트 생성, `React.cache()`로 요청 단위 메모이제이션.
+    - Admin은 `export const dynamic = 'force-dynamic'`으로 항상 최신 데이터를 보장한다.
   - **Write Strategy (On-Demand Revalidation):**
-    - 관리자가 데이터를 생성/수정/삭제(CUD)하는 **Server Actions** 성공 시, 반드시 `revalidatePath()`를 호출하여 즉시 캐시를 무효화(Purge)하고 최신 데이터를 반영한다.
+    - Server Actions 성공 시, `revalidatePath()`를 호출하여 즉시 캐시를 무효화하고 최신 데이터를 반영한다.
     - _Goal:_ "목사님이 올리면 바로 뜬다"는 UX 보장.
 
 ### Styling
@@ -98,16 +100,20 @@
 
 ### Monorepo Structure
 
-- `apps/web`: 사용자용 서비스 (Next.js 16 App Router, SSG/ISR 위주, 고령층 최적화).
-- `apps/admin`: 관리자용 CMS (Next.js 16 App Router, CSR/Auth 위주, 비전문가 친화 UI).
-- `packages/ui`: 공통 디자인 시스템 (Shadcn/UI 컴포넌트 라이브러리).
-- `packages/tailwind-config`: Tailwind CSS v4 공통 설정 (Mobile First, Font Scale 변수).
-- `packages/typescript-config`: TypeScript 공통 설정 (Strict Mode, Path Alias).
-- `packages/eslint-config`: ESLint 공통 규칙 (Turbopack 호환, React 19 규칙).
-- `packages/database`: Supabase Generated Types (`database.types.ts`) 및 Client Factory.
+- `apps/web`: 사용자용 서비스 (Next.js App Router, SSG/ISR 위주, 고령층 최적화). _(Work in Progress)_
+- `apps/admin`: 관리자용 CMS (Next.js 16.1.1 App Router, `force-dynamic` + Server Actions, 비전문가 친화 UI). ✅ **구현 완료**
+- `packages/ui` (`@repo/ui`): 공통 디자인 시스템 (Shadcn/UI + Radix UI 기반).
+  - Exports: `./shadcn`, `./lib`, `./components`, `./hooks`, `./styles.css`
+  - Shadcn 컴포넌트: Accordion, AlertDialog, Avatar, Badge, Button, Card, Carousel, Dialog, DropdownMenu, Form, Input, Label, NavigationMenu, Progress, Select, Sheet, Skeleton, Switch, Table, Textarea
+  - 공유 컴포넌트: `AspectRatio`
+  - 유틸리티: `cn()` (clsx + tailwind-merge)
+- `packages/tailwind-config` (`@repo/tailwind-config`): Tailwind CSS v4 공통 스타일 + PostCSS 설정.
+- `packages/typescript-config` (`@repo/typescript-config`): TypeScript 공통 설정 (`base.json`, `nextjs.json`, `react-library.json`).
+- `packages/eslint-config` (`@repo/eslint-config`): ESLint Flat Config (`base`, `next-js`, `react-internal`).
+- `packages/database` (`@repo/database`): Supabase Generated Types + Client Factory.
+  - Exports: `./client` (Server Component용), `./auth` (Auth 헬퍼), `./middleware` (미들웨어용), `./types`
   - _Why:_ `any` 타입 사용 방지, 앱 간 DB 스키마 동기화 보장.
-- `packages/utils`: 날짜 포맷팅, 문자열 처리 등 순수 함수 모음.
-  - _Why:_ 중복 코드 제거, 유닛 테스트 용이성.
+- ~~`packages/utils`~~: **미구현.** 유틸리티 함수는 각 앱의 `src/shared/lib/`에 위치.
 
 ## 5. 아키텍처 및 폴더 구조 (Clean FSD + CQRS Pattern)
 
@@ -212,95 +218,123 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
     - PostgreSQL `LIMIT` & `OFFSET` 사용.
     - 총 페이지 수 계산을 위해 `COUNT(*)` 쿼리 별도 실행.
 
-### C. 관리자 CMS (`apps/admin`)
+### C. 관리자 CMS (`apps/admin`) ✅ 구현 완료
 
 #### Tech Stack
 
 - **Port:** 3001 (dev & start)
-- **Dependencies:** React Hook Form 7.70.0, Zod 4.3.5, use-debounce 10.1.0, @hookform/resolvers 5.2.2
-- **Config:** React Compiler enabled, transpiles `@repo/ui`
+- **Dependencies:**
+  - React Hook Form 7.70.0, Zod 4.3.5, @hookform/resolvers 5.2.2
+  - use-debounce 10.1.0, date-fns 4.1.0, sonner 2.0.7
+  - browser-image-compression 2.0.2, pdfjs-dist 5.4.530
+  - @sentry/nextjs 10.36.0, lucide-react 0.546.0
+- **Config:** React Compiler enabled (`reactCompiler: true`), Sentry 통합 (`withSentryConfig`)
 
-#### Implemented Routes
+#### Implemented Routes (All Complete)
 
-- `/login` - 로그인 페이지 (LoginCard widget)
-- `/(admin)/` - 대시보드 (Date, RecentBulletinCard, RecentAnnouncementCard, RecentEventCard, RecentSermonCard, RecentGalleryCard)
-- `/(admin)/announcements` - 공지사항 관리 (search + pagination)
-- `/(admin)/bulletins` - 주보 관리 (search + pagination)
-- `/(admin)/events` - 이벤트 관리 (search + pagination)
-- `/(admin)/gallery` - 갤러리/앨범 관리 (search + pagination)
-- `/(admin)/sermons` - 설교 관리 (search + pagination)
-- `/(admin)/servants` - 섬기는 사람들 (placeholder, not implemented)
+- `/login` — 로그인 페이지 (LoginCard widget)
+- `/(admin)/(main)/` — 대시보드 (Date, RecentBulletinCard, RecentAnnouncementCard, RecentEventCard, RecentSermonCard, RecentGalleryCard)
+- `/(admin)/announcements` — 공지사항 CRUD (search + pagination)
+- `/(admin)/bulletins` — 주보 CRUD (year/month 필터 + pagination + PDF→WebP 자동 변환)
+- `/(admin)/events` — 이벤트 CRUD (search + pagination + 이미지 자동 압축)
+- `/(admin)/gallery` — 갤러리/앨범 CRUD (search + pagination + 다중 이미지 업로드/압축)
+- `/(admin)/sermons` — 설교 CRUD (search + pagination + YouTube URL 검증)
+- `/(admin)/servants` — 섬기는 사람들 CRUD (포지션 필터 + 정렬)
 
 #### FSD Layer Implementation
 
 **Entities Layer (`src/entities/`):**
 
-- announcement/, bulletin/, event/, gallery/, sermon/, user/
-- Structure: `model/` (types), `api/queries.ts` (data fetching), `api/dto.ts`, `lib/mapper.ts`, `index.ts`
-- Current: MOCK data in queries (not connected to Supabase yet)
+- `announcement/`, `bulletin/`, `event/`, `gallery/`, `sermon/`, `servant/`, `user/`
+- Structure: `model/` (타입 정의), `api/queries.ts` (Supabase 데이터 페칭), `api/dto.ts` (DTO 타입), `api/mapper.ts` (Row→Domain 매핑), `index.ts` (named export)
+- `servant/`에 추가로 `config/positions.ts` (POSITION_OPTIONS 상수)
+- `user/`에 `ui/UserProfile.tsx` + `ProfileSkeleton` (프로필 표시 컴포넌트)
+- **Status:** Supabase 연동 완료 (Mock 데이터 아님)
 
 **Features Layer (`src/features/`):**
 
-- announcement/, auth/, bulletin/, event/, gallery/, sermon/
-- Structure: `ui/` (CreateButton, EditButton, DeleteButton, Form), `model/actions.ts` (Server Actions), `model/schema.ts` (Zod), `model/use-form.ts`, `model/use-delete-*.ts`, `config/form.ts`, `lib/`
-- Pattern: Server Actions + `useFormState` + React Hook Form
-- Validation: Zod schemas with field-level error handling
+- `announcement/`, `auth/`, `bulletin/`, `event/`, `gallery/`, `sermon/`, `servant/`
+- Structure:
+  - `ui/`: CreateButton, EditButton, DeleteButton, Form 컴포넌트
+  - `api/actions.ts`: Server Actions (requireAuth + Zod 검증 + tryCatchAction + revalidatePath)
+  - `api/create.ts`, `api/update.ts`, `api/delete.ts`: Supabase Storage 연동 CRUD 로직
+  - `model/schema.ts`: Zod 스키마 (z.instanceof(File) 사용, z.any() 금지)
+  - `model/use-form.ts`: React Hook Form + useActionState 커스텀 훅
+  - `model/use-delete.ts`: 삭제 확인 다이얼로그 + 삭제 액션 훅
+  - `lib/`: 유틸리티 (extractVideoId, parseStorageUrl, validatePdf, mapper 등)
+  - `ui/form-data.ts`: FormData 매핑 유틸리티
+- **bulletin** 추가: `ui/YearMonthSelect.tsx`, `ui/YearMonthSelectSkeleton.tsx` (연/월 필터)
+- **gallery** 추가: `lib/use-gallery-images.ts` (다중 이미지 관리 훅, 썸네일 지정 포함)
+- **Pattern:** Server Actions + `useActionState` + React Hook Form + `@hookform/resolvers/zod`
 
 **Widgets Layer (`src/widgets/`):**
 
-- \*-list/ (AnnouncementsList, BulletinsList, EventsList, AlbumsList, SermonsList)
-- dashboard/ (Date, Recent\*Card components)
-- login-card/ (LoginCard)
-- main-layout/ (Sidebar, MainHeader, SidebarNav, SidebarFooter, SidebarProvider context)
+- `*-list/`: AnnouncementsList, BulletinsList, EventsList, GalleriesList, SermonsList, ServantsList
+  - 각 위젯에 `ui/labels.ts` (UI 라벨 상수), `ui/columns.ts` (테이블 컬럼 정의), `*Item.tsx` (리스트 아이템)
+  - `gallery-list/`에 추가로 `GalleriesImage.tsx` (이미지 썸네일 표시)
+  - `servant-list/`에 추가로 `ServantsFilters.tsx` (포지션 필터)
+- `dashboard/`: Date, RecentBulletinCard, RecentAnnouncementCard, RecentEventCard, RecentSermonCard, RecentGalleryCard, CardSkeleton, CardError, DashboardCardWrapper
+- `login-card/`: LoginCard
+- `main-layout/`: Sidebar, **MainHeader (Server Component)**, HeaderClient (Client Component), SidebarNav, SidebarHeader, SidebarFooter, SidebarProvider (context)
 
 **Shared Layer (`src/shared/`):**
 
-- `config/route.ts` - ADMIN_ROUTES 정의 (href, label, icon)
-- `ui/` - @repo/ui 래핑 컴포넌트 (Button, Card, Input, Label, Textarea, Switch, Skeleton, Table, etc.)
-- `ui/components/` - EmptyState, ListSkeleton, Pagination, SearchInput
-- `ui/utils/` - withAsyncBoundary
-- `lib/` - 유틸리티 함수
-- `model/` - ActionState 타입
+- `config/route.ts` — ADMIN_ROUTES 정의 (href, label, Lucide icon)
+- `ui/base/` — @repo/ui 래핑 컴포넌트 (Avatar, AlertDialog, Badge, Button, Card, Dialog, DropdownMenu, Form, Input, Label, Progress, Select, Skeleton, Switch, Table, Textarea)
+- `ui/components/` — EmptyState, ListSkeleton, LoadingProgress, Pagination, SearchInput(+Skeleton)
+- `ui/utils/` — withAsyncBoundary (Suspense + ErrorBoundary 합성)
+- `ui/` (root) — DataTable, DeleteDialog, FormTriggerButton, ImageDialog, MultiImageDialog, SectionCard, Toaster
+- `ui/index.ts` — 모든 UI 컴포넌트의 named export 배럴 파일
+- `api/try-catch-wrapper.ts` — tryCatchAction, tryCatchVoid (Server Action 에러 핸들링)
+- `lib/` — date (formatKoreanDate, formatRelativeDate, getCurrentYearMonth), guard (requireAuth), image (imageConverter: browser-image-compression), pdf (pdfToWebpConverter: pdfjs-dist), use-dialog, use-input (useImageInput, usePdfInput), use-toast-and-refresh
+- `model/action.ts` — ActionState 타입 (ErrorState | SuccessState)
 
 #### Page Pattern (All CRUD Pages)
 
 ```tsx
 // searchParams: { q?: string; page?: string }
-// Suspense + ListSkeleton fallback
+// Suspense + ListSkeleton fallback (labels.ts에서 title/description 참조)
 // CreateButton + List widget
 ```
 
 #### Form Pattern
 
-- Schema: Zod validation (`createAnnouncementSchema`, `createBulletinSchema`, etc.)
-- Actions: Server Actions (`createAnnouncementAction`, `updateAnnouncementAction`, etc.)
-- Hook: `useFormState` + custom `use-form.ts` hook
-- UI: React Hook Form integration, field errors display, `isPending` state
-- Success: `revalidatePath()` 호출 후 success callback
+- **Schema:** Zod validation — `z.instanceof(File)` 사용 (z.any() 금지)
+- **Actions:** Server Actions — `requireAuth()` → Zod 파싱 → 비즈니스 로직 → `revalidatePath()`
+- **Hook:** `useActionState` + custom `use-form.ts` 훅 (React Hook Form 연동)
+- **UI:** React Hook Form, field-level 에러, `isPending` → `LoadingProgress` 오버레이
+- **Success:** `revalidatePath()` + `toast.success()` + `router.refresh()`
 
-#### Validation Schemas
+#### Validation Schemas (Actual)
 
 - **Announcement:** title (required), content (required), isUrgent (boolean)
-- **Bulletin:** publishedAt (date), pdfFile (File, PDF only, max 10MB)
-- **Event:** title, description, startDate, photoFile (Image: jpg/png/webp, max 5MB)
-- **Sermon:** title, preacher, date, youtubeUrl (validated with extractVideoId)
-- **Gallery:** title, eventDate, images[] (File array, max 5MB each, jpg/png/webp)
-- **Auth:** username, password (simple login schema)
+- **Bulletin:** publishedAt (date), pdfFile (File, PDF only, max 10MB), coverImageFile (optional image), imageFiles (File[])
+- **Event:** title, description (optional), startDate, photoFile (Image: jpg/png/webp, max 10MB)
+- **Sermon:** title, preacher, date, videoUrl (YouTube URL, extractVideoId로 검증)
+- **Gallery:** title, eventDate, images[] ({file, isThumbnail, id}, max 10장, 10MB each)
+- **Servant:** (별도 Server Action에서 FormData 직접 파싱)
+- **Auth:** email (이메일 형식 검증), password (영문+숫자 필수)
 
 #### Layout Structure
 
-- `layout.tsx` (root) - Noto Sans KR font, metadata
-- `(admin)/layout.tsx` - SidebarProvider + Sidebar + MainHeader + content area
-- Sidebar: ADMIN_ROUTES navigation with Lucide icons, responsive (mobile hamburger)
-- MainHeader: User profile (getMyProfile), logout dropdown
+- `layout.tsx` (root) — Noto Sans KR font, metadata, Sentry 통합
+- `(admin)/layout.tsx` — SidebarProvider + Sidebar + **MainHeader (Server Component)** + content area
+  - `MainHeader`는 Server Component로 `getMyProfile()`을 직접 호출하고 `Suspense` + `ProfileSkeleton`으로 감싸 스트리밍.
+  - `HeaderClient`가 클라이언트 인터랙션 (sidebar toggle, logout dropdown) 담당.
+- Sidebar: ADMIN_ROUTES 네비게이션 (Lucide icons), 반응형 (모바일 hamburger + overlay)
 
-#### Not Yet Implemented
+#### Auth & Middleware
 
-- PDF to image conversion (bulletin feature)
-- Real Supabase integration (currently using mocks)
-- Image compression pipeline
-- Auth middleware & whitelist check
-- Servants CRUD functionality
+- `src/proxy.ts` — Supabase 미들웨어 클라이언트로 인증 체크:
+  - 비로그인 상태 + `/login` 외 경로 → `/login`으로 리다이렉트
+  - 로그인 상태 + `/login` 경로 → `/`로 리다이렉트
+- `src/shared/lib/guard.ts` — `requireAuth()`: Server Action 내부에서 인증 상태 확인
+- `src/instrumentation.ts`, `src/instrumentation-client.ts` — Sentry 계측
+
+#### Image & PDF Processing (구현 완료)
+
+- **Image Compression:** `browser-image-compression` 라이브러리로 클라이언트 사이드 이미지 압축 (`src/shared/lib/image.ts`)
+- **PDF → WebP:** `pdfjs-dist`로 PDF 페이지를 Canvas에 렌더링 후 WebP Blob 변환 (`src/shared/lib/pdf.ts`)
 
 ## 7. 데이터베이스 스키마 상세 명세 (Database Schema & Policies)
 
@@ -319,7 +353,7 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 ---
 
-### B. 테이블 명세 (Table Definitions)
+### B. 테이블 명세 (Table Definitions) — Supabase Generated Types 기준
 
 #### 1. `sermons` (설교 영상)
 
@@ -331,7 +365,7 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
   - `video_url`: TEXT (NOT NULL, YouTube Link)
   - `created_at`: TIMESTAMPTZ (Default: NOW())
 
-#### 2. `gallery` (교회 앨범)
+#### 2. `galleries` (교회 앨범)
 
 - **Columns:**
   - `id`: UUID (PK)
@@ -354,14 +388,14 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 #### 4. `bulletins` (주보)
 
-> Plan C 적용: 관리자는 PDF를 올리지만, 시스템은 이를 이미지로 변환하여 저장 및 서빙한다.
+> 관리자는 PDF를 업로드하면, 클라이언트에서 `pdfjs-dist`로 각 페이지를 WebP 이미지로 변환 후 Supabase Storage에 업로드한다.
 
 - **Columns:**
   - `id`: UUID (PK)
   - `published_at`: DATE (NOT NULL)
-  - `cover_image_url`: TEXT (NOT NULL, 대표 이미지. 미입력 시 클라이언트에서 기본 이미지 처리)
-  - `content_image_urls`: TEXT[] (NOT NULL, PDF에서 변환된 3장의 주보 본문 이미지 URL 리스트)
-  - `original_pdf_url`: TEXT (Nullable, 다운로드용 원본 파일. 필요 시 저장)
+  - `cover_image_url`: TEXT (Nullable, 대표 이미지. 미입력 시 클라이언트에서 기본 이미지 처리)
+  - `image_urls`: TEXT[] (NOT NULL, PDF에서 변환된 주보 본문 이미지 URL 리스트)
+  - `original_pdf_url`: TEXT (Nullable, 다운로드용 원본 PDF)
   - `created_at`: TIMESTAMPTZ
 
 #### 5. `notices` (공지사항)
@@ -379,8 +413,8 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
   - `id`: UUID (PK)
   - `title`: TEXT (NOT NULL)
   - `description`: TEXT (Nullable, 설명)
-  - `photo_url`: TEXT (Nullable, 행사 포스터/사진)
-  - `start_date`: DATE (Nullable, 행사 시작일 - 필요 시 사용)
+  - `photo_url`: TEXT (NOT NULL, 행사 포스터/사진)
+  - `start_date`: DATE (NOT NULL, 행사 시작일)
   - `created_at`: TIMESTAMPTZ
 
 #### 7. `members` (섬기는 사람들)
@@ -394,6 +428,15 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
   - `introduction`: TEXT (Nullable, 소개글)
   - `is_public`: BOOLEAN (Default: true, 인터넷 노출 여부)
   - `sort_order`: INTEGER (Default: 0, 목사님을 맨 위로 올리기 위한 정렬 순서)
+  - `created_at`: TIMESTAMPTZ
+
+#### 8. `banners` (배너) — 초기 계획에 없던 추가 테이블
+
+- **Columns:**
+  - `id`: UUID (PK)
+  - `title`: TEXT (NOT NULL)
+  - `image_url`: TEXT (NOT NULL)
+  - `sort_order`: INTEGER (Nullable, 정렬 순서)
   - `created_at`: TIMESTAMPTZ
 
 ---
@@ -439,7 +482,7 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 ```bash
 # [Common] Supabase 연결 정보 (Web & Admin 공통)
-NEXT_PUBLIC_SUPABASE_URL="[https://your-project-id.supabase.co](https://your-project-id.supabase.co)"
+NEXT_PUBLIC_SUPABASE_URL="https://your-project-id.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
 
 # [Admin Only] 관리자 앱 전용 설정
@@ -450,8 +493,11 @@ SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 # 쉼표(,)로 구분하여 관리. 코드 레벨에서 이메일 일치 여부 확인.
 NEXT_PUBLIC_ADMIN_EMAILS="pastor@manna.church,admin@manna.church"
 
+# [Monitoring] Sentry 소스맵 업로드용
+SENTRY_AUTH_TOKEN="your-sentry-auth-token"
+
 # [Web Only] 메타데이터 및 SEO 설정
-NEXT_PUBLIC_SITE_URL="[https://manna-church.com](https://manna-church.com)"
+NEXT_PUBLIC_SITE_URL="https://manna-church.com"
 ```
 
 ### B. Supabase Storage Buckets
