@@ -38,6 +38,15 @@ export {
   SelectTrigger,
   SelectValue,
 } from './base/Select';
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './base/Dialog';
 
 // utils
 export { AspectRatio } from './utils/aspect-ratio';
