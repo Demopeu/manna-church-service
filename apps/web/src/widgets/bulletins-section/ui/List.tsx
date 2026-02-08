@@ -42,7 +42,9 @@ async function List({ year, month, page }: Props) {
             >
               <div className="group relative aspect-210/297 overflow-hidden bg-transparent transition-all group-hover:scale-105">
                 <Image
-                  src={bulletin.coverImageUrl || '/DEFAULT_BULLETIN.png'}
+                  src={
+                    bulletin.coverImageUrl || '/default/DEFAULT_BULLETIN.png'
+                  }
                   alt={`${bulletin.publishedAt} 주보`}
                   fill
                   className="object-contain duration-300"

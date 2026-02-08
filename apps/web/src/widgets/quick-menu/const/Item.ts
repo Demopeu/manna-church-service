@@ -5,7 +5,7 @@ export const YoutubeImageBoxItem = {
   preacher: '김정환',
   date: '2026-02-03',
   videoUrl: churchData.youtube,
-  imageUrl: '/youtube_imageUrl.png',
+  imageUrl: '/default/youtube_imageUrl.png',
   tags: [
     '#주일 오전예배',
     '#주일 오후예배',

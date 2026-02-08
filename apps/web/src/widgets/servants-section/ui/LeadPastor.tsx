@@ -12,7 +12,7 @@ export function LeadPastorSection({ data }: Props) {
       <h2 className="text-foreground border-manna mb-6 border-b-2 pb-2 text-xl font-bold">
         {data.role}
       </h2>
-      <div className="bg-manna-cyan mx-auto flex max-w-xs flex-col items-center gap-6 rounded-2xl p-6 sm:max-w-xl sm:flex-row md:gap-10 md:p-8">
+      <div className="bg-manna-dark-blue/50 mx-auto flex max-w-xs flex-col items-center gap-6 rounded-2xl p-6 sm:max-w-xl sm:flex-row md:gap-10 md:p-8">
         <div className="h-40 w-40 shrink-0 overflow-hidden rounded-2xl bg-white/10 shadow-lg md:h-52 md:w-52">
           <Image
             src={data.photoFile || '/placeholder.svg'}

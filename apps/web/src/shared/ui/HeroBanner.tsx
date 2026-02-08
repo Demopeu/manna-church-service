@@ -63,7 +63,9 @@ export function HeroBanner({
           {title}
         </h1>
 
-        <p className="text-xl font-medium text-white/90">{subtitle}</p>
+        <p className="text-korean-pretty text-xl font-medium text-white/90">
+          {subtitle}
+        </p>
       </div>
     </div>
   );
