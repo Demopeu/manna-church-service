@@ -1,7 +1,6 @@
-'use cache';
-
+// 'use cache';
 import { cache } from 'react';
-import { cacheLife, cacheTag } from 'next/cache';
+// import { cacheLife, cacheTag } from 'next/cache';
 import { createClient } from '@repo/database/client';
 import type { Bulletin } from '../model/bulletin';
 import { mapBulletin } from './mapper';
@@ -15,8 +14,8 @@ interface GetBulletinsParams {
 
 export const getBulletins = cache(
   async ({ year, month, page, pageSize = 8 }: GetBulletinsParams) => {
-    cacheTag('bulletin-list');
-    cacheLife('hours');
+    // cacheTag('bulletin-list');
+    // cacheLife('hours');
 
     const supabase = await createClient();
 
@@ -67,8 +66,8 @@ export const getBulletins = cache(
 
 export const getBulletinById = cache(
   async (id: string): Promise<Bulletin | null> => {
-    cacheTag(`bulletin-${id}`);
-    cacheLife('hours');
+    // cacheTag(`bulletin-${id}`);
+    // cacheLife('hours');
     const supabase = await createClient();
 
     const { data, error } = await supabase
@@ -94,8 +93,8 @@ export const getBulletinById = cache(
 );
 export const getBulletinByDate = cache(
   async (dateString: string): Promise<Bulletin | null> => {
-    cacheTag(`bulletin-${dateString}`);
-    cacheLife('hours');
+    // cacheTag(`bulletin-${dateString}`);
+    // cacheLife('hours');
     const supabase = await createClient();
 
     const { data, error } = await supabase

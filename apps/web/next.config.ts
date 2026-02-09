@@ -3,7 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  cacheComponents: true,
+  // cacheComponents: true,
   images: {
     remotePatterns: [
       {

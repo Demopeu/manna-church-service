@@ -2,8 +2,6 @@ import { notFound } from 'next/navigation';
 import { BulletinDetail } from '@/widgets/bulletins-section';
 import { getBulletinByDate } from '@/entities/bulletin/api/queries';
 
-export const dynamic = 'force-dynamic';
-
 interface Props {
   params: Promise<{ date: string }>;
 }
