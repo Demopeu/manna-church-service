@@ -62,3 +62,16 @@ export function NavLink({ href, title, icon }: Props) {
     </Link>
   );
 }
+
+export function NavLinkSkeleton() {
+  return (
+    <div
+      className={cn(
+        'flex animate-pulse items-center gap-3 rounded-xl px-3 py-2.5',
+      )}
+    >
+      <div className="bg-muted/20 h-[18px] w-[18px] shrink-0 rounded" />
+      <div className="bg-muted/20 h-4 w-24 rounded" />
+    </div>
+  );
+}
