@@ -12,6 +12,7 @@ interface GetEventsParams {
 interface GetEventsResult {
   events: Event[];
   totalPages: number;
+  totalCount: number;
 }
 
 export const getEvents = cache(
@@ -42,14 +43,39 @@ export const getEvents = cache(
       throw new Error(`Failed to fetch events: ${error.message}`);
     }
 
-    const totalPages = count ? Math.ceil(count / limit) : 0;
+    const validCount = count ?? 0;
 
     return {
       events: (data || []).map(mapEvent),
-      totalPages,
+      totalPages: Math.ceil(validCount / limit),
+      totalCount: validCount,
     };
   },
 );
+
+export const getEventById = cache(async (id: string): Promise<Event | null> => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('events')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      console.warn(`이벤트 ID ${id}를 찾을 수 없습니다.`);
+      return null;
+    }
+
+    console.error('이벤트 상세 조회 중 Supabase 에러 발생:', error);
+    throw new Error(
+      `[이벤트 조회 실패] 서버 응답 오류입니다. (${error.message})`,
+    );
+  }
+
+  return data ? mapEvent(data) : null;
+});
 
 export const getRecentEvents = cache(async (): Promise<Event[]> => {
   const supabase = await createClient();

@@ -1,5 +1,5 @@
-import { HeroBanner } from './HeroBanner';
-import type { HeroBannerProps } from './HeroBanner';
+import { HeroBanner } from './components/HeroBanner';
+import type { HeroBannerProps } from './components/HeroBanner';
 
 interface MainWrapperProps {
   heroBannerData: HeroBannerProps;

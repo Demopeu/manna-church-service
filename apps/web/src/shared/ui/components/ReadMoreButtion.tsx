@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@repo/ui/lib';
-import { Button } from './base/Button';
+import { Button } from '../base/Button';
 
 type ReadMoreButtonVariant = 'manna' | 'blue' | 'transparent';
 
