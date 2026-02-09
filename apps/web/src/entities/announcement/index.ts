@@ -1,6 +1,6 @@
 export {
   getAnnouncements,
-  getAnnouncementById,
+  getAnnouncementByShortId,
   getRecentAnnouncements,
 } from './api/queries';
 export type { Announcement } from './model/announcement';

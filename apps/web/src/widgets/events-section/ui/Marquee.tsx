@@ -53,7 +53,9 @@ export function EventsMarquee({ events }: Props) {
                     size="sm"
                     className="border-white/60 bg-transparent text-white hover:bg-white/20"
                   >
-                    <Link href={`/news/events/${event.id}`}>자세히 보기</Link>
+                    <Link href={`/news/events/${event.title}-${event.shortId}`}>
+                      자세히 보기
+                    </Link>
                   </Button>
                 </div>
               </div>

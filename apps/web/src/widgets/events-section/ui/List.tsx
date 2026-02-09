@@ -35,16 +35,16 @@ async function List({ query, page }: Props) {
           {events.map((event) => (
             <Link
               key={event.id}
-              href={`/news/events/${event.id}`}
+              href={`/news/events/${event.title}-${event.shortId}`}
               className="group focus-visible:ring-manna rounded-xl text-left focus:outline-none focus-visible:ring-2"
             >
-              <div className="relative aspect-3/4 overflow-hidden rounded-xl shadow-md transition-shadow group-hover:shadow-lg">
+              <div className="group relative aspect-210/297 overflow-hidden bg-transparent transition-all group-hover:scale-105">
                 <Image
                   src={event.photoUrl}
-                  alt={event.title}
+                  alt={`${event.startDate} 이벤트`}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 768px) 50vw, 33vw"
+                  className="object-contain duration-300"
+                  sizes="(max-width: 768px) 50vw, 25vw"
                 />
               </div>
 

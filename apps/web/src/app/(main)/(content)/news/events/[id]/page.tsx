@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { EventDetail } from '@/widgets/events-section';
-import { getEventById } from '@/entities/event/api/queries';
+import { getEventByShortId } from '@/entities/event';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -8,8 +8,13 @@ interface Props {
 
 export default async function EventDetailPage({ params }: Props) {
   const { id } = await params;
+  const shortId = id.split('-').pop();
 
-  const event = await getEventById(id);
+  if (!shortId) {
+    notFound();
+  }
+
+  const event = await getEventByShortId(shortId);
 
   if (!event) {
     notFound();

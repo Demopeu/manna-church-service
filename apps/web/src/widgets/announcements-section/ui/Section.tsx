@@ -22,7 +22,7 @@ export function AnnouncementsSection({
             {announcements.map((item) => (
               <li key={item.id}>
                 <Link
-                  href={`/news/announcements/${item.id}`}
+                  href={`/news/announcements/${item.title}-${item.shortId}`}
                   className="hover:bg-muted/50 flex items-center justify-between gap-4 px-6 py-4 transition-colors"
                 >
                   <div className="flex flex-1 items-center gap-2 overflow-hidden">

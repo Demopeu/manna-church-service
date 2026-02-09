@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { GalleryDetail } from '@/widgets/gallery-section';
-import { getGalleryById } from '@/entities/gallery/api/queries';
+import { getGalleryByShortId } from '@/entities/gallery';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -8,8 +8,13 @@ interface Props {
 
 export default async function GalleryDetailPage({ params }: Props) {
   const { id } = await params;
+  const shortId = id.split('-').pop();
 
-  const gallery = await getGalleryById(id);
+  if (!shortId) {
+    notFound();
+  }
+
+  const gallery = await getGalleryByShortId(shortId);
 
   if (!gallery) {
     notFound();

@@ -32,7 +32,10 @@ export function GallerySection({ galleries }: Props) {
 
         <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
           {galleries.slice(0, 4).map((item) => (
-            <Link key={item.id} href={`/news/gallery/${item.id}`}>
+            <Link
+              key={item.id}
+              href={`/news/gallery/${item.title}-${item.shortId}`}
+            >
               <Card className="group cursor-pointer overflow-hidden border-0 p-0 shadow-md transition-all duration-300 hover:shadow-lg">
                 <CardContent className="p-0">
                   <AspectRatio ratio={4 / 3}>

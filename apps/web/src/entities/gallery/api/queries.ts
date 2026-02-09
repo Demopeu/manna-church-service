@@ -59,19 +59,21 @@ export const getGalleries = cache(
   },
 );
 
-export const getGalleryById = cache(
-  async (id: string): Promise<GalleryWithImages | null> => {
+export const getGalleryByShortId = cache(
+  async (shortId: string): Promise<GalleryWithImages | null> => {
+    if (!shortId) return null;
+
     const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('galleries')
       .select('*, gallery_images(*)')
-      .eq('id', id)
+      .eq('short_id', shortId)
       .single();
 
     if (error) {
       if (error.code === 'PGRST116') {
-        console.warn(`갤러리 ID ${id}를 찾을 수 없습니다.`);
+        console.warn(`갤러리 ShortID ${shortId}를 찾을 수 없습니다.`);
         return null;
       }
 

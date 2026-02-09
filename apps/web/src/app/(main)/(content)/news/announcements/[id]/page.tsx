@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { AnnouncementDetail } from '@/widgets/announcements-section';
-import { getAnnouncementById } from '@/entities/announcement/api/queries';
+import { getAnnouncementByShortId } from '@/entities/announcement';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -8,8 +8,13 @@ interface Props {
 
 export default async function AnnouncementDetailPage({ params }: Props) {
   const { id } = await params;
+  const shortId = id.split('-').pop();
 
-  const announcement = await getAnnouncementById(id);
+  if (!shortId) {
+    notFound();
+  }
+
+  const announcement = await getAnnouncementByShortId(shortId);
 
   if (!announcement) {
     notFound();

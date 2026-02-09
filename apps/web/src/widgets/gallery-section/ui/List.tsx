@@ -35,7 +35,7 @@ async function List({ query, page }: Props) {
           {galleries.map((gallery) => (
             <Link
               key={gallery.id}
-              href={`/news/gallery/${gallery.id}`}
+              href={`/news/gallery/${gallery.title}-${gallery.shortId}`}
               className="group focus-visible:ring-manna rounded-xl text-left focus:outline-none focus-visible:ring-2"
             >
               <div className="relative aspect-4/3 overflow-hidden rounded-xl shadow-md transition-shadow group-hover:shadow-lg">

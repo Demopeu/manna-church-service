@@ -36,7 +36,7 @@ async function List({ query, page }: Props) {
             {announcements.map((item) => (
               <Link
                 key={item.id}
-                href={`/news/announcements/${item.id}`}
+                href={`/news/announcements/${item.title}-${item.shortId}`}
                 className="hover:bg-muted/50 flex w-full items-center gap-4 px-4 py-4 text-left transition-colors md:px-6"
               >
                 <div className="w-12 shrink-0">

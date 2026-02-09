@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
-import { Button } from '@/shared/ui';
+import { BackButton, Button } from '@/shared/ui';
 
 export default function NotFound() {
   return (
@@ -29,6 +29,7 @@ export default function NotFound() {
       </p>
 
       <div className="flex w-full flex-col gap-4 sm:w-auto sm:flex-row">
+        <BackButton className="text-md rounded-full bg-[#1A2B45] px-8 py-6 text-white shadow-lg shadow-blue-900/10 hover:bg-[#253959]" />
         <Button
           className="text-md rounded-full bg-[#1A2B45] px-8 py-6 text-white shadow-lg shadow-blue-900/10 hover:bg-[#253959]"
           asChild

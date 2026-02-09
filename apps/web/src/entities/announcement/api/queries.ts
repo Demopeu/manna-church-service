@@ -54,19 +54,21 @@ export const getAnnouncements = cache(
   },
 );
 
-export const getAnnouncementById = cache(
-  async (id: string): Promise<Announcement | null> => {
+export const getAnnouncementByShortId = cache(
+  async (shortId: string): Promise<Announcement | null> => {
+    if (!shortId) return null;
+
     const supabase = await createClient();
 
     const { data, error } = await supabase
       .from('notices')
       .select('*')
-      .eq('id', id)
+      .eq('short_id', shortId)
       .single();
 
     if (error) {
       if (error.code === 'PGRST116') {
-        console.warn(`공지사항 ID ${id}를 찾을 수 없습니다.`);
+        console.warn(`공지사항 ShortID ${shortId}를 찾을 수 없습니다.`);
         return null;
       }
 

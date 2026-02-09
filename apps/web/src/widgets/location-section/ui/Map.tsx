@@ -10,8 +10,6 @@ import {
 
 function MapContent() {
   const navermaps = useNavermaps();
-
-  // 만나교회 좌표
   const position = { lat: 35.06374, lng: 128.981336 };
 
   return (

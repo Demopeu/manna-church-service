@@ -30,23 +30,24 @@ export function GalleryDetail({ gallery }: Props) {
       <div className="border-border border-b pb-6">
         <h1 className="text-foreground text-3xl font-bold">{gallery.title}</h1>
         <p className="text-muted-foreground mt-2">
-          {formatKoreanDate(gallery.eventDate)} &middot;{' '}
-          {gallery.images.length}장
+          {formatKoreanDate(gallery.eventDate)} &middot; {gallery.images.length}
+          장
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="flex flex-col gap-2 overflow-hidden">
         {gallery.images.map((image) => (
           <div
             key={image.id}
-            className="relative aspect-4/3 overflow-hidden rounded-xl shadow-sm transition-shadow hover:shadow-md"
+            className="relative w-full overflow-hidden rounded-xl shadow-sm transition-shadow hover:shadow-md"
           >
             <Image
               src={image.storagePath}
               alt={gallery.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 50vw, 25vw"
+              width={0}
+              height={0}
+              sizes="100vw"
+              className="h-auto w-full"
             />
           </div>
         ))}

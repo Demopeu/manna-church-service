@@ -59,6 +59,7 @@ export { NotImage } from './components/NotImage';
 export { ReadMoreButton } from './components/ReadMoreButtion';
 export { ListError } from './components/ListError';
 export { ListSkeleton } from './components/ListSkeleton';
+export { BackButton } from './components/BackButton';
 
 // etc
 export { SectionWrapper } from './SectionWrapper';
