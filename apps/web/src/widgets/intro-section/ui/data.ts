@@ -12,8 +12,8 @@ export const pastorData = {
   profile: {
     name: '김정환',
     role: '담임목사',
-    image: '/LEADPASTOR.webp',
-    signature: '/signature.png',
+    image: '/about/LEADPASTOR.webp',
+    signature: '/about/signature.png',
   },
   greeting: {
     title: ['하나님을 만나고,', '이웃을 만나는 교회'],

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@repo/database/client';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
+import { requireAuth } from '@/shared/lib';
 import { ActionState } from '@/shared/model';
 import {
   type CreateAnnouncementInput,
@@ -76,9 +77,13 @@ async function deleteAnnouncement(id: string): Promise<void> {
 }
 
 export async function createAnnouncementAction(
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
+  }
   const rawData = {
     title: formData.get('title'),
     content: formData.get('content'),
@@ -100,9 +105,13 @@ export async function createAnnouncementAction(
 
 export async function updateAnnouncementAction(
   id: string,
-  prevState: ActionState,
+  _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
+  const authState = await requireAuth();
+  if (authState) {
+    return authState;
+  }
   const rawData = {
     title: formData.get('title'),
     content: formData.get('content'),
@@ -125,5 +134,6 @@ export async function updateAnnouncementAction(
 }
 
 export async function deleteAnnouncementAction(id: string): Promise<void> {
+  await requireAuth(true);
   await tryCatchVoid(() => deleteAnnouncement(id));
 }

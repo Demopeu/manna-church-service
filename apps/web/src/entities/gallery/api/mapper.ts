@@ -4,6 +4,7 @@ import type { Gallery, GalleryImage } from '../model/gallery';
 export function mapGallery(dto: GalleryDto): Gallery {
   return {
     id: dto.id,
+    shortId: dto.short_id,
     title: dto.title,
     eventDate: dto.event_date,
     thumbnailUrl: dto.thumbnail_url,

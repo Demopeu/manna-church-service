@@ -14,7 +14,7 @@ export function AnnouncementsSection({
         <h3 className="text-foreground text-xl font-bold md:text-2xl">
           공지사항
         </h3>
-        <ReadMoreButton href="/announcements" variant="transparent" />
+        <ReadMoreButton href="/news/announcements" variant="transparent" />
       </div>
       <div className="rounded-xl bg-white shadow-lg lg:flex-1 lg:overflow-hidden">
         <div className="lg:h-full lg:overflow-y-auto">
@@ -22,7 +22,7 @@ export function AnnouncementsSection({
             {announcements.map((item) => (
               <li key={item.id}>
                 <Link
-                  href={`/announcements/${item.id}`}
+                  href={`/news/announcements/${item.title}-${item.shortId}`}
                   className="hover:bg-muted/50 flex items-center justify-between gap-4 px-6 py-4 transition-colors"
                 >
                   <div className="flex flex-1 items-center gap-2 overflow-hidden">

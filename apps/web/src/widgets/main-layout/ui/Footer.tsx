@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { MapPin, Phone } from 'lucide-react';
 import { churchData } from '@/shared/config';
+import { PolicyDialog } from './PolicyDialog';
+import { PrivacyDialog } from './PrivacyDialog';
 
 export function MainFooter() {
   const { title, address, copyright, phone } = churchData;
@@ -13,7 +15,7 @@ export function MainFooter() {
             <span className="text-lg font-bold">{title}</span>
           </div>
 
-          <div className="flex flex-col items-center gap-4 text-sm text-slate-300 md:flex-row">
+          <div className="text-korean-pretty flex flex-col items-center gap-4 text-sm text-slate-300 md:flex-row">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
               <span>{address}</span>
@@ -24,9 +26,16 @@ export function MainFooter() {
             </div>
           </div>
 
-          <p className="text-xs text-slate-500">
-            ©{copyright}. ALL RIGHTS RESERVED.
-          </p>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-xs text-slate-500">
+              ©{copyright}. ALL RIGHTS RESERVED.
+            </p>
+            <div className="flex items-center gap-3">
+              <PolicyDialog />
+              <span className="text-slate-600">|</span>
+              <PrivacyDialog />
+            </div>
+          </div>
         </div>
       </div>
     </footer>

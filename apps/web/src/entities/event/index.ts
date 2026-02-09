@@ -1,2 +1,2 @@
-export { getEvents, getRecentEvents } from './api/queries';
+export { getEvents, getEventByShortId, getRecentEvents } from './api/queries';
 export type { Event } from './model/event';

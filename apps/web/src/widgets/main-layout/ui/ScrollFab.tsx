@@ -33,7 +33,7 @@ export function ScrollFAB() {
         >
           <button
             onClick={scrollToTop}
-            className="hover:bg-church-blue active:bg-church-blue/90 flex h-12 w-12 items-center justify-center text-slate-500 transition-colors hover:text-white"
+            className="hover:bg-church-blue active:bg-church-blue/90 flex h-12 w-12 items-center justify-center text-slate-500 transition-colors hover:scale-110 hover:text-slate-700"
             aria-label="맨 위로"
             type="button"
           >
@@ -43,7 +43,7 @@ export function ScrollFAB() {
 
         <button
           onClick={scrollToBottom}
-          className="hover:bg-church-blue active:bg-church-blue/90 flex h-12 w-12 items-center justify-center text-slate-500 transition-colors hover:text-white"
+          className="hover:bg-church-blue active:bg-church-blue/90 flex h-12 w-12 items-center justify-center text-slate-500 transition-colors hover:scale-110 hover:text-slate-700"
           aria-label="맨 아래로"
           type="button"
         >

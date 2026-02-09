@@ -1,5 +1,6 @@
 export interface Gallery {
   id: string;
+  shortId: string;
   title: string;
   eventDate: string;
   thumbnailUrl: string | null;

@@ -7,10 +7,10 @@ export function QuickMenu() {
     <section className="bg-manna-yellow/20 py-12 md:py-24 xl:py-30">
       <div className="container mx-auto px-4">
         <div className="mb-10 text-center">
-          <h2 className="text-foreground mb-2 text-2xl font-bold whitespace-nowrap md:text-3xl lg:text-4xl">
+          <h2 className="text-foreground text-korean-pretty mb-2 text-2xl font-bold whitespace-nowrap md:text-3xl lg:text-4xl">
             Welcome to Manna Church
           </h2>
-          <p className="text-muted-foreground whitespace-nowrap md:text-xl">
+          <p className="text-muted-foreground text-korean-pretty whitespace-nowrap md:text-xl">
             하나님을 만나고 이웃을 만나는 교회
           </p>
         </div>

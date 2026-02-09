@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { toast } from 'sonner';
 import { useDialog } from '@/shared/lib';
 import { deleteServantAction } from '../api/actions';
@@ -20,7 +20,7 @@ export function useDeleteServant(servantId: string) {
       toast.success('교인 정보가 성공적으로 삭제되었습니다.');
       router.refresh();
     } catch (error) {
-      Sentry.captureException(error);
+      captureException(error);
       console.error('섬기는 사람 삭제 실패:', error);
       toast.error('섬기는 사람 삭제에 실패했습니다.');
     } finally {

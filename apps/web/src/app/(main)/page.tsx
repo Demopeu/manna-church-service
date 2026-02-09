@@ -1,5 +1,5 @@
 import { AnnouncementsSection } from '@/widgets/announcements-section';
-import { EventsMarquee } from '@/widgets/events-Marquee';
+import { EventsMarquee } from '@/widgets/events-section';
 import { GallerySection } from '@/widgets/gallery-section';
 import { HeroCarousel } from '@/widgets/hero-carousel';
 import { QuickMenu, YoutubeImageBox } from '@/widgets/quick-menu';

@@ -1,4 +1,3 @@
-export * from './api/dto';
-export * from './api/queries';
-export * from './model/servant';
-export * from './config/positions';
+export { getServants, getServantById } from './api/queries';
+export type { Servant } from './model/servant';
+export { POSITION_OPTIONS } from './config/positions';

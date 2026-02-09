@@ -12,6 +12,7 @@ interface GetAnnouncementsParams {
 interface GetAnnouncementsResult {
   announcements: Announcement[];
   totalPages: number;
+  totalCount: number;
 }
 
 export const getAnnouncements = cache(
@@ -25,6 +26,7 @@ export const getAnnouncements = cache(
     let queryBuilder = supabase
       .from('notices')
       .select('*', { count: 'exact' })
+      .order('is_urgent', { ascending: false })
       .order('created_at', { ascending: false });
 
     if (query) {
@@ -42,12 +44,41 @@ export const getAnnouncements = cache(
       throw new Error(`Failed to fetch announcements: ${error.message}`);
     }
 
-    const totalPages = count ? Math.ceil(count / limit) : 0;
+    const validCount = count ?? 0;
 
     return {
       announcements: (data || []).map(mapAnnouncement),
-      totalPages,
+      totalPages: Math.ceil(validCount / limit),
+      totalCount: validCount,
     };
+  },
+);
+
+export const getAnnouncementByShortId = cache(
+  async (shortId: string): Promise<Announcement | null> => {
+    if (!shortId) return null;
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('notices')
+      .select('*')
+      .eq('short_id', shortId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        console.warn(`공지사항 ShortID ${shortId}를 찾을 수 없습니다.`);
+        return null;
+      }
+
+      console.error('공지사항 상세 조회 중 Supabase 에러 발생:', error);
+      throw new Error(
+        `[공지사항 조회 실패] 서버 응답 오류입니다. (${error.message})`,
+      );
+    }
+
+    return data ? mapAnnouncement(data) : null;
   },
 );
 

@@ -12,6 +12,7 @@ interface GetGalleriesParams {
 interface GetGalleriesResult {
   galleries: GalleryWithImages[];
   totalPages: number;
+  totalCount: number;
 }
 
 export const getGalleries = cache(
@@ -40,7 +41,7 @@ export const getGalleries = cache(
       throw new Error(`Failed to fetch galleries: ${error.message}`);
     }
 
-    const totalPages = count ? Math.ceil(count / limit) : 0;
+    const validCount = count ?? 0;
 
     const galleries: GalleryWithImages[] = (data || []).map((gallery) => {
       const images = (gallery.gallery_images || []).map(mapGalleryImage);
@@ -52,7 +53,42 @@ export const getGalleries = cache(
 
     return {
       galleries,
-      totalPages,
+      totalPages: Math.ceil(validCount / limit),
+      totalCount: validCount,
+    };
+  },
+);
+
+export const getGalleryByShortId = cache(
+  async (shortId: string): Promise<GalleryWithImages | null> => {
+    if (!shortId) return null;
+
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('galleries')
+      .select('*, gallery_images(*)')
+      .eq('short_id', shortId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        console.warn(`갤러리 ShortID ${shortId}를 찾을 수 없습니다.`);
+        return null;
+      }
+
+      console.error('갤러리 상세 조회 중 Supabase 에러 발생:', error);
+      throw new Error(
+        `[갤러리 조회 실패] 서버 응답 오류입니다. (${error.message})`,
+      );
+    }
+
+    if (!data) return null;
+
+    const images = (data.gallery_images || []).map(mapGalleryImage);
+    return {
+      ...mapGallery(data),
+      images,
     };
   },
 );

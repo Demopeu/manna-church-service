@@ -59,7 +59,7 @@ export function YearMonthSelect({ year, month }: Props) {
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="0">전체 연</SelectItem>
+          <SelectItem value="0">전체</SelectItem>
           {years.map((y) => (
             <SelectItem key={y} value={String(y)}>
               {y}년
@@ -68,12 +68,16 @@ export function YearMonthSelect({ year, month }: Props) {
         </SelectContent>
       </Select>
 
-      <Select value={String(month)} onValueChange={handleMonthChange}>
+      <Select
+        value={String(month)}
+        onValueChange={handleMonthChange}
+        disabled={year === 0}
+      >
         <SelectTrigger className="w-[100px]">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="0">전체 월</SelectItem>
+          <SelectItem value="0">전체</SelectItem>
           {months.map((m) => (
             <SelectItem key={m} value={String(m)}>
               {m}월

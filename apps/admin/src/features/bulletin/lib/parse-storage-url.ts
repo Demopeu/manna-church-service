@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 
 const BUCKET_NAME = 'bulletins';
 
@@ -13,7 +13,7 @@ export function extractBucketPath(
       return decodeURIComponent(bucketPath);
     }
   } catch (error) {
-    Sentry.captureException(error);
+    captureException(error);
     const fileName = url.split('/').pop();
     if (fileName) {
       return `${fallbackFolder}/${fileName}`;

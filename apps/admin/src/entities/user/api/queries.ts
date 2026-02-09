@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import * as Sentry from '@sentry/nextjs';
+import { captureException } from '@sentry/nextjs';
 import { createClient } from '@repo/database/client';
 
 export const getMyProfile = cache(async () => {
@@ -17,7 +17,7 @@ export const getMyProfile = cache(async () => {
 
     return { name: user.user_metadata || null };
   } catch (error) {
-    Sentry.captureException(error);
+    captureException(error);
     console.error('Error fetching profile:', error);
     return { name: null };
   }
