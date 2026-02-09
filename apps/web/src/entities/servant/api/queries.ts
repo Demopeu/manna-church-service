@@ -1,9 +1,15 @@
+'use cache';
+
 import { cache } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createClient } from '@repo/database/client';
 import type { Servant } from '../model/servant';
 import { mapServant } from './mapper';
 
 export const getAllServants = cache(async (): Promise<Servant[]> => {
+  cacheTag('servant-list');
+  cacheLife('days');
+
   const supabase = await createClient();
 
   const { data, error } = await supabase

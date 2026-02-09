@@ -1,10 +1,16 @@
+'use cache';
+
 import { cache } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createClient } from '@repo/database/client';
 import type { Sermon } from '../model/sermon';
 import { mapSermon } from './mapper';
 
 export const getLatestSermon = cache(async (): Promise<Sermon | null> => {
   const supabase = await createClient();
+
+  cacheTag('sermon-latest');
+  cacheLife('hours');
 
   const { data, error } = await supabase
     .from('sermons')

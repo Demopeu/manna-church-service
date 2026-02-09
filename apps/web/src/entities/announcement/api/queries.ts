@@ -1,4 +1,7 @@
+'use cache';
+
 import { cache } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createClient } from '@repo/database/client';
 import type { Announcement } from '../model/announcement';
 import { mapAnnouncement } from './mapper';
@@ -21,6 +24,9 @@ export const getAnnouncements = cache(
     page = 1,
     limit = 10,
   }: GetAnnouncementsParams = {}): Promise<GetAnnouncementsResult> => {
+    cacheTag('announcement-list');
+    cacheLife('hours');
+
     const supabase = await createClient();
 
     let queryBuilder = supabase
@@ -56,6 +62,9 @@ export const getAnnouncements = cache(
 
 export const getAnnouncementByShortId = cache(
   async (shortId: string): Promise<Announcement | null> => {
+    cacheTag(`announcement-${shortId}`);
+    cacheLife('days');
+
     if (!shortId) return null;
 
     const supabase = await createClient();
@@ -84,6 +93,9 @@ export const getAnnouncementByShortId = cache(
 
 export const getRecentAnnouncements = cache(
   async (): Promise<Announcement[]> => {
+    cacheTag('announcement-recent');
+    cacheLife('hours');
+
     const supabase = await createClient();
 
     const { data, error } = await supabase
