@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { GalleryDetail } from '@/widgets/gallery-section';
-import { getGalleryByShortId } from '@/entities/gallery';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -14,11 +13,5 @@ export default async function GalleryDetailPage({ params }: Props) {
     notFound();
   }
 
-  const gallery = await getGalleryByShortId(shortId);
-
-  if (!gallery) {
-    notFound();
-  }
-
-  return <GalleryDetail gallery={gallery} />;
+  return <GalleryDetail shortId={shortId} />;
 }
