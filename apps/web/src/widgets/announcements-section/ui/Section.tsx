@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getRecentAnnouncements } from '@/entities/announcement/api/queries';
 import { formatKoreanDate } from '@/shared/lib';
-import { Badge, withAsyncBoundary } from '@/shared/ui';
+import { Badge, ReadMoreButton, withAsyncBoundary } from '@/shared/ui';
 
 async function AnnouncementsSectionBase() {
   const announcements = await getRecentAnnouncements();
@@ -84,10 +84,25 @@ function AnnouncementsPlaceholder({ variant }: Props) {
   );
 }
 
-export const AnnouncementsSection = withAsyncBoundary(
-  AnnouncementsSectionBase,
-  {
-    loadingFallback: <AnnouncementsPlaceholder variant="skeleton" />,
-    errorFallback: <AnnouncementsPlaceholder variant="error" />,
-  },
-);
+export const AnnouncementsList = withAsyncBoundary(AnnouncementsSectionBase, {
+  loadingFallback: <AnnouncementsPlaceholder variant="skeleton" />,
+  errorFallback: <AnnouncementsPlaceholder variant="error" />,
+});
+
+export function AnnouncementsSection() {
+  return (
+    <div className="flex w-full flex-col lg:aspect-video">
+      <div className="mx-4 mb-4 flex shrink-0 items-center justify-between">
+        <h3 className="text-foreground text-xl font-bold md:text-2xl">
+          공지사항
+        </h3>
+        <ReadMoreButton href="/news/announcements" variant="transparent" />
+      </div>
+      <div className="rounded-xl bg-white shadow-lg lg:flex-1 lg:overflow-hidden">
+        <div className="lg:h-full lg:overflow-y-auto">
+          <AnnouncementsList />
+        </div>
+      </div>
+    </div>
+  );
+}

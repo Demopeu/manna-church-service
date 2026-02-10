@@ -40,11 +40,11 @@ export function HangingPolaroid({
 
       {/* Polaroid */}
       <div
-        className="animate-sway hover:paused relative origin-top cursor-default bg-white p-2 pb-8 shadow-lg transition-shadow hover:shadow-2xl sm:p-3 sm:pb-10"
+        className="animate-sway hover:paused relative min-w-50 origin-top cursor-default bg-white p-2 pb-8 shadow-lg transition-shadow hover:shadow-2xl sm:min-w-60 sm:p-3 sm:pb-10"
         style={{ animationDelay: variant.delay }}
       >
         {/* Pin */}
-        <div className="absolute -top-1.5 left-1/2 z-10 h-3 w-3 -translate-x-1/2 rounded-full bg-red-400 shadow-md" />
+        <div className="absolute -top-1.5 left-1/2 z-10 h-4 w-4 -translate-x-1/2 rounded-full bg-red-400 shadow-md" />
 
         {/* Photo */}
         <div className="bg-muted relative aspect-square w-full overflow-hidden">
@@ -65,8 +65,8 @@ export function HangingPolaroid({
 
         {/* Caption */}
         <div className="pt-2 text-center sm:pt-3">
-          <p className="text-xs font-bold text-gray-800 sm:text-sm">{name}</p>
-          <p className="mt-0.5 flex items-center justify-center gap-1 text-[10px] text-gray-500 sm:text-xs">
+          <p className="text-xl font-bold text-gray-800 sm:text-2xl">{name}</p>
+          <p className="sm:text-md mt-0.5 flex items-center justify-center gap-1 text-sm text-gray-500">
             <Globe className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
             <span>{country}</span>
           </p>

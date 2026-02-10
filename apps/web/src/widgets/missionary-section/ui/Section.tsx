@@ -12,7 +12,7 @@ export async function MissionarySection() {
     <section className="space-y-8">
       <div className="relative">
         <div className="bg-border absolute top-0 right-0 left-0 h-px" />
-        <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+        <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
           {missionaries.map((m, index) => (
             <HangingPolaroid
               key={m.id}
