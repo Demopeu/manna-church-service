@@ -1,5 +1,7 @@
+// 'use cache';
 import { cache } from 'react';
-import { createClient } from '@repo/database/client';
+// import { cacheLife, cacheTag } from 'next/cache';
+import { createPublicClient } from '@repo/database/client';
 import type { GalleryWithImages } from '../model/gallery';
 import { mapGallery, mapGalleryImage } from './mapper';
 
@@ -21,7 +23,10 @@ export const getGalleries = cache(
     page = 1,
     limit = 10,
   }: GetGalleriesParams = {}): Promise<GetGalleriesResult> => {
-    const supabase = await createClient();
+    // cacheTag('gallery-list');
+    // cacheLife('hours');
+
+    const supabase = createPublicClient();
 
     let queryBuilder = supabase
       .from('galleries')
@@ -61,9 +66,12 @@ export const getGalleries = cache(
 
 export const getGalleryByShortId = cache(
   async (shortId: string): Promise<GalleryWithImages | null> => {
+    // cacheTag(`gallery-${shortId}`);
+    // cacheLife('days');
+
     if (!shortId) return null;
 
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('galleries')
@@ -95,7 +103,9 @@ export const getGalleryByShortId = cache(
 
 export const getRecentGalleries = cache(
   async (): Promise<GalleryWithImages[]> => {
-    const supabase = await createClient();
+    // cacheTag('gallery-recent');
+    // cacheLife('hours');
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('galleries')

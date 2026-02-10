@@ -1,5 +1,6 @@
+import { Suspense } from 'react';
 import { menuData } from '@/shared/config';
-import { NavLink } from './NavLink';
+import { NavLink, NavLinkSkeleton } from './NavLink';
 
 export function AboutSidebar() {
   const groups = Object.entries(menuData);
@@ -15,14 +16,24 @@ export function AboutSidebar() {
               </h3>
 
               <div className="space-y-1">
-                {items.map((item) => (
-                  <NavLink
-                    key={item.href}
-                    href={item.href}
-                    title={item.title}
-                    icon={item.icon}
-                  />
-                ))}
+                <Suspense
+                  fallback={
+                    <>
+                      {[...Array(10)].map((_, i) => (
+                        <NavLinkSkeleton key={i} />
+                      ))}
+                    </>
+                  }
+                >
+                  {items.map((item) => (
+                    <NavLink
+                      key={item.href}
+                      href={item.href}
+                      title={item.title}
+                      icon={item.icon}
+                    />
+                  ))}
+                </Suspense>
               </div>
 
               {groupIndex < groups.length - 1 && (

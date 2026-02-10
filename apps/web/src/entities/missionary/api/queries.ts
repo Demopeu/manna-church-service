@@ -2,24 +2,23 @@
 import { cache } from 'react';
 // import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicClient } from '@repo/database/client';
-import type { Banner } from '../model/banner';
-import { mapBanner } from './mapper';
+import type { Missionary } from '../model/missionary';
+import { mapMissionary } from './mapper';
 
-export const getBanners = cache(async (): Promise<Banner[]> => {
-  // cacheTag('banner-list');
+export const getAllMissionaries = cache(async (): Promise<Missionary[]> => {
+  // cacheTag('missionary-list');
   // cacheLife('days');
 
   const supabase = createPublicClient();
 
   const { data, error } = await supabase
-    .from('banners')
+    .from('missionaries')
     .select('*')
-    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
 
   if (error) {
-    throw new Error(`Failed to fetch banners: ${error.message}`);
+    throw new Error(`Failed to fetch all missionaries: ${error.message}`);
   }
 
-  return data.map(mapBanner) || [];
+  return (data || []).map(mapMissionary);
 });

@@ -12,7 +12,7 @@ interface Props {
   banners: Banner[];
 }
 
-export function HeroCarousel({ banners }: Props) {
+export function HeroCarouselView({ banners }: Props) {
   const { setApi, plugin, current, count, scrollPrev, scrollNext, scrollTo } =
     useCarousel({ autoplayDelay: 5000 });
 
