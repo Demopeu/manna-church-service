@@ -10,7 +10,7 @@ async function HeroCarouselBase() {
 }
 
 export function HeroCarouselPlaceholder() {
-  const banner = DEFAULT_BANNER[1];
+  const banner = DEFAULT_BANNER[0];
 
   return (
     <section className="relative w-full">
