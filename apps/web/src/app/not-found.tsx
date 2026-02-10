@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
 import { BackButton, Button } from '@/shared/ui';
+
+export const metadata: Metadata = {
+  title: {
+    absolute: '페이지를 찾을 수 없습니다',
+  },
+};
 
 export default function NotFound() {
   return (
