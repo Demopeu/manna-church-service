@@ -1,7 +1,7 @@
 // 'use cache';
 import { cache } from 'react';
 // import { cacheLife, cacheTag } from 'next/cache';
-import { createClient } from '@repo/database/client';
+import { createPublicClient } from '@repo/database/client';
 import type { Missionary } from '../model/missionary';
 import { mapMissionary } from './mapper';
 
@@ -9,7 +9,7 @@ export const getAllMissionaries = cache(async (): Promise<Missionary[]> => {
   // cacheTag('missionary-list');
   // cacheLife('days');
 
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from('missionaries')

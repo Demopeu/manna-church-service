@@ -1,7 +1,7 @@
 // 'use cache';
 import { cache } from 'react';
 // import { cacheLife, cacheTag } from 'next/cache';
-import { createClient } from '@repo/database/client';
+import { createPublicClient } from '@repo/database/client';
 import type { Announcement } from '../model/announcement';
 import { mapAnnouncement } from './mapper';
 
@@ -26,7 +26,7 @@ export const getAnnouncements = cache(
     // cacheTag('announcement-list');
     // cacheLife('hours');
 
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     let queryBuilder = supabase
       .from('notices')
@@ -66,7 +66,7 @@ export const getAnnouncementByShortId = cache(
 
     if (!shortId) return null;
 
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('notices')
@@ -95,7 +95,7 @@ export const getRecentAnnouncements = cache(
     // cacheTag('announcement-recent');
     // cacheLife('hours');
 
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('notices')

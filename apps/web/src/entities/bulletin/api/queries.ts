@@ -1,7 +1,7 @@
 // 'use cache';
 import { cache } from 'react';
 // import { cacheLife, cacheTag } from 'next/cache';
-import { createClient } from '@repo/database/client';
+import { createPublicClient } from '@repo/database/client';
 import type { Bulletin } from '../model/bulletin';
 import { mapBulletin } from './mapper';
 
@@ -17,7 +17,7 @@ export const getBulletins = cache(
     // cacheTag('bulletin-list');
     // cacheLife('hours');
 
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     let queryBuilder = supabase
       .from('bulletins')
@@ -68,7 +68,7 @@ export const getBulletinById = cache(
   async (id: string): Promise<Bulletin | null> => {
     // cacheTag(`bulletin-${id}`);
     // cacheLife('hours');
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('bulletins')
@@ -95,7 +95,7 @@ export const getBulletinByDate = cache(
   async (dateString: string): Promise<Bulletin | null> => {
     // cacheTag(`bulletin-${dateString}`);
     // cacheLife('hours');
-    const supabase = await createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from('bulletins')
