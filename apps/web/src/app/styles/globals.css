@@ -81,6 +81,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --animate-marquee: marquee 40s linear infinite;
+  --animate-sway: sway 3s ease-in-out infinite;
   --text-korean-pretty: text-pretty break-keep;
 
   @keyframes marquee {
@@ -89,6 +90,16 @@
     }
     to {
       transform: translateX(-50%);
+    }
+  }
+
+  @keyframes sway {
+    0%,
+    100% {
+      transform: rotate(var(--sway-from, -3deg));
+    }
+    50% {
+      transform: rotate(var(--sway-to, 3deg));
     }
   }
 }

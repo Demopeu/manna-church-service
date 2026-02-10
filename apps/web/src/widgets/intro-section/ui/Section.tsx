@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { pastorData } from './data';
 
-export function PastorGreetingIntro() {
+export function PastorGreetingIntroSection() {
   const { profile, greeting } = pastorData;
 
   return (
