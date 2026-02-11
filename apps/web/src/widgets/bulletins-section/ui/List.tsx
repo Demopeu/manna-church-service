@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { getBulletins } from '@/entities/bulletin/api/queries';
+import { getBulletins } from '@/entities/bulletin';
 import { formatKoreanDate } from '@/shared/lib';
 import { withAsyncBoundary } from '@/shared/ui';
 import { BulletinListError } from './Error';
@@ -9,19 +9,15 @@ import { BulletinListSkeleton } from './Skeleton';
 import { BulletinContentWrapper } from './Wrapper';
 
 interface Props {
-  year: number;
-  month: number;
-  page: number;
+  filterParams: Promise<{ year: number; month: number; page: number }>;
 }
 
-async function List({ year, month, page }: Props) {
-  const pageSize = 8;
-
+async function List({ filterParams }: Props) {
+  const { year, month, page } = await filterParams;
   const { bulletins, totalPages, totalCount } = await getBulletins({
     year,
     month,
     page,
-    pageSize,
   });
 
   return (

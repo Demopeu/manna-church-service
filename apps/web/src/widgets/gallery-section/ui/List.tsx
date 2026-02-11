@@ -10,17 +10,15 @@ import {
 } from '@/shared/ui';
 
 interface Props {
-  query: string;
-  page: number;
+  filterParams: Promise<{ query: string; page: number }>;
 }
 
-async function List({ query, page }: Props) {
-  const limit = 6;
+async function List({ filterParams }: Props) {
+  const { query, page } = await filterParams;
 
   const { galleries, totalPages, totalCount } = await getGalleries({
     query,
     page,
-    limit,
   });
 
   return (

@@ -10,17 +10,14 @@ import {
 } from '@/shared/ui';
 
 interface Props {
-  query: string;
-  page: number;
+  filterParams: Promise<{ query: string; page: number }>;
 }
 
-async function List({ query, page }: Props) {
-  const limit = 10;
-
+async function List({ filterParams }: Props) {
+  const { query, page } = await filterParams;
   const { announcements, totalPages, totalCount } = await getAnnouncements({
     query,
     page,
-    limit,
   });
 
   return (

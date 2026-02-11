@@ -1,8 +1,13 @@
 import { notFound } from 'next/navigation';
 import { BulletinDetail } from '@/widgets/bulletins-section';
+import { getRecentBulletinDates } from '@/entities/bulletin';
 
 interface Props {
   params: Promise<{ date: string }>;
+}
+
+export async function generateStaticParams() {
+  return await getRecentBulletinDates(20);
 }
 
 export default async function BulletinDetailPage({ params }: Props) {

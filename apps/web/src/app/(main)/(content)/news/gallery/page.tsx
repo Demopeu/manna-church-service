@@ -6,17 +6,14 @@ export default async function GalleryPage({
 }: {
   searchParams: Promise<{ query?: string; page?: string }>;
 }) {
-  const { query, page } = await searchParams;
-  const currentQuery = query || '';
-  const pageNum = page ? Number(page) : 1;
+  const filterParams = searchParams.then((sp) => ({
+    query: sp.query || '',
+    page: sp.page ? Number(sp.page) : 1,
+  }));
 
   return (
     <MainWrapper heroBannerData={galleryData}>
-      <GalleryList
-        key={`${currentQuery}-${pageNum}`}
-        query={currentQuery}
-        page={pageNum}
-      />
+      <GalleryList filterParams={filterParams} />
     </MainWrapper>
   );
 }

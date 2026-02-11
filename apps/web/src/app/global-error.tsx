@@ -2,11 +2,10 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { captureException } from '@sentry/nextjs';
 import { AlertTriangle, Home, Phone, RefreshCcw } from 'lucide-react';
 import { churchData } from '@/shared/config';
 import { Button } from '@/shared/ui';
-
-// import { captureException } from '@sentry/nextjs';
 
 export default function GlobalError({
   error,
@@ -16,7 +15,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // captureException(error);
+    captureException(error);
     console.error(error);
   }, [error]);
 

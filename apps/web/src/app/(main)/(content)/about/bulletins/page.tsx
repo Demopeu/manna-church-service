@@ -6,19 +6,14 @@ export default async function BulletinsPage({
 }: {
   searchParams: Promise<{ year?: string; month?: string; page?: string }>;
 }) {
-  const { year, month, page } = await searchParams;
-  const yearNum = year && year !== 'all' ? Number(year) : 0;
-  const monthNum = month && month !== 'all' ? Number(month) : 0;
-  const pageNum = page ? Number(page) : 1;
-
+  const filterParams = searchParams.then((sp) => ({
+    year: sp.year && sp.year !== 'all' ? Number(sp.year) : 0,
+    month: sp.month && sp.month !== 'all' ? Number(sp.month) : 0,
+    page: sp.page ? Number(sp.page) : 1,
+  }));
   return (
     <MainWrapper heroBannerData={bulletinsData}>
-      <BulletinList
-        key={`${yearNum}-${monthNum}-${pageNum}`}
-        year={yearNum}
-        month={monthNum}
-        page={pageNum}
-      />
+      <BulletinList filterParams={filterParams} />
     </MainWrapper>
   );
 }
