@@ -59,10 +59,10 @@ async function GallerySectionBase() {
                   )}
 
                   <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 p-4 text-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <h4 className="mb-2 line-clamp-2 text-sm leading-tight font-bold text-white md:text-base">
+                    <h3 className="mb-2 line-clamp-2 text-sm leading-tight font-bold text-white md:text-base">
                       {item.title}
-                    </h4>
-                    <p className="mb-4 text-xs text-white/80">
+                    </h3>
+                    <p className="mb-4 text-xs text-white">
                       {formatKoreanDate(item.eventDate)}
                     </p>
                     <Button
@@ -109,9 +109,9 @@ export function GallerySection() {
     <SectionWrapper className="bg-white">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-10 flex items-center justify-between">
-          <h3 className="text-foreground text-2xl font-bold md:text-4xl">
+          <h2 className="text-foreground text-2xl font-bold md:text-4xl">
             갤러리
-          </h3>
+          </h2>
           <ReadMoreButton
             href="/news/gallery"
             variant="manna"

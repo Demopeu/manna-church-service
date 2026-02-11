@@ -66,7 +66,7 @@ export function BulletinContentWrapper({
             value={currentYear}
             onValueChange={(val) => updateParams({ year: val })}
           >
-            <SelectTrigger className="w-28">
+            <SelectTrigger className="w-28" aria-label="년도 선택">
               <SelectValue placeholder="년도" />
             </SelectTrigger>
             <SelectContent>
@@ -84,7 +84,7 @@ export function BulletinContentWrapper({
             disabled={!currentYear || currentYear === 'all'}
             onValueChange={(val) => updateParams({ month: val })}
           >
-            <SelectTrigger className="w-24">
+            <SelectTrigger className="w-24" aria-label="월 선택">
               <SelectValue placeholder="월" />
             </SelectTrigger>
             <SelectContent>

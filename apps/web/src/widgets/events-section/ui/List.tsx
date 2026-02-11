@@ -48,9 +48,9 @@ async function List({ filterParams }: Props) {
               </div>
 
               <div className="mt-3 space-y-1">
-                <h3 className="text-manna-dark-blue line-clamp-2 font-bold group-hover:underline">
+                <h2 className="text-manna-dark-blue line-clamp-2 text-base font-bold group-hover:underline">
                   {event.title}
-                </h3>
+                </h2>
                 <p className="text-muted-foreground text-sm">
                   {formatKoreanDate(event.startDate)}
                 </p>

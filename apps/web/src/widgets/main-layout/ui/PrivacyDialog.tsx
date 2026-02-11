@@ -25,7 +25,7 @@ export function PrivacyDialog() {
       <DialogTrigger asChild>
         <button
           type="button"
-          className="inline-flex cursor-pointer items-center gap-1 text-xs text-slate-500 transition-colors hover:text-slate-300"
+          className="inline-flex cursor-pointer items-center gap-1 text-xs text-slate-400 transition-colors hover:text-slate-300"
         >
           <span>{PRIVACY_TITLE}</span>
         </button>

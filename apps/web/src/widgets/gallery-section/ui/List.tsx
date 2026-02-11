@@ -67,9 +67,9 @@ async function List({ filterParams }: Props) {
               </div>
 
               <div className="mt-3 space-y-1">
-                <h3 className="text-manna-dark-blue font-bold group-hover:underline">
+                <h2 className="text-manna-dark-blue text-base font-bold group-hover:underline">
                   {gallery.title}
-                </h3>
+                </h2>
                 <p className="text-muted-foreground text-sm">
                   {formatKoreanDate(gallery.eventDate)} &middot;{' '}
                   {gallery.images.length}장
