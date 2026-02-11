@@ -3,7 +3,7 @@ import { GoogleIcon, KakaoIcon, NaverIcon } from '@/shared/icon';
 
 export const locationData = {
   title: '오시는 길',
-  subtitle: 'God Bless You! 환영하고 축복합니다.',
+  subtitle: '만남이 기다리는 곳, 만나교회로 오시는 길',
   breadcrumbs: [
     { label: '교회 소개', href: '/about/intro' },
     { label: '오시는 길', href: '/about/location' },
@@ -65,7 +65,7 @@ export const mapLinks: MapLinkItem[] = [
   {
     id: 'naver',
     name: '네이버 지도',
-    href: 'https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%20%EC%82%AC%ED%95%98%EA%B5%AC%20%EB%8B%A4%EB%8C%80%EB%A1%9C429%EB%B2%88%EA%B8%B8%2023/address/14358135.0200915,4172542.9830382,%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EC%82%AC%ED%95%98%EA%B5%AC%20%EB%8B%A4%EB%8C%80%EB%A1%9C429%EB%B2%88%EA%B8%B8%2023?c=20.00,0,0,0,dh&isCorrectAnswer=true',
+    href: 'https://map.naver.com/p/search/%EB%A7%8C%EB%82%98%EA%B5%90%ED%9A%8C/place/2011349726',
     icon: NaverIcon,
     style: {
       className:

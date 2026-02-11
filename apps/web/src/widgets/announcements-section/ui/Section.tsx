@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getRecentAnnouncements } from '@/entities/announcement/api/queries';
+import { getRecentAnnouncements } from '@/entities/announcement';
 import { formatKoreanDate } from '@/shared/lib';
 import { Badge, ReadMoreButton, withAsyncBoundary } from '@/shared/ui';
 
@@ -17,6 +17,7 @@ async function AnnouncementsSectionBase() {
           <Link
             href={`/news/announcements/${item.title}-${item.shortId}`}
             className="hover:bg-muted/50 flex items-center justify-between gap-4 px-6 py-4 transition-colors"
+            aria-label={`공지사항: ${item.title} 상세 보기`}
           >
             <div className="flex flex-1 items-center gap-2 overflow-hidden">
               {item.isUrgent && (
@@ -96,7 +97,11 @@ export function AnnouncementsSection() {
         <h3 className="text-foreground text-xl font-bold md:text-2xl">
           공지사항
         </h3>
-        <ReadMoreButton href="/news/announcements" variant="transparent" />
+        <ReadMoreButton
+          href="/news/announcements"
+          variant="transparent"
+          ariaLabel="공지사항 전체 목록 보기"
+        />
       </div>
       <div className="rounded-xl bg-white shadow-lg lg:flex-1 lg:overflow-hidden">
         <div className="lg:h-full lg:overflow-y-auto">

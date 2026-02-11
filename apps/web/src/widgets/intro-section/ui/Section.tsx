@@ -11,7 +11,7 @@ export function PastorGreetingIntroSection() {
           <div className="bg-manna-dark-blue/20 relative mx-16 aspect-4/5 overflow-hidden rounded-2xl shadow-lg sm:mx-0">
             <Image
               src={profile.image}
-              alt={`${profile.role} ${profile.name}`}
+              alt={`${profile.role} ${profile.name} 프로필 사진`}
               fill
               className="object-cover object-top"
               priority

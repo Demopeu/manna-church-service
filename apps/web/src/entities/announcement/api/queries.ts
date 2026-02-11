@@ -1,6 +1,7 @@
-// 'use cache';
+'use cache';
+
 import { cache } from 'react';
-// import { cacheLife, cacheTag } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicClient } from '@repo/database/client';
 import type { Announcement } from '../model/announcement';
 import { mapAnnouncement } from './mapper';
@@ -23,8 +24,8 @@ export const getAnnouncements = cache(
     page = 1,
     limit = 10,
   }: GetAnnouncementsParams = {}): Promise<GetAnnouncementsResult> => {
-    // cacheTag('announcement-list');
-    // cacheLife('hours');
+    cacheTag('announcement-list');
+    cacheLife('hours');
 
     const supabase = createPublicClient();
 
@@ -35,8 +36,9 @@ export const getAnnouncements = cache(
       .order('created_at', { ascending: false });
 
     if (query) {
+      const sanitizedQuery = query.replace(/[,.()]/g, '');
       queryBuilder = queryBuilder.or(
-        `title.ilike.%${query}%,content.ilike.%${query}%`,
+        `title.ilike.%${sanitizedQuery}%,content.ilike.%${sanitizedQuery}%`,
       );
     }
 
@@ -61,8 +63,8 @@ export const getAnnouncements = cache(
 
 export const getAnnouncementByShortId = cache(
   async (shortId: string): Promise<Announcement | null> => {
-    // cacheTag(`announcement-${shortId}`);
-    // cacheLife('days');
+    cacheTag(`announcement-${shortId}`);
+    cacheLife('days');
 
     if (!shortId) return null;
 
@@ -92,8 +94,8 @@ export const getAnnouncementByShortId = cache(
 
 export const getRecentAnnouncements = cache(
   async (): Promise<Announcement[]> => {
-    // cacheTag('announcement-recent');
-    // cacheLife('hours');
+    cacheTag('announcement-recent');
+    cacheLife('hours');
 
     const supabase = createPublicClient();
 
@@ -110,5 +112,34 @@ export const getRecentAnnouncements = cache(
     }
 
     return (data || []).map(mapAnnouncement);
+  },
+);
+
+export const getRecentAnnouncementShortIds = cache(
+  async (limit: number = 100): Promise<{ id: string }[]> => {
+    cacheTag('announcement-slugs');
+    cacheLife('hours');
+
+    const supabase = createPublicClient();
+
+    const { data, error } = await supabase
+      .from('notices')
+      .select('title, short_id')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw new Error(`Failed to fetch slugs: ${error.message}`);
+    }
+
+    return (data || []).map((item) => {
+      const safeTitle = item.title
+        .replace(/\s+/g, '-')
+        .replace(/[^\wㄱ-ㅎ가-힣-]/g, '');
+
+      return {
+        id: `${safeTitle}-${item.short_id}`,
+      };
+    });
   },
 );

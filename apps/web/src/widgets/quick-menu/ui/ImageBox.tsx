@@ -7,7 +7,7 @@ export function YoutubeImageBox() {
     <div className="group relative block aspect-video w-full overflow-hidden rounded-xl bg-gray-900 shadow-lg">
       <Image
         src={YoutubeImageBoxItem.imageUrl}
-        alt="Sermon Thumbnail Background"
+        alt="최신 설교 영상 썸네일"
         fill
         className="object-cover transition-transform duration-500 group-hover:scale-105"
         priority

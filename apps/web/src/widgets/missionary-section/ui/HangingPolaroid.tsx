@@ -35,23 +35,17 @@ export function HangingPolaroid({
         } as React.CSSProperties
       }
     >
-      {/* Wire */}
       <div className="bg-border h-8 w-px sm:h-12" />
-
-      {/* Polaroid */}
       <div
         className="animate-sway hover:paused relative min-w-50 origin-top cursor-default bg-white p-2 pb-8 shadow-lg transition-shadow hover:shadow-2xl sm:min-w-60 sm:p-3 sm:pb-10"
         style={{ animationDelay: variant.delay }}
       >
-        {/* Pin */}
         <div className="absolute -top-1.5 left-1/2 z-10 h-4 w-4 -translate-x-1/2 rounded-full bg-red-400 shadow-md" />
-
-        {/* Photo */}
         <div className="bg-muted relative aspect-square w-full overflow-hidden">
           {imageUrl ? (
             <Image
               src={imageUrl}
-              alt={`${name} 선교사`}
+              alt={`${name} 선교사 (${country}) 프로필 사진`}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 40vw, (max-width: 1024px) 28vw, 20vw"
@@ -62,8 +56,6 @@ export function HangingPolaroid({
             </div>
           )}
         </div>
-
-        {/* Caption */}
         <div className="pt-2 text-center sm:pt-3">
           <p className="text-xl font-bold text-gray-800 sm:text-2xl">{name}</p>
           <p className="sm:text-md mt-0.5 flex items-center justify-center gap-1 text-sm text-gray-500">

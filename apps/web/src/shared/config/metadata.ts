@@ -1,0 +1,68 @@
+export const BASE_URL = 'https://mannachurch.or.kr';
+export const DEFAULT_OG_IMAGE = '/default/DEFAULT-OG-IMAGE.png';
+
+export const churchData = {
+  name: '만나교회',
+  altName: 'Manna Church',
+  description:
+    '부산 사하구 다대동(낫개역)에 위치한 대한예수교장로회(고신) 만나교회입니다. 통합예배와 새벽/저녁 기도회, 다음세대 교육과 어르신 섬김에 힘쓰며 말씀과 기도, 선교사 후원 및 구제 사역에 힘쓰며 하나님과 이웃을 섬깁니다.',
+  url: BASE_URL,
+  foundingDate: '2013-01-31',
+  keywords: [
+    '부산교회',
+    '사하구교회',
+    '다대동교회',
+    '낫개역교회',
+    '낫개역 교회',
+    '대한예수교장로회',
+    '고신교회',
+    '만나교회',
+    '부산고신교회',
+    '주일예배',
+    '새벽기도회',
+    '저녁기도회',
+    '수요 저녁 기도회',
+    '통합예배',
+    '다음세대',
+    '교회학교',
+    '실버대학',
+    '유년부 예배',
+    '청소년부 예배',
+    '청년부 예배',
+    '구역 모임',
+    '김정환 목사',
+    '만나교회 담임목사',
+    '만나교회 주보',
+    '만나교회 선교',
+    '선교사 후원',
+    '부산 사하구 다대동',
+    '고신대학교',
+    '복음병원',
+  ],
+  address: {
+    street: '다대로429번길 23',
+    city: '부산광역시 사하구',
+    region: '부산',
+    postalCode: '49522',
+    country: 'KR',
+    fullAddress: '부산광역시 사하구 다대로429번길 23, 4층',
+  },
+  geo: {
+    latitude: 35.0637401,
+    longitude: 128.9813358,
+  },
+  contact: {
+    phone: '010-4125-9186',
+    smartCall: '0507-1387-9186',
+    email: 'daegigogi@naver.com',
+  },
+  social: {
+    youtube: 'https://www.youtube.com/@mannachurch9186',
+    instagram: 'https://www.instagram.com/mannachurch9186',
+  },
+  copyright: 'Demopeu',
+  leader: {
+    name: '김정환',
+    role: '담임목사',
+  },
+};

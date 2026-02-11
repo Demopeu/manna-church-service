@@ -22,7 +22,7 @@ export function DistrictLeaderList({ leaders }: Props) {
             <div className="bg-manna-mint/30 mb-3 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full md:h-20 md:w-20">
               <Image
                 src={leader.photoFile || '/placeholder.svg'}
-                alt={leader.name}
+                alt={`${leader.name} ${leader.role} 프로필 사진`}
                 className="h-full w-full object-cover"
                 width={64}
                 height={64}

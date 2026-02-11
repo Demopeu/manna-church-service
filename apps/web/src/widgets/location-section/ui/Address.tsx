@@ -2,7 +2,7 @@ import { MapPin, Phone } from 'lucide-react';
 import { churchData } from '@/shared/config';
 
 export function AddressSection() {
-  const { address, phone } = churchData;
+  const { address, contact } = churchData;
   return (
     <section className="bg-card border-border/50 rounded-2xl border p-6 shadow-sm">
       <div className="flex flex-col gap-6 sm:flex-row">
@@ -12,7 +12,7 @@ export function AddressSection() {
           </div>
           <div>
             <p className="text-muted-foreground mb-1 text-base">주소</p>
-            <p className="text-foreground font-medium">{address}</p>
+            <p className="text-foreground font-medium">{address.fullAddress}</p>
           </div>
         </div>
         <div className="flex items-start gap-3">
@@ -21,7 +21,7 @@ export function AddressSection() {
           </div>
           <div>
             <p className="text-muted-foreground mb-1 text-base">전화번호</p>
-            <p className="text-foreground font-medium">{phone}</p>
+            <p className="text-foreground font-medium">{contact.phone}</p>
           </div>
         </div>
       </div>

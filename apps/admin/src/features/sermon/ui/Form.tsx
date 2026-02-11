@@ -98,7 +98,7 @@ export function SermonForm({
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="youtubeUrl">유튜브 링크 *</Label>
+          <Label htmlFor="youtubeUrl">동영상 링크 *</Label>
           <Input
             id="youtubeUrl"
             type="url"

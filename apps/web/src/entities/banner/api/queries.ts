@@ -1,13 +1,14 @@
-// 'use cache';
+'use cache';
+
 import { cache } from 'react';
-// import { cacheLife, cacheTag } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicClient } from '@repo/database/client';
 import type { Banner } from '../model/banner';
 import { mapBanner } from './mapper';
 
 export const getBanners = cache(async (): Promise<Banner[]> => {
-  // cacheTag('banner-list');
-  // cacheLife('days');
+  cacheTag('banner-list');
+  cacheLife('days');
 
   const supabase = createPublicClient();
 

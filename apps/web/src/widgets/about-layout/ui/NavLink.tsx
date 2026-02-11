@@ -45,6 +45,7 @@ export function NavLink({ href, title, icon }: Props) {
   return (
     <Link
       href={href}
+      aria-label={`${title} 페이지로 이동`}
       className={cn(
         'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
         isActive

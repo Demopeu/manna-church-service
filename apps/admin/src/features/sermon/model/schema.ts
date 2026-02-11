@@ -10,7 +10,7 @@ export const createSermonSchema = z.object({
     .string()
     .url('올바른 URL 형식이 아닙니다.')
     .refine((url) => extractVideoId(url) !== null, {
-      message: '유효한 유튜브 영상 주소가 아닙니다.',
+      message: '유효한 유튜브 또는 인스타그램 영상 주소가 아닙니다.',
     }),
 });
 

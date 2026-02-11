@@ -18,7 +18,7 @@ export function HeroCarouselPlaceholder() {
         <div className="relative mx-auto h-[200px] w-full md:h-[400px] lg:h-[700px]">
           <Image
             src={banner!.imageUrl}
-            alt="Default Banner"
+            alt="만나교회 메인 배너 이미지"
             fill
             className="object-cover"
             priority

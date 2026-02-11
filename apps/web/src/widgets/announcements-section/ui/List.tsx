@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAnnouncements } from '@/entities/announcement/api/queries';
+import { getAnnouncements } from '@/entities/announcement';
 import { formatKoreanDate } from '@/shared/lib';
 import {
   Badge,
@@ -10,17 +10,14 @@ import {
 } from '@/shared/ui';
 
 interface Props {
-  query: string;
-  page: number;
+  filterParams: Promise<{ query: string; page: number }>;
 }
 
-async function List({ query, page }: Props) {
-  const limit = 10;
-
+async function List({ filterParams }: Props) {
+  const { query, page } = await filterParams;
   const { announcements, totalPages, totalCount } = await getAnnouncements({
     query,
     page,
-    limit,
   });
 
   return (
@@ -38,6 +35,7 @@ async function List({ query, page }: Props) {
                 key={item.id}
                 href={`/news/announcements/${item.title}-${item.shortId}`}
                 className="hover:bg-muted/50 flex w-full items-center gap-4 px-4 py-4 text-left transition-colors md:px-6"
+                aria-label={`공지사항: ${item.title} 상세 보기`}
               >
                 <div className="w-12 shrink-0">
                   {item.isUrgent && (

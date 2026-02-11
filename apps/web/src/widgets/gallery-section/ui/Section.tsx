@@ -25,6 +25,7 @@ async function GallerySectionBase() {
         <Link
           key={item.id}
           href={`/news/gallery/${item.title}-${item.shortId}`}
+          aria-label={`갤러리: ${item.title} 상세 보기`}
         >
           <Card className="group cursor-pointer overflow-hidden border-0 p-0 shadow-md transition-all duration-300 hover:shadow-lg">
             <CardContent className="p-0">
@@ -33,7 +34,7 @@ async function GallerySectionBase() {
                   {item.thumbnailUrl ? (
                     <Image
                       src={item.thumbnailUrl}
-                      alt={item.title}
+                      alt={`${item.title} 갤러리 썸네일`}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 768px) 50vw, 25vw"
@@ -45,6 +46,7 @@ async function GallerySectionBase() {
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -110,7 +112,11 @@ export function GallerySection() {
           <h3 className="text-foreground text-2xl font-bold md:text-4xl">
             갤러리
           </h3>
-          <ReadMoreButton href="/news/gallery" variant="manna" />
+          <ReadMoreButton
+            href="/news/gallery"
+            variant="manna"
+            ariaLabel="갤러리 전체 목록 보기"
+          />
         </div>
         <GallerySectionList />
       </div>

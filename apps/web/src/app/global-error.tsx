@@ -2,11 +2,10 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import { captureException } from '@sentry/nextjs';
 import { AlertTriangle, Home, Phone, RefreshCcw } from 'lucide-react';
 import { churchData } from '@/shared/config';
 import { Button } from '@/shared/ui';
-
-// import { captureException } from '@sentry/nextjs';
 
 export default function GlobalError({
   error,
@@ -16,7 +15,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // captureException(error);
+    captureException(error);
     console.error(error);
   }, [error]);
 
@@ -45,8 +44,7 @@ export default function GlobalError({
               이용에 불편을 드려 죄송합니다.
             </p>
             <p className="mb-10 text-sm break-keep text-gray-500">
-              {error.message ||
-                '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}
+              예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
             </p>
 
             <div className="mb-8 flex flex-col gap-3">
@@ -58,7 +56,11 @@ export default function GlobalError({
                 다시 시도하기
               </Button>
 
-              <Link href="/" className="w-full">
+              <Link
+                href="/"
+                className="w-full"
+                aria-label="오류 발생 후 홈페이지로 돌아가기"
+              >
                 <Button
                   variant="outline"
                   className="text-md w-full rounded-full border-2 border-gray-300 bg-white py-6 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
@@ -74,11 +76,11 @@ export default function GlobalError({
                 문제가 지속되면 아래로 연락주세요
               </p>
               <a
-                href={`tel:${churchData.phone}`}
+                href={`tel:${churchData.contact.phone}`}
                 className="inline-flex items-center gap-2 text-lg font-bold text-[#1A2B45] transition-colors hover:text-blue-700"
               >
                 <Phone className="h-4 w-4" />
-                {churchData.phone}
+                {churchData.contact.phone}
               </a>
             </div>
           </div>

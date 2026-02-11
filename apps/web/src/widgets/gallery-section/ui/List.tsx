@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getGalleries } from '@/entities/gallery/api/queries';
+import { getGalleries } from '@/entities/gallery';
 import { formatKoreanDate } from '@/shared/lib';
 import {
   ContentWrapper,
@@ -10,17 +10,15 @@ import {
 } from '@/shared/ui';
 
 interface Props {
-  query: string;
-  page: number;
+  filterParams: Promise<{ query: string; page: number }>;
 }
 
-async function List({ query, page }: Props) {
-  const limit = 6;
+async function List({ filterParams }: Props) {
+  const { query, page } = await filterParams;
 
   const { galleries, totalPages, totalCount } = await getGalleries({
     query,
     page,
-    limit,
   });
 
   return (
@@ -37,12 +35,13 @@ async function List({ query, page }: Props) {
               key={gallery.id}
               href={`/news/gallery/${gallery.title}-${gallery.shortId}`}
               className="group focus-visible:ring-manna rounded-xl text-left focus:outline-none focus-visible:ring-2"
+              aria-label={`갤러리: ${gallery.title} 상세 보기`}
             >
               <div className="relative aspect-4/3 overflow-hidden rounded-xl shadow-md transition-shadow group-hover:shadow-lg">
                 {gallery.thumbnailUrl ? (
                   <Image
                     src={gallery.thumbnailUrl}
-                    alt={gallery.title}
+                    alt={`${gallery.title} 갤러리 썸네일`}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -54,6 +53,7 @@ async function List({ query, page }: Props) {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         strokeLinecap="round"

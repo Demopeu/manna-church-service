@@ -1,22 +1,33 @@
+import type { Metadata } from 'next';
 import { EventList, eventsData } from '@/widgets/events-section';
 import { MainWrapper } from '@/shared/ui';
+
+export const metadata: Metadata = {
+  title: '이벤트',
+  description: '만나교회의 다양한 행사와 이벤트를 소개합니다.',
+  alternates: {
+    canonical: '/news/events',
+  },
+  openGraph: {
+    title: '이벤트',
+    description: '만나교회의 다양한 행사와 이벤트를 소개합니다.',
+    images: [{ url: '/hero-banner/events.webp' }],
+  },
+};
 
 export default async function EventsPage({
   searchParams,
 }: {
   searchParams: Promise<{ query?: string; page?: string }>;
 }) {
-  const { query, page } = await searchParams;
-  const currentQuery = query || '';
-  const pageNum = page ? Number(page) : 1;
+  const filterParams = searchParams.then((sp) => ({
+    query: sp.query || '',
+    page: sp.page ? Number(sp.page) : 1,
+  }));
 
   return (
     <MainWrapper heroBannerData={eventsData}>
-      <EventList
-        key={`${currentQuery}-${pageNum}`}
-        query={currentQuery}
-        page={pageNum}
-      />
+      <EventList filterParams={filterParams} />
     </MainWrapper>
   );
 }

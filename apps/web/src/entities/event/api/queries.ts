@@ -1,6 +1,7 @@
-// 'use cache';
+'use cache';
+
 import { cache } from 'react';
-// import { cacheLife, cacheTag } from 'next/cache';
+import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicClient } from '@repo/database/client';
 import type { Event } from '../model/event';
 import { mapEvent } from './mapper';
@@ -23,8 +24,8 @@ export const getEvents = cache(
     page = 1,
     limit = 10,
   }: GetEventsParams = {}): Promise<GetEventsResult> => {
-    // cacheTag('event-list');
-    // cacheLife('hours');
+    cacheTag('event-list');
+    cacheLife('hours');
 
     const supabase = createPublicClient();
 
@@ -34,8 +35,9 @@ export const getEvents = cache(
       .order('start_date', { ascending: false });
 
     if (query) {
+      const sanitizedQuery = query.replace(/[,.()]/g, '');
       queryBuilder = queryBuilder.or(
-        `title.ilike.%${query}%,description.ilike.%${query}%`,
+        `title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%`,
       );
     }
 
@@ -60,8 +62,8 @@ export const getEvents = cache(
 
 export const getEventByShortId = cache(
   async (shortId: string): Promise<Event | null> => {
-    // cacheTag(`event-${shortId}`);
-    // cacheLife('days');
+    cacheTag(`event-${shortId}`);
+    cacheLife('days');
 
     if (!shortId) return null;
 
@@ -89,9 +91,38 @@ export const getEventByShortId = cache(
   },
 );
 
+export const getRecentEventShortIds = cache(
+  async (limit: number = 20): Promise<{ id: string }[]> => {
+    cacheTag('event-slugs');
+    cacheLife('hours');
+
+    const supabase = createPublicClient();
+
+    const { data, error } = await supabase
+      .from('events')
+      .select('title, short_id')
+      .order('start_date', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw new Error(`Failed to fetch event slugs: ${error.message}`);
+    }
+
+    return (data || []).map((item) => {
+      const safeTitle = item.title
+        .replace(/\s+/g, '-')
+        .replace(/[^\wㄱ-ㅎ가-힣-]/g, '');
+
+      return {
+        id: `${safeTitle}-${item.short_id}`,
+      };
+    });
+  },
+);
+
 export const getRecentEvents = cache(async (): Promise<Event[]> => {
-  // cacheTag('event-recent');
-  // cacheLife('hours');
+  cacheTag('event-recent');
+  cacheLife('hours');
 
   const supabase = createPublicClient();
 

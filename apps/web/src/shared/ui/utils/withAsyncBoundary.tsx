@@ -16,8 +16,22 @@ export function withAsyncBoundary<T extends object>(
     try {
       return await Component(props);
     } catch (error) {
-      captureException(error);
-      console.error('ErrorBoundary Error:', error);
+      const errorObj =
+        error instanceof Error ? error : new Error(String(error));
+
+      const isNextInternalError =
+        ('digest' in errorObj &&
+          typeof errorObj.digest === 'string' &&
+          errorObj.digest.startsWith('NEXT_')) ||
+        errorObj.message?.includes('searchParams') ||
+        errorObj.message?.includes('dynamic-server-error');
+
+      if (isNextInternalError) {
+        throw errorObj;
+      }
+
+      captureException(errorObj);
+      console.error('ErrorBoundary Error:', errorObj);
       return <>{errorFallback}</>;
     }
   }

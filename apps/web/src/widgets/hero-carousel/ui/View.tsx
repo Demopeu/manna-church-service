@@ -30,15 +30,15 @@ export function HeroCarouselView({ banners }: Props) {
         }}
       >
         <CarouselContent>
-          {displayBanners.map((banner) => (
+          {displayBanners.map((banner, index) => (
             <CarouselItem key={banner.id}>
               <div className="sm-[300px] relative mx-auto h-[200px] w-full md:h-[400px] lg:h-[700px]">
                 <Image
                   src={banner.imageUrl}
-                  alt={banner.title}
+                  alt={`만나교회 배너 - ${banner.title}`}
                   fill
                   className="object-cover"
-                  priority
+                  priority={index === 0}
                 />
               </div>
             </CarouselItem>

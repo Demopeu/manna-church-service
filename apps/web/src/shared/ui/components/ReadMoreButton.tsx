@@ -8,6 +8,7 @@ interface ReadMoreButtonProps {
   href: string;
   variant?: ReadMoreButtonVariant;
   className?: string;
+  ariaLabel: string;
 }
 
 const variantStyles: Record<ReadMoreButtonVariant, string> = {
@@ -21,6 +22,7 @@ export function ReadMoreButton({
   href,
   variant = 'blue',
   className,
+  ariaLabel,
 }: ReadMoreButtonProps) {
   return (
     <Button
@@ -29,7 +31,9 @@ export function ReadMoreButton({
       size="sm"
       className={cn(`${variantStyles[variant]} ${className || ''} text-lg`)}
     >
-      <Link href={href}>+ 더 보기</Link>
+      <Link href={href} aria-label={ariaLabel}>
+        + 더 보기
+      </Link>
     </Button>
   );
 }

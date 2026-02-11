@@ -1,22 +1,35 @@
-import { AnnouncementList, announcementsData } from '@/widgets/announcements-section';
+import type { Metadata } from 'next';
+import {
+  AnnouncementList,
+  announcementsData,
+} from '@/widgets/announcements-section';
 import { MainWrapper } from '@/shared/ui';
+
+export const metadata: Metadata = {
+  title: '공지사항',
+  description: '만나교회의 공지사항과 안내를 전합니다.',
+  alternates: {
+    canonical: '/news/announcements',
+  },
+  openGraph: {
+    title: '공지사항',
+    description: '만나교회의 공지사항과 안내를 전합니다.',
+  },
+};
 
 export default async function AnnouncementsPage({
   searchParams,
 }: {
   searchParams: Promise<{ query?: string; page?: string }>;
 }) {
-  const { query, page } = await searchParams;
-  const currentQuery = query || '';
-  const pageNum = page ? Number(page) : 1;
+  const filterParams = searchParams.then((sp) => ({
+    query: sp.query || '',
+    page: sp.page ? Number(sp.page) : 1,
+  }));
 
   return (
     <MainWrapper heroBannerData={announcementsData}>
-      <AnnouncementList
-        key={`${currentQuery}-${pageNum}`}
-        query={currentQuery}
-        page={pageNum}
-      />
+      <AnnouncementList filterParams={filterParams} />
     </MainWrapper>
   );
 }
