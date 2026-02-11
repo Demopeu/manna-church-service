@@ -11,7 +11,9 @@ export const PRIVACY_TITLE = '개인정보처리방침';
 export const PRIVACY_EFFECTIVE_DATE =
   '이 개인정보처리방침은 2026년 1월 1일부터 적용됩니다.';
 
-const { title: CHURCH, name: OFFICER_NAME, phone: OFFICER_PHONE } = churchData;
+const CHURCH = churchData.name;
+const OFFICER_NAME = churchData.leader.name;
+const OFFICER_PHONE = churchData.contact.phone;
 
 export const PRIVACY_POLICY: PrivacySection[] = [
   {

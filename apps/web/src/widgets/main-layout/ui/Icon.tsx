@@ -6,7 +6,7 @@ export function Icon() {
   return (
     <div className="flex items-center gap-1">
       <Link
-        href={churchData.youtube}
+        href={churchData.social.youtube}
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"
@@ -15,7 +15,7 @@ export function Icon() {
         <span className="sr-only">YouTube</span>
       </Link>
       <Link
-        href={churchData.instagram}
+        href={churchData.social.instagram}
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"

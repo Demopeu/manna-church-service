@@ -44,8 +44,7 @@ export default function GlobalError({
               이용에 불편을 드려 죄송합니다.
             </p>
             <p className="mb-10 text-sm break-keep text-gray-500">
-              {error.message ||
-                '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}
+              예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
             </p>
 
             <div className="mb-8 flex flex-col gap-3">
@@ -73,11 +72,11 @@ export default function GlobalError({
                 문제가 지속되면 아래로 연락주세요
               </p>
               <a
-                href={`tel:${churchData.phone}`}
+                href={`tel:${churchData.contact.phone}`}
                 className="inline-flex items-center gap-2 text-lg font-bold text-[#1A2B45] transition-colors hover:text-blue-700"
               >
                 <Phone className="h-4 w-4" />
-                {churchData.phone}
+                {churchData.contact.phone}
               </a>
             </div>
           </div>

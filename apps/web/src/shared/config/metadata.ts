@@ -1,6 +1,7 @@
 export const BASE_URL = 'https://www.manna-church.com';
+export const DEFAULT_OG_IMAGE = '/default/DEFAULT-OG-IMAGE.png';
 
-export const jsonConfig = {
+export const churchData = {
   name: '만나교회',
   altName: 'Manna Church',
   description:
@@ -44,9 +45,24 @@ export const jsonConfig = {
     region: '부산',
     postalCode: '49522',
     country: 'KR',
+    fullAddress: '부산광역시 사하구 다대로429번길 23, 4층',
+  },
+  geo: {
+    latitude: 35.0637401,
+    longitude: 128.9813358,
   },
   contact: {
     phone: '010-4125-9186',
+    smartCall: '0507-1387-9186',
     email: 'daegigogi@naver.com',
+  },
+  social: {
+    youtube: 'https://www.youtube.com',
+    instagram: 'https://www.instagram.com',
+  },
+  copyright: 'Demopeu',
+  leader: {
+    name: '김정환',
+    role: '담임목사',
   },
 };

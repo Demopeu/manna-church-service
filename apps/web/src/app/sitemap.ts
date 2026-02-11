@@ -1,8 +1,11 @@
 import type { MetadataRoute } from 'next';
+import { getRecentAnnouncementShortIds } from '@/entities/announcement';
+import { getRecentBulletinDates } from '@/entities/bulletin';
+import { getRecentEventShortIds } from '@/entities/event';
+import { getRecentGalleryShortIds } from '@/entities/gallery';
+import { BASE_URL } from '@/shared/config';
 
-import { BASE_URL } from '@/shared/config/metadata';
-
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = BASE_URL;
 
   // --- Static Routes ---
@@ -77,47 +80,49 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   // --- Dynamic Routes ---
-  // TODO: API 연결 필요 — 주보 상세 페이지
-  // const bulletinDates = await fetchBulletinDates();
-  // const bulletinRoutes: MetadataRoute.Sitemap = bulletinDates.map((date) => ({
-  //   url: `${baseUrl}/about/bulletins/${date}`,
-  //   lastModified: new Date(date),
-  //   changeFrequency: 'weekly' as const,
-  //   priority: 0.4,
-  // }));
+  const [bulletinDates, announcementIds, eventIds, galleryIds] =
+    await Promise.all([
+      getRecentBulletinDates(50).catch(() => []),
+      getRecentAnnouncementShortIds(100).catch(() => []),
+      getRecentEventShortIds(50).catch(() => []),
+      getRecentGalleryShortIds(50).catch(() => []),
+    ]);
 
-  // TODO: API 연결 필요 — 공지사항 상세 페이지
-  // const announcements = await fetchAnnouncements();
-  // const announcementRoutes: MetadataRoute.Sitemap = announcements.map((item) => ({
-  //   url: `${baseUrl}/news/announcements/${item.id}`,
-  //   lastModified: new Date(item.updatedAt),
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.4,
-  // }));
+  const bulletinRoutes: MetadataRoute.Sitemap = bulletinDates.map((item) => ({
+    url: `${baseUrl}/about/bulletins/${item.date}`,
+    lastModified: new Date(item.date),
+    changeFrequency: 'weekly' as const,
+    priority: 0.4,
+  }));
 
-  // TODO: API 연결 필요 — 이벤트 상세 페이지
-  // const events = await fetchEvents();
-  // const eventRoutes: MetadataRoute.Sitemap = events.map((item) => ({
-  //   url: `${baseUrl}/news/events/${item.id}`,
-  //   lastModified: new Date(item.updatedAt),
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.4,
-  // }));
+  const announcementRoutes: MetadataRoute.Sitemap = announcementIds.map(
+    (item) => ({
+      url: `${baseUrl}/news/announcements/${item.id}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.4,
+    }),
+  );
 
-  // TODO: API 연결 필요 — 갤러리 상세 페이지
-  // const galleries = await fetchGalleries();
-  // const galleryRoutes: MetadataRoute.Sitemap = galleries.map((item) => ({
-  //   url: `${baseUrl}/news/gallery/${item.id}`,
-  //   lastModified: new Date(item.updatedAt),
-  //   changeFrequency: 'monthly' as const,
-  //   priority: 0.4,
-  // }));
+  const eventRoutes: MetadataRoute.Sitemap = eventIds.map((item) => ({
+    url: `${baseUrl}/news/events/${item.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.4,
+  }));
+
+  const galleryRoutes: MetadataRoute.Sitemap = galleryIds.map((item) => ({
+    url: `${baseUrl}/news/gallery/${item.id}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.4,
+  }));
 
   return [
     ...staticRoutes,
-    // ...bulletinRoutes,
-    // ...announcementRoutes,
-    // ...eventRoutes,
-    // ...galleryRoutes,
+    ...bulletinRoutes,
+    ...announcementRoutes,
+    ...eventRoutes,
+    ...galleryRoutes,
   ];
 }

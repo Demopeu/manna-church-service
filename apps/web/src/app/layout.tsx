@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import Script from 'next/script';
 import '@repo/ui/styles.css';
-import { jsonConfig } from '@/shared/config';
+import { churchData } from '@/shared/config';
 import './styles/globals.css';
 
 const notoSansKR = Noto_Sans_KR({
@@ -13,32 +13,32 @@ const notoSansKR = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   title: {
-    default: `${jsonConfig.name} | ${jsonConfig.altName}`,
-    template: `%s | ${jsonConfig.name}`,
+    default: `${churchData.name} | ${churchData.altName}`,
+    template: `%s | ${churchData.name}`,
   },
-  description: jsonConfig.description,
-  keywords: jsonConfig.keywords,
+  description: churchData.description,
+  keywords: churchData.keywords,
   generator: 'demopeu',
   alternates: {
     canonical: './',
   },
-  metadataBase: new URL(jsonConfig.url),
+  metadataBase: new URL(churchData.url),
   openGraph: {
     title: {
-      default: jsonConfig.name,
-      template: `%s | ${jsonConfig.name}`,
+      default: churchData.name,
+      template: `%s | ${churchData.name}`,
     },
-    description: jsonConfig.description,
-    url: jsonConfig.url,
-    siteName: jsonConfig.name,
+    description: churchData.description,
+    url: churchData.url,
+    siteName: churchData.name,
     locale: 'ko_KR',
     type: 'website',
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: jsonConfig.name,
-    description: jsonConfig.description,
+    title: churchData.name,
+    description: churchData.description,
   },
 
   robots: {
@@ -55,20 +55,27 @@ export default function RootLayout({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Church',
-    'name': jsonConfig.name,
-    'alternateName': jsonConfig.altName,
-    'description': jsonConfig.description,
-    'url': jsonConfig.url,
-    'foundingDate': jsonConfig.foundingDate,
+    'name': churchData.name,
+    'alternateName': churchData.altName,
+    'description': churchData.description,
+    'url': churchData.url,
+    'foundingDate': churchData.foundingDate,
+    'telephone': churchData.contact.smartCall,
+    'email': churchData.contact.email,
     'address': {
       '@type': 'PostalAddress',
-      'streetAddress': jsonConfig.address.street,
-      'addressLocality': jsonConfig.address.city,
-      'addressRegion': jsonConfig.address.region,
-      'postalCode': jsonConfig.address.postalCode,
-      'addressCountry': jsonConfig.address.country,
+      'streetAddress': churchData.address.street,
+      'addressLocality': churchData.address.city,
+      'addressRegion': churchData.address.region,
+      'postalCode': churchData.address.postalCode,
+      'addressCountry': churchData.address.country,
     },
-    'keywords': jsonConfig.keywords.join(', '),
+    'geo': {
+      '@type': 'GeoCoordinates',
+      'latitude': churchData.geo.latitude,
+      'longitude': churchData.geo.longitude,
+    },
+    'keywords': churchData.keywords.join(', '),
   };
   return (
     <html lang="ko" suppressHydrationWarning>

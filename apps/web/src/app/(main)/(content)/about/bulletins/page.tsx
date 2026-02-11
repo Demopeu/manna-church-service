@@ -1,5 +1,15 @@
+import type { Metadata } from 'next';
 import { BulletinList, bulletinsData } from '@/widgets/bulletins-section';
 import { MainWrapper } from '@/shared/ui';
+
+export const metadata: Metadata = {
+  title: '주보',
+  description: '만나교회 주보입니다. 매주 예배와 교회 소식을 전합니다.',
+  openGraph: {
+    title: '주보',
+    description: '만나교회 주보입니다. 매주 예배와 교회 소식을 전합니다.',
+  },
+};
 
 export default async function BulletinsPage({
   searchParams,
