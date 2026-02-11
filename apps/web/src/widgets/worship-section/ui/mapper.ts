@@ -10,7 +10,7 @@ export const titleBorderColorMap: Record<AccentColor, string> = {
 
 export const titleTextColorMap: Record<AccentColor, string> = {
   blue: 'text-manna-dark-blue',
-  cyan: 'text-manna-cyan',
+  cyan: 'text-manna-cyan-text',
   green: 'text-manna-green',
   manna: 'text-manna',
   yellow: 'text-manna-yellow',
@@ -26,7 +26,7 @@ export const cardBorderColorMap: Record<AccentColor, string> = {
 
 export const iconColorMap: Record<AccentColor, string> = {
   blue: 'text-manna-dark-blue',
-  cyan: 'text-manna-cyan',
+  cyan: 'text-manna-cyan-text',
   green: 'text-manna-green',
   manna: 'text-manna',
   yellow: 'text-manna-yellow',
