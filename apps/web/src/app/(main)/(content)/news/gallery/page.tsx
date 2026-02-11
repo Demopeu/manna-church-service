@@ -5,6 +5,9 @@ import { MainWrapper } from '@/shared/ui';
 export const metadata: Metadata = {
   title: '갤러리',
   description: '만나교회의 소중한 순간들을 사진으로 만나보세요.',
+  alternates: {
+    canonical: '/news/gallery',
+  },
   openGraph: {
     title: '갤러리',
     description: '만나교회의 소중한 순간들을 사진으로 만나보세요.',

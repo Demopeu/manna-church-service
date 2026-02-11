@@ -3,7 +3,7 @@ import { GoogleIcon, KakaoIcon, NaverIcon } from '@/shared/icon';
 
 export const locationData = {
   title: '오시는 길',
-  subtitle: 'God Bless You! 환영하고 축복합니다.',
+  subtitle: '만남이 기다리는 곳, 만나교회로 오시는 길',
   breadcrumbs: [
     { label: '교회 소개', href: '/about/intro' },
     { label: '오시는 길', href: '/about/location' },

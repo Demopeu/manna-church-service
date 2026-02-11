@@ -22,6 +22,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${date} 주보`,
     description: `만나교회 ${date} 주보입니다.`,
+    alternates: {
+      canonical: `/about/bulletins/${date}`,
+    },
     openGraph: {
       title: `${date} 주보`,
       description: `만나교회 ${date} 주보입니다.`,

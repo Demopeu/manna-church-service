@@ -32,8 +32,12 @@ export function MobileMenu() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="text-gray-600 lg:hidden">
-          <Menu className="h-10 w-10" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-gray-600 lg:hidden [&_svg:not([class*='size-'])]:size-6"
+        >
+          <Menu />
           <span className="sr-only">메뉴 열기</span>
         </Button>
       </SheetTrigger>
@@ -66,6 +70,7 @@ export function MobileMenu() {
                         href={item.href}
                         onClick={() => setOpen(false)}
                         className="hover:text-manna py-2 text-base text-gray-500 transition-colors"
+                        aria-label={`${item.title} 페이지로 이동`}
                       >
                         {item.title}
                       </Link>

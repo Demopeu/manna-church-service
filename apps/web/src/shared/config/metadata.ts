@@ -1,4 +1,4 @@
-export const BASE_URL = 'https://www.manna-church.com';
+export const BASE_URL = 'https://mannachurch.or.kr';
 export const DEFAULT_OG_IMAGE = '/default/DEFAULT-OG-IMAGE.png';
 
 export const churchData = {
@@ -57,8 +57,8 @@ export const churchData = {
     email: 'daegigogi@naver.com',
   },
   social: {
-    youtube: 'https://www.youtube.com',
-    instagram: 'https://www.instagram.com',
+    youtube: 'https://www.youtube.com/@mannachurch9186',
+    instagram: 'https://www.instagram.com/mannachurch9186',
   },
   copyright: 'Demopeu',
   leader: {

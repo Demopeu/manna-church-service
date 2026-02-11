@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
-import Script from 'next/script';
 import '@repo/ui/styles.css';
 import { churchData } from '@/shared/config';
 import './styles/globals.css';
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
   keywords: churchData.keywords,
   generator: 'demopeu',
   alternates: {
-    canonical: './',
+    canonical: '/',
   },
   metadataBase: new URL(churchData.url),
   openGraph: {
@@ -80,10 +79,9 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={`${notoSansKR.variable} font-sans antialiased`}>
-        <Script
+        <script
           id="json-ld-schema"
           type="application/ld+json"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         {children}

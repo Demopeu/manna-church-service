@@ -10,8 +10,14 @@ export function Icon() {
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"
+        aria-label="만나교회 YouTube 채널 바로가기"
       >
-        <Image src="/icons/youtube.webp" alt="YouTube" width={28} height={28} />
+        <Image
+          src="/icons/youtube.webp"
+          alt="만나교회 YouTube 채널 아이콘"
+          width={28}
+          height={28}
+        />
         <span className="sr-only">YouTube</span>
       </Link>
       <Link
@@ -19,10 +25,11 @@ export function Icon() {
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"
+        aria-label="만나교회 Instagram 바로가기"
       >
         <Image
           src="/icons/instagram.webp"
-          alt="Instagram"
+          alt="만나교회 Instagram 아이콘"
           width={28}
           height={28}
         />

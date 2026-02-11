@@ -56,7 +56,11 @@ export default function GlobalError({
                 다시 시도하기
               </Button>
 
-              <Link href="/" className="w-full">
+              <Link
+                href="/"
+                className="w-full"
+                aria-label="오류 발생 후 홈페이지로 돌아가기"
+              >
                 <Button
                   variant="outline"
                   className="text-md w-full rounded-full border-2 border-gray-300 bg-white py-6 font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"

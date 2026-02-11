@@ -1,6 +1,6 @@
 export const introData = {
   title: '만나교회 소개',
-  subtitle: 'God Bless You! 환영하고 축복합니다.',
+  subtitle: 'God Bless You! 환영하고 축복합니다',
   breadcrumbs: [
     { label: '교회 소개', href: '/about/intro' },
     { label: '만나교회 소개', href: '/about/intro' },

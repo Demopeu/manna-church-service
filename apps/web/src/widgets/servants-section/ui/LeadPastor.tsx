@@ -16,7 +16,7 @@ export function LeadPastorSection({ data }: Props) {
         <div className="h-40 w-40 shrink-0 overflow-hidden rounded-2xl bg-white/10 shadow-lg md:h-52 md:w-52">
           <Image
             src={data.photoFile || '/placeholder.svg'}
-            alt={`${data.name} ${data.role}`}
+            alt={`${data.name} ${data.role} 프로필 사진`}
             width={208}
             height={208}
             className="h-full w-full object-cover"

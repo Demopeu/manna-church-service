@@ -38,6 +38,7 @@ export function MainNavigationMenu() {
                                     <Link
                                       href={item.href}
                                       className="hover:bg-manna/20 hover:fond-extrabold text-sm text-gray-600 transition-colors hover:text-gray-900"
+                                      aria-label={`${item.title} 페이지로 이동`}
                                     >
                                       {item.title}
                                     </Link>

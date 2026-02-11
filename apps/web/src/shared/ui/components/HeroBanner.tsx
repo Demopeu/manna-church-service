@@ -21,7 +21,7 @@ export function HeroBanner({
       {backgroundImage ? (
         <Image
           src={backgroundImage}
-          alt="배경 이미지"
+          alt={`${title} 페이지 배경`}
           fill
           className="object-cover"
           priority
@@ -38,7 +38,11 @@ export function HeroBanner({
           aria-label="Breadcrumb"
           className="mb-4 flex items-center gap-2 text-sm text-white/80"
         >
-          <Link href="/" className="transition-colors hover:text-white">
+          <Link
+            href="/"
+            className="transition-colors hover:text-white"
+            aria-label="홈페이지로 이동"
+          >
             <Home className="h-4 w-4" />
             <span className="sr-only">Home</span>
           </Link>
@@ -49,6 +53,7 @@ export function HeroBanner({
                 <Link
                   href={item.href}
                   className="transition-colors hover:text-white"
+                  aria-label={`${item.label} 페이지로 이동`}
                 >
                   {item.label}
                 </Link>

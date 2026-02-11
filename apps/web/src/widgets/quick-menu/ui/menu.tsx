@@ -22,6 +22,7 @@ export function QuickMenu() {
                 key={item.label}
                 href={item.href}
                 className="group flex flex-col items-center gap-2"
+                aria-label={`${item.label} 바로가기`}
               >
                 <div
                   className={`relative flex h-20 w-20 items-center justify-center rounded-full bg-white transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg md:h-20 md:w-20 lg:h-24 lg:w-24 xl:h-32 xl:w-32`}

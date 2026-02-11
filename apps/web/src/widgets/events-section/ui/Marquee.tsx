@@ -28,7 +28,7 @@ async function EventsMarqueeBase() {
             <div className="relative h-full w-full">
               <Image
                 src={event.photoUrl}
-                alt={event.title}
+                alt={`${event.title} 이벤트 포스터`}
                 fill
                 className="object-cover object-top transition-transform duration-500 hover:scale-105"
                 sizes="(max-width: 768px) 240px, 240px"
@@ -48,7 +48,10 @@ async function EventsMarqueeBase() {
                   size="sm"
                   className="border-white/60 bg-transparent text-white hover:bg-white/20"
                 >
-                  <Link href={`/news/events/${event.title}-${event.shortId}`}>
+                  <Link
+                    href={`/news/events/${event.title}-${event.shortId}`}
+                    aria-label={`${event.title} 이벤트 자세히 보기`}
+                  >
                     자세히 보기
                   </Link>
                 </Button>
@@ -90,7 +93,11 @@ export function EventsMarquee() {
           <h3 className="text-foreground text-2xl font-bold md:text-4xl">
             이벤트
           </h3>
-          <ReadMoreButton href="/news/events" variant="manna" />
+          <ReadMoreButton
+            href="/news/events"
+            variant="manna"
+            ariaLabel="이벤트 전체 목록 보기"
+          />
         </div>
       </div>
       <EventsMarqueeList />

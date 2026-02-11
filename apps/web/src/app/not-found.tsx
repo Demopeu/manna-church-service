@@ -16,7 +16,7 @@ export default function NotFound() {
       <div className="relative mb-8 flex h-64 w-64 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gray-300 bg-white/50 text-gray-400">
         <Image
           src="/not-found.webp"
-          alt="404"
+          alt="페이지를 찾을 수 없습니다 안내 이미지"
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover"
@@ -41,7 +41,7 @@ export default function NotFound() {
           className="text-md rounded-full bg-[#1A2B45] px-8 py-6 text-white shadow-lg shadow-blue-900/10 hover:bg-[#253959]"
           asChild
         >
-          <Link href="/">
+          <Link href="/" aria-label="메인 홈페이지로 돌아가기">
             <Home className="mr-2 h-5 w-5" />
             메인으로 돌아가기
           </Link>

@@ -67,7 +67,7 @@ async function EventDetailBase({ shortId }: { shortId: string }) {
           <div className="relative w-full">
             <Image
               src={event.photoUrl}
-              alt={event.title}
+              alt={`${event.title} 이벤트 상세 이미지`}
               width={0}
               height={0}
               sizes="100vw"

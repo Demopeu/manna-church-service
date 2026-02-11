@@ -35,13 +35,14 @@ async function List({ filterParams }: Props) {
               key={bulletin.id}
               href={`/about/bulletins/${format(new Date(bulletin.publishedAt), 'yyyy-MM-dd')}`}
               className="group block cursor-pointer text-left"
+              aria-label={`${formatKoreanDate(bulletin.publishedAt)} 주보 상세 보기`}
             >
               <div className="group relative aspect-210/297 overflow-hidden bg-transparent transition-all group-hover:scale-105">
                 <Image
                   src={
                     bulletin.coverImageUrl || '/default/DEFAULT_BULLETIN.png'
                   }
-                  alt={`${bulletin.publishedAt} 주보`}
+                  alt={`${formatKoreanDate(bulletin.publishedAt)} 주보 표지`}
                   fill
                   className="object-contain duration-300"
                   sizes="(max-width: 768px) 50vw, 25vw"

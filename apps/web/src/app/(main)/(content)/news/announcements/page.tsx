@@ -8,6 +8,9 @@ import { MainWrapper } from '@/shared/ui';
 export const metadata: Metadata = {
   title: '공지사항',
   description: '만나교회의 공지사항과 안내를 전합니다.',
+  alternates: {
+    canonical: '/news/announcements',
+  },
   openGraph: {
     title: '공지사항',
     description: '만나교회의 공지사항과 안내를 전합니다.',

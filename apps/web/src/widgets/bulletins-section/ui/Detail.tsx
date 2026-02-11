@@ -28,7 +28,7 @@ async function BulletinDetailBase({ date }: { date: string }) {
           <div className="relative w-full">
             <Image
               src={bulletin.coverImageUrl}
-              alt="주보 커버"
+              alt={`${formatKoreanDate(bulletin.publishedAt)} 주보 표지`}
               width={0}
               height={0}
               sizes="100vw"
@@ -42,7 +42,7 @@ async function BulletinDetailBase({ date }: { date: string }) {
           <div key={index} className="relative w-full">
             <Image
               src={url}
-              alt={`${bulletin.publishedAt} 주보 상세 ${index + 1}`}
+              alt={`${formatKoreanDate(bulletin.publishedAt)} 주보 내지 ${index + 1}페이지`}
               width={0}
               height={0}
               sizes="100vw"

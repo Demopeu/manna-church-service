@@ -35,7 +35,8 @@ export const getGalleries = cache(
       .order('event_date', { ascending: false });
 
     if (query) {
-      queryBuilder = queryBuilder.ilike('title', `%${query}%`);
+      const sanitizedQuery = query.replace(/[,.()]/g, '');
+      queryBuilder = queryBuilder.ilike('title', `%${sanitizedQuery}%`);
     }
 
     const from = (page - 1) * limit;

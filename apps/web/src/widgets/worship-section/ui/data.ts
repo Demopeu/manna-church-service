@@ -14,7 +14,7 @@ export const worshipData = {
   subtitle: '하나님과 만나는 거룩한 시간',
   breadcrumbs: [
     { label: '교회 소개', href: '/about/intro' },
-    { label: '예배 시간', href: '/about/worship' },
+    { label: '예배 안내', href: '/about/worship' },
   ],
   backgroundImage: '/hero-banner/worship.webp',
 };

@@ -5,6 +5,9 @@ import { MainWrapper } from '@/shared/ui';
 export const metadata: Metadata = {
   title: '이벤트',
   description: '만나교회의 다양한 행사와 이벤트를 소개합니다.',
+  alternates: {
+    canonical: '/news/events',
+  },
   openGraph: {
     title: '이벤트',
     description: '만나교회의 다양한 행사와 이벤트를 소개합니다.',

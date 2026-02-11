@@ -35,8 +35,9 @@ export const getEvents = cache(
       .order('start_date', { ascending: false });
 
     if (query) {
+      const sanitizedQuery = query.replace(/[,.()]/g, '');
       queryBuilder = queryBuilder.or(
-        `title.ilike.%${query}%,description.ilike.%${query}%`,
+        `title.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%`,
       );
     }
 

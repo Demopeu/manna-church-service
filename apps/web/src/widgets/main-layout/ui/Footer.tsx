@@ -13,7 +13,7 @@ export function MainFooter() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-between gap-6 lg:flex-row">
           <div className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="logo" width={32} height={32} />
+            <Image src="/logo.svg" alt="만나교회 로고" width={32} height={32} />
             <span className="text-lg font-bold">{name}</span>
           </div>
 

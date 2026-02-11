@@ -36,8 +36,9 @@ export const getAnnouncements = cache(
       .order('created_at', { ascending: false });
 
     if (query) {
+      const sanitizedQuery = query.replace(/[,.()]/g, '');
       queryBuilder = queryBuilder.or(
-        `title.ilike.%${query}%,content.ilike.%${query}%`,
+        `title.ilike.%${sanitizedQuery}%,content.ilike.%${sanitizedQuery}%`,
       );
     }
 

@@ -5,6 +5,9 @@ import { MainWrapper } from '@/shared/ui';
 export const metadata: Metadata = {
   title: '주보',
   description: '만나교회 주보입니다. 매주 예배와 교회 소식을 전합니다.',
+  alternates: {
+    canonical: '/about/bulletins',
+  },
   openGraph: {
     title: '주보',
     description: '만나교회 주보입니다. 매주 예배와 교회 소식을 전합니다.',

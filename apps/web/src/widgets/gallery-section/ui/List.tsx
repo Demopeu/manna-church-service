@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getGalleries } from '@/entities/gallery/api/queries';
+import { getGalleries } from '@/entities/gallery';
 import { formatKoreanDate } from '@/shared/lib';
 import {
   ContentWrapper,
@@ -35,12 +35,13 @@ async function List({ filterParams }: Props) {
               key={gallery.id}
               href={`/news/gallery/${gallery.title}-${gallery.shortId}`}
               className="group focus-visible:ring-manna rounded-xl text-left focus:outline-none focus-visible:ring-2"
+              aria-label={`갤러리: ${gallery.title} 상세 보기`}
             >
               <div className="relative aspect-4/3 overflow-hidden rounded-xl shadow-md transition-shadow group-hover:shadow-lg">
                 {gallery.thumbnailUrl ? (
                   <Image
                     src={gallery.thumbnailUrl}
-                    alt={gallery.title}
+                    alt={`${gallery.title} 갤러리 썸네일`}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
@@ -52,6 +53,7 @@ async function List({ filterParams }: Props) {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
+                      aria-hidden="true"
                     >
                       <path
                         strokeLinecap="round"

@@ -3,6 +3,7 @@ export const GoogleIcon = ({ className }: { className?: string }) => (
     viewBox="0 0 24 24"
     className={className}
     xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
   >
     <path
       d="M23.766 12.276c0-.852-.076-1.672-.218-2.466H12v4.665h6.596c-.284 1.532-1.147 2.83-2.443 3.698v3.076h3.957c2.315-2.132 3.656-5.267 3.656-8.973z"

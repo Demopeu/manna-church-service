@@ -60,7 +60,7 @@ async function GalleryDetailBase({ shortId }: { shortId: string }) {
           >
             <Image
               src={image.storagePath}
-              alt={`${gallery.title} - ${index + 1}`}
+              alt={`${gallery.title} 사진 ${index + 1}번째`}
               width={0}
               height={0}
               sizes="100vw"

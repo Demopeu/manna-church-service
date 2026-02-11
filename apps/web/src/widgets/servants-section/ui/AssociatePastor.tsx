@@ -22,7 +22,7 @@ export function AssociatePastorList({ pastors }: Props) {
             <div className="bg-muted h-24 w-24 shrink-0 overflow-hidden rounded-xl md:h-28 md:w-28">
               <Image
                 src={pastor.photoFile || '/placeholder.svg'}
-                alt={`${pastor.name} ${pastor.role}`}
+                alt={`${pastor.name} ${pastor.role} 프로필 사진`}
                 width={112}
                 height={112}
                 className="h-full w-full object-cover"

@@ -56,7 +56,7 @@ export { withAsyncBoundary } from './utils/withAsyncBoundary';
 // components
 export { HeroBanner } from './components/HeroBanner';
 export { NotImage } from './components/NotImage';
-export { ReadMoreButton } from './components/ReadMoreButtion';
+export { ReadMoreButton } from './components/ReadMoreButton';
 export { ListError } from './components/ListError';
 export { ListSkeleton } from './components/ListSkeleton';
 export { BackButton } from './components/BackButton';
@@ -64,5 +64,5 @@ export { BackButton } from './components/BackButton';
 // etc
 export { SectionWrapper } from './SectionWrapper';
 export { MainWrapper } from './MainWrapper';
-export { PaginationBar } from './components/PagenationBar';
+export { PaginationBar } from './components/PaginationBar';
 export { ContentWrapper } from './ContentWrapper';
