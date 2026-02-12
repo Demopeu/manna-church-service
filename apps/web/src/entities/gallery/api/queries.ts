@@ -22,7 +22,7 @@ export const getGalleries = cache(
   async ({
     query = '',
     page = 1,
-    limit = 10,
+    limit = 9,
   }: GetGalleriesParams = {}): Promise<GetGalleriesResult> => {
     cacheTag('gallery-list');
     cacheLife('hours');

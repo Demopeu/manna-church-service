@@ -45,7 +45,7 @@ export const churchData = {
     region: '부산',
     postalCode: '49522',
     country: 'KR',
-    fullAddress: '부산광역시 사하구 다대로429번길 23, 4층',
+    fullAddress: '부산광역시 사하구 다대로429번길 23',
   },
   geo: {
     latitude: 35.0637401,

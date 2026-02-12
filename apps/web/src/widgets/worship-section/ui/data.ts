@@ -11,7 +11,7 @@ import type { AccentColor } from './mapper';
 
 export const worshipData = {
   title: '예배 안내',
-  subtitle: '하나님과 만나는 거룩한 시간',
+  subtitle: '하나님과 만나는 거룩한 시간입니다',
   breadcrumbs: [
     { label: '교회 소개', href: '/about/intro' },
     { label: '예배 안내', href: '/about/worship' },
@@ -106,7 +106,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
     items: [
       {
         name: '유년부 예배',
-        time: '오전 11:00',
+        time: '오전 12:10',
         location: '유년부실',
         days: '주일',
         icon: BookOpen,
@@ -114,8 +114,8 @@ export const WORSHIP_DATA: WorshipCategory[] = [
       },
       {
         name: '청소년부 예배',
-        time: '오전 11:00',
-        location: '유년부실',
+        time: '오전 12:10',
+        location: '청년부실',
         days: '주일',
         icon: Calendar,
         iconColor: 'blue',
@@ -123,7 +123,7 @@ export const WORSHIP_DATA: WorshipCategory[] = [
       {
         name: '청년부 예배',
         time: '2,4주차 오후 2:00',
-        location: '유년부실',
+        location: '청년부실',
         days: '주일',
         icon: Users,
         iconColor: 'blue',
