@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import LocationImage from '@/app/asset/hero-banner/location.webp';
 import { LocationContent, locationData } from '@/widgets/location-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function LocationPage() {
   return (
-    <MainWrapper heroBannerData={locationData}>
+    <MainWrapper heroBannerData={locationData} heroBannerImage={LocationImage}>
       <LocationContent />
     </MainWrapper>
   );

@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import InstagramIcon from '@/app/asset/icons/instagram.webp';
+import YoutubeIcon from '@/app/asset/icons/youtube.webp';
 import { churchData } from '@/shared/config';
 
 export function Icon() {
@@ -13,7 +15,7 @@ export function Icon() {
         aria-label="만나교회 YouTube 채널 바로가기"
       >
         <Image
-          src="/icons/youtube.webp"
+          src={YoutubeIcon}
           alt="만나교회 YouTube 채널 아이콘"
           width={28}
           height={28}
@@ -28,7 +30,7 @@ export function Icon() {
         aria-label="만나교회 Instagram 바로가기"
       >
         <Image
-          src="/icons/instagram.webp"
+          src={InstagramIcon}
           alt="만나교회 Instagram 아이콘"
           width={28}
           height={28}

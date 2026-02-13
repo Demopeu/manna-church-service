@@ -5,5 +5,4 @@ export const announcementsData = {
     { label: '홈', href: '/' },
     { label: '공지사항', href: '/news/announcements' },
   ],
-  backgroundImage: '/hero-banner/announcements.webp',
 };

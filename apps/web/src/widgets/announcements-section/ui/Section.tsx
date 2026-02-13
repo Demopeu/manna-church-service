@@ -92,7 +92,7 @@ export const AnnouncementsList = withAsyncBoundary(AnnouncementsSectionBase, {
 
 export function AnnouncementsSection() {
   return (
-    <div className="flex w-full flex-col lg:aspect-video">
+    <div className="flex w-full min-w-0 flex-col lg:aspect-video">
       <div className="mx-4 mb-4 flex shrink-0 items-center justify-between">
         <h2 className="text-foreground text-xl font-bold md:text-2xl">
           공지사항

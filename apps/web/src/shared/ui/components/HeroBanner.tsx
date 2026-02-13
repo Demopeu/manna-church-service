@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import type { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
 import { NotImage } from '@/shared/ui';
@@ -7,7 +8,7 @@ export interface HeroBannerProps {
   title: string;
   subtitle: string;
   breadcrumbs: { label: string; href?: string }[];
-  backgroundImage?: string;
+  backgroundImage?: StaticImageData;
 }
 
 export function HeroBanner({

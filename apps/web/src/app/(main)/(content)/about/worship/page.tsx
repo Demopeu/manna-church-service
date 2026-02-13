@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import WORSHIP_BANNER from '@/app/asset/hero-banner/worship.webp';
 import { WorshipContent, worshipData } from '@/widgets/worship-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function WorshipPage() {
   return (
-    <MainWrapper heroBannerData={worshipData}>
+    <MainWrapper heroBannerImage={WORSHIP_BANNER} heroBannerData={worshipData}>
       <WorshipContent />
     </MainWrapper>
   );

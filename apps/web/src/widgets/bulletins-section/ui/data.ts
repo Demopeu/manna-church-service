@@ -5,5 +5,4 @@ export const bulletinsData = {
     { label: '홈', href: '/about/intro' },
     { label: '주보', href: '/about/bulletins' },
   ],
-  backgroundImage: '/hero-banner/bulletins.webp',
 };

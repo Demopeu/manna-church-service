@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import ANNOUNCEMENTS_BANNER from '@/app/asset/hero-banner/announcements.webp';
 import {
   AnnouncementList,
   announcementsData,
@@ -28,7 +29,10 @@ export default async function AnnouncementsPage({
   }));
 
   return (
-    <MainWrapper heroBannerData={announcementsData}>
+    <MainWrapper
+      heroBannerImage={ANNOUNCEMENTS_BANNER}
+      heroBannerData={announcementsData}
+    >
       <AnnouncementList filterParams={filterParams} />
     </MainWrapper>
   );

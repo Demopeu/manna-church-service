@@ -1,3 +1,11 @@
+import BibleIcon from '@/app/asset/icons/bible.png';
+import BulletinIcon from '@/app/asset/icons/bulletin.png';
+import CalendarIcon from '@/app/asset/icons/calendar.png';
+import ChurchIcon from '@/app/asset/icons/church.png';
+import CommunityIcon from '@/app/asset/icons/community.png';
+import MapIcon from '@/app/asset/icons/map.png';
+import MissionaryIcon from '@/app/asset/icons/missionary.png';
+import SermonIcon from '@/app/asset/icons/sermon.png';
 import { churchData } from './metadata';
 
 export const menuData = {
@@ -19,42 +27,42 @@ export const menuData = {
 
 export const Items = [
   {
-    icon: '/icons/church.png',
+    icon: ChurchIcon,
     label: '교회소개',
     href: '/about/intro',
   },
   {
-    icon: '/icons/sermon.png',
+    icon: SermonIcon,
     label: '1분 메세지',
     href: churchData.social.youtube,
   },
   {
-    icon: '/icons/bulletin.png',
+    icon: BulletinIcon,
     label: '주보',
     href: '/about/bulletins',
   },
   {
-    icon: '/icons/calendar.png',
+    icon: CalendarIcon,
     label: '예배안내',
     href: '/about/worship',
   },
   {
-    icon: '/icons/map.png',
+    icon: MapIcon,
     label: '오시는길',
     href: '/about/location',
   },
   {
-    icon: '/icons/community.png',
+    icon: CommunityIcon,
     label: '섬기는사람들',
     href: '/about/servants',
   },
   {
-    icon: '/icons/bible.png',
+    icon: BibleIcon,
     label: '성경타자',
     href: 'https://bible.cts.tv/cts/bible',
   },
   {
-    icon: '/icons/missionary.png',
+    icon: MissionaryIcon,
     label: '선교사 후원',
     href: '/about/missionary',
   },
