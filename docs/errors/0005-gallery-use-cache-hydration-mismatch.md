@@ -2,7 +2,34 @@
 
 ## 📣 해결 여부
 
-미해결 - 2026-02-13 조사 중
+**해결됨** - 2026-02-13
+
+## ✅ 해결 방법
+
+`List.tsx`에서 `<Link>` 및 그 하위 JSX를 **`'use client'` 컴포넌트(`Item.tsx`)로 분리**.
+
+```tsx
+// Item.tsx — 'use client'
+'use client';
+import Link from 'next/link';
+// List.tsx — Server Component (async, 'use cache' 데이터 사용)
+import { GalleryItem } from './Item';
+
+export function GalleryItem({ gallery }: Props) {
+  return (
+    <Link href={`/news/gallery/${gallery.title}-${gallery.shortId}`}>...</Link>
+  );
+}
+
+async function List({ filterParams }: Props) {
+  const { galleries } = await getGalleries({ query, page });
+  return galleries.map((g) => <GalleryItem key={g.id} gallery={g} />);
+}
+```
+
+**핵심**: `Link` 컴포넌트의 렌더링을 `'use cache'`의 RSC payload 캐싱 범위 밖으로 이동.
+
+---
 
 ## 📋 에러 정보
 
@@ -23,6 +50,100 @@ Minified React error #418
 - `/news/gallery` 리스트 페이지에서만 발생
 - 같은 엔티티의 다른 페이지(`/news/gallery/[id]` 상세, 홈 섹션)는 정상
 - 다른 엔티티(`announcements`, `bulletins`, `events`)의 동일 패턴 페이지는 정상
+
+---
+
+## � 원인 분석: `next/link` + `'use cache'` + 모듈 그래프 오염
+
+### next/link 내부 구현
+
+`next/link`의 소스코드([github: packages/next/src/client/link.tsx](https://github.com/vercel/next.js/blob/canary/packages/next/src/client/link.tsx))를 분석한 결과:
+
+1. **`'use client'` 컴포넌트**: `link.tsx` 파일 최상단에 `'use client'` 선언
+2. **`useIntersection` 훅**: viewport 진입 감지용 `IntersectionObserver` 사용
+3. **`useContext(RouterContext)`**: 런타임 라우터 상태에 의존
+4. **`React.useMemo`로 href 해석**: `resolveHref(router, hrefProp, true)` + `addBasePath` + `addLocale`
+5. **`React.useEffect`로 prefetch**: viewport에 보이면 자동 prefetch 실행
+6. **최종 렌더링**: `<a {...restProps} {...childProps}>{children}</a>`
+
+### 왜 hydration mismatch가 발생하는가
+
+#### Server Component에서 Link를 직접 렌더링할 때 ('use cache' 활성)
+
+```
+[빌드/prerender 시]
+Server Component (List.tsx)
+  → getGalleries() with 'use cache' → 데이터 fetch
+  → Link 렌더링 → <a href="/news/gallery/제목-shortId"> (HTML에 포함)
+  → RSC payload에 Link의 client reference + props + 렌더된 HTML 캐시
+```
+
+```
+[런타임 hydration 시]
+브라우저가 캐시된 HTML 수신
+  → Link 컴포넌트 hydrate
+  → useMemo로 href 재계산 (resolveHref + addBasePath)
+  → 서버에서 캐시된 <a href="...">와 클라이언트에서 계산된 href 비교
+  → 불일치 → Hydration Error #418
+```
+
+**`Link`가 `useMemo`로 계산하는 `href`는 런타임 라우터 컨텍스트(`RouterContext`)에 의존한다.**
+`'use cache'`로 캐시된 prerender HTML의 `<a>` 태그 `href`와,
+hydration 시 `Link`가 다시 계산하는 `href`가 미세하게 달라질 수 있다.
+
+#### 'use client' 컴포넌트로 분리할 때 (해결됨)
+
+```
+[빌드/prerender 시]
+Server Component (List.tsx)
+  → getGalleries() with 'use cache' → 데이터 fetch
+  → GalleryItem 렌더링 → client component boundary
+  → RSC payload에는 GalleryItem의 reference + serialized props만 캐시
+  → Link의 렌더된 HTML은 캐시에 포함되지 않음
+```
+
+```
+[런타임 hydration 시]
+브라우저가 HTML 수신
+  → GalleryItem hydrate → Link 렌더링
+  → 서버 HTML과 클라이언트 렌더링 모두 동일한 런타임 컨텍스트 사용
+  → href 일치 → 정상
+```
+
+**핵심 차이: client component boundary가 `'use cache'`의 캐싱 범위를 제한한다.**
+`Link`가 client component 내부에 있으면, `'use cache'`는 `Link`의 렌더된 HTML을 캐시하지 않고
+client component의 **reference와 props만** 캐시한다.
+
+### 왜 gallery에서만 발생하는가 (모듈 그래프 오염)
+
+announcements도 `Link`를 Server Component에서 직접 렌더링하지만 정상 작동한다.
+gallery에서만 발생하는 이유는 **모듈 그래프에 `gallery_images(*)` 중첩 쿼리 함수가 포함**되기 때문이다.
+
+```
+gallery/page.tsx
+  → @/widgets/gallery-section (barrel)
+    → Section.tsx → queries.ts → getRecentGalleries() [gallery_images(*) + 'use cache']
+    → Detail.tsx  → queries.ts → getGalleryByShortId() [gallery_images(*) + 'use cache']
+    → List.tsx    → queries.ts → getGalleries() [플랫 데이터 + 'use cache']
+```
+
+**`gallery_images(*)`를 포함하는 `'use cache'` 함수가 모듈 그래프에 있으면:**
+
+1. `'use cache'` 컴파일러가 이 함수들의 반환 타입을 직렬화 가능하게 변환
+2. 중첩 관계형 데이터(`gallery_images(*)`)의 복잡한 타입 구조가 직렬화 코드에 포함
+3. 이 변환이 **같은 페이지의 RSC payload 생성 전체에 영향**
+4. `Link`의 server-rendered HTML이 포함된 RSC payload의 직렬화/역직렬화 과정에서 미세한 불일치 발생
+
+announcements의 `queries.ts`에는 중첩 쿼리가 없어서 (플랫 데이터만) 이 문제가 발생하지 않는다.
+
+### 증거 요약
+
+| 조건                                                   | 결과 | 설명                                           |
+| ------------------------------------------------------ | ---- | ---------------------------------------------- |
+| gallery barrel import 없음 (AnnouncementList 사용)     | ✅   | queries.ts 로드 안 됨                          |
+| gallery barrel import + Link 직접 렌더링               | ❌   | queries.ts 로드 + Link HTML 캐시됨             |
+| gallery barrel import + Link를 client component로 분리 | ✅   | queries.ts 로드되지만 Link HTML은 캐시 범위 밖 |
+| announcements (중첩 쿼리 없음) + Link 직접 렌더링      | ✅   | 중첩 쿼리 없어서 RSC payload 오염 없음         |
 
 ---
 
@@ -51,6 +172,8 @@ Minified React error #418
 | 4     | `JSON.parse(JSON.stringify(data))` 정제 후 매핑      | 프로토타입 제거해도 실패    |
 | —     | `galleries_with_count` View 사용                     | View도 실패                 |
 | A+B+D | primitive 파라미터 + const 체인 + **notices 테이블** | 다른 테이블도 실패          |
+
+**Phase 1 결론**: `getGalleries()` 내부 코드는 문제가 아니었다. 문제는 이 함수가 속한 모듈 그래프에 있었다.
 
 ---
 
@@ -93,125 +216,73 @@ entity barrel에서 `getGalleries`는 `queries-list.ts`에서 re-export.
 하지만 widget barrel을 통해 `Section.tsx`/`Detail.tsx`는 여전히 로드됨.
 **→ ❌ 실패.**
 
+### 최종 해결 J: Link를 'use client' 컴포넌트로 분리
+
+`Item.tsx`에 `'use client'` + `Link` + 하위 JSX 이동.
+**→ ✅ 성공!** `'use cache'`도 정상 적용된 상태에서 hydration 에러 없음.
+
 ---
 
-## 🔍 핵심 발견 요약
+## 🧩 남은 의문점
 
-### 1. 코드 패턴은 무관
+### 의문 1: announcements는 왜 Link 직접 렌더링이 되는가?
 
-`getAnnouncements()`와 `getGalleries()`는 완전히 동일한 패턴:
+announcements도 `Link`를 Server Component에서 직접 렌더링한다. 차이점은 모듈 그래프에
+`gallery_images(*)` 같은 **중첩 관계형 쿼리**가 없다는 것이다.
+이것은 `'use cache'` 컴파일러가 중첩 데이터 타입을 처리할 때 RSC payload 직렬화에
+부작용을 일으킨다는 것을 시사한다.
 
-- `cache()` 래퍼 + `'use cache'`
-- 객체 구조분해 파라미터
-- `let queryBuilder` + 조건부 재할당
-- `{ count: 'exact' }` + `.range()`
-- `(data || []).map(mapper)` 반환
+### 의문 2: Next.js 컴파일러 버그 가능성
 
-### 2. 데이터/테이블은 무관
+`'use cache'`는 Next.js 15에서 experimental, 16에서 stable이 된 비교적 새로운 기능이다.
+중첩 관계형 데이터를 반환하는 `'use cache'` 함수가 같은 모듈 그래프에 있을 때,
+`Link`의 server-rendered HTML 직렬화에 영향을 주는 것은 의도된 동작이 아닐 가능성이 높다.
 
-`getGalleries()` 안에서 `notices` 테이블을 쿼리해도 실패.
-announcements에서 정상 작동하는 동일 테이블.
+### 의문 3: PPR(Partial Prerendering)과의 상호작용
 
-### 3. 함수 자체도 무관
+`cacheComponents: true` 설정 시 PPR이 활성화된다.
+PPR은 static shell + dynamic streaming으로 나뉘는데,
+`'use cache'` 함수의 결과가 static shell에 포함될 때
+`Link`의 `resolveHref`가 prerender 시점과 runtime 시점에서 다른 결과를 내는지 확인 필요.
 
-`getAnnouncements()` (다른 파일의 다른 함수)를 gallery `List.tsx`에서 호출해도 실패.
+---
 
-### 4. gallery-section barrel import가 트리거
+## 📝 교훈 및 권장 패턴
 
-gallery `page.tsx`에서 `@/widgets/gallery-section`을 import하지 않으면 정상.
-import하면 — 그 안에서 어떤 함수를 호출하든 — 실패.
+### 1. `'use cache'` Server Component에서 `Link`를 직접 렌더링하지 말 것
 
-### 5. barrel이 로드하는 모듈 체인
+특히 모듈 그래프에 **중첩 관계형 쿼리** (`select('*, relation(*)')`)가 포함된 경우.
+대신 `Link`를 `'use client'` 컴포넌트로 분리하여 client component boundary를 만들 것.
 
+### 2. client component boundary는 캐싱 범위를 제한하는 역할
+
+`'use cache'`의 RSC payload 캐싱은 client component boundary에서 멈춘다.
+캐시 경계 안에서 `Link` 같은 stateful client component를 렌더링하면,
+server-rendered HTML과 hydration output 간 불일치 위험이 있다.
+
+### 3. 아이템 렌더링을 별도 컴포넌트로 분리하는 것은 좋은 패턴
+
+```tsx
+// ✅ 좋음 — 데이터 fetch는 서버, 렌더링은 클라이언트
+<ServerList>
+  {items.map(item => <ClientItem key={item.id} data={item} />)}
+</ServerList>
+
+// ⚠️ 위험 — 'use cache' 모듈에 중첩 쿼리가 있으면 hydration 에러 가능
+<ServerList>
+  {items.map(item => <Link href={...}>{item.title}</Link>)}
+</ServerList>
 ```
-gallery/page.tsx
-  → @/widgets/gallery-section (barrel)
-    → Section.tsx → @/entities/gallery → queries.ts (gallery_images(*) + 'use cache')
-    → Detail.tsx  → @/entities/gallery → queries.ts
-    → List.tsx    → @/entities/gallery → queries-list.ts (분리해도 효과 없음)
-```
-
-`queries.ts`에는 `gallery_images(*)` 중첩 관계를 fetch하는 함수가 있고,
-이 함수들이 `'use cache'`로 마킹되어 있다.
-이 파일이 페이지의 모듈 그래프에 포함되면 hydration 에러가 발생한다.
-
----
-
-## 🧩 미해결 의문점
-
-### 의문 1: queries.ts의 중첩 쿼리 함수가 모듈 전체를 오염시키는가?
-
-`queries.ts`에서 `gallery_images(*)`를 사용하는 `getRecentGalleries()`와 `getGalleryByShortId()`가 문제의 근원인가?
-이 함수들의 `'use cache'` 컴파일러 변환이 같은 페이지의 다른 컴포넌트 렌더링에 영향을 주는가?
-
-**검증 방법**: `queries.ts`에서 `gallery_images(*)` 참조를 모두 제거하고 `select('*')`로 변경한 뒤 테스트.
-
-### 의문 2: widget barrel의 tree shaking이 실패하는가?
-
-gallery `page.tsx`는 `GalleryList`와 `galleryData`만 사용.
-하지만 barrel이 `Section.tsx`, `Detail.tsx`도 로드한다.
-Next.js/Turbopack이 `'use cache'` 함수를 tree shaking하지 못해서 불필요한 모듈이 포함되는 것인가?
-
-**검증 방법**: widget barrel에서 `Section`/`Detail` export를 임시 제거하고 테스트.
-
-### 의문 3: 홈 페이지의 GallerySection이 빌드 시 캐시를 오염시키는가?
-
-홈 페이지(`/`)에서 `GallerySection` → `getRecentGalleries()` → `gallery_images(*)` 호출.
-빌드 시 이 함수가 실행되면서 `'use cache'` 캐시에 중첩 데이터가 저장되고,
-이것이 `/news/gallery` 페이지의 캐시 동작에 영향을 주는가?
-
-**검증 방법**: 홈 페이지에서 `GallerySection` 임시 제거 후 테스트.
-
-### 의문 4: getGalleryByShortId의 gallery_images 정렬이 문제인가?
-
-`getGalleryByShortId()`에는 `.order('created_at', { referencedTable: 'gallery_images' })`가 없다.
-`gallery_images`의 비결정적 정렬이 `'use cache'` 직렬화에서 서버/클라이언트 불일치를 유발하고,
-이것이 같은 모듈에 있는 다른 함수의 캐시 동작에까지 파급되는가?
-
-### 의문 5: Next.js 16 'use cache' 컴파일러 버그인가?
-
-`'use cache'`는 Next.js 15에서 experimental, Next.js 16에서 stable이 된 비교적 새로운 기능이다.
-중첩 관계형 데이터(`gallery_images(*)`)를 반환하는 함수의 `'use cache'` 컴파일러 변환에
-아직 알려지지 않은 직렬화 버그가 있을 수 있다.
-
-### 의문 6: Partial Prerendering(PPR)과의 상호작용인가?
-
-`next.config.ts`에 PPR 관련 설정이 있다.
-PPR은 정적/동적 파트를 분리하여 렌더링하는데,
-`'use cache'` 함수가 포함된 모듈이 PPR의 정적/동적 경계를 횡단할 때
-prerender 시점의 HTML과 runtime RSC payload 간 불일치가 발생할 수 있다.
-
----
-
-## 🎯 가장 유력한 다음 시도
-
-### 즉시 시도 (빠른 검증)
-
-1. **widget barrel에서 Section/Detail export 임시 제거** — `queries.ts`가 모듈 그래프에서 빠지는지 확인
-2. **queries.ts의 모든 `gallery_images(*)` → `select('*')`로 변경** — 중첩 쿼리 자체가 오염 원인인지 확인
-
-### 구조적 해결 (위 검증 후)
-
-3. **widget barrel 분리** — List, Detail, Section을 별도 barrel로 분리하여 필요한 것만 import
-4. **`'use cache'` 제거 + 다른 캐싱 전략** — `getGalleries()`에만 `cache()` (React) 사용, 빌드 경고 처리
-
-### 장기 해결
-
-5. **Next.js GitHub Issue 등록** — 재현 가능한 최소 예제와 함께 버그 리포트
-6. **Next.js 버전 업데이트 시 재테스트** — 컴파일러 버그라면 향후 패치될 가능성
 
 ---
 
 ## 📚 관련 파일
 
-- `apps/web/src/entities/gallery/api/queries.ts` — 중첩 쿼리 함수 위치
-- `apps/web/src/entities/gallery/api/queries-list.ts` — getGalleries 분리 시도 (효과 없음)
-- `apps/web/src/widgets/gallery-section/index.ts` — widget barrel (Section/Detail/List 모두 export)
-- `apps/web/src/widgets/gallery-section/ui/List.tsx` — 갤러리 리스트 컴포넌트
+- `apps/web/src/widgets/gallery-section/ui/Item.tsx` — **해결: 'use client' 컴포넌트로 Link 분리**
+- `apps/web/src/widgets/gallery-section/ui/List.tsx` — 갤러리 리스트 (Server Component)
+- `apps/web/src/entities/gallery/api/queries.ts` — 중첩 쿼리 함수 위치 (gallery_images)
+- `apps/web/src/widgets/gallery-section/index.ts` — widget barrel
 - `apps/web/src/widgets/gallery-section/ui/Section.tsx` — 홈 섹션 (getRecentGalleries 호출)
-- `apps/web/src/widgets/gallery-section/ui/Detail.tsx` — 상세 (getGalleryByShortId 호출)
 - `apps/web/src/app/(main)/(content)/news/gallery/page.tsx` — 갤러리 리스트 페이지
-- `apps/web/src/app/(main)/page.tsx` — 홈 페이지 (GallerySection 사용)
 - `apps/web/src/entities/announcement/api/queries.ts` — 정상 작동 비교 대상 (중첩 쿼리 없음)
-- `apps/web/src/shared/ui/utils/withAsyncBoundary.tsx` — Suspense/ErrorBoundary 래퍼
-- `apps/web/next.config.ts` — PPR, reactCompiler 등 설정
+- `next/link 소스코드` — [github](https://github.com/vercel/next.js/blob/canary/packages/next/src/client/link.tsx)
