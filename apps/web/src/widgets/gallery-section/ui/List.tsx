@@ -72,7 +72,7 @@ async function List({ filterParams }: Props) {
                 </h2>
                 <p className="text-muted-foreground text-sm">
                   {formatKoreanDate(gallery.eventDate)} &middot;{' '}
-                  {gallery.images.length}장
+                  {gallery.imagesCount}장
                 </p>
               </div>
             </Link>

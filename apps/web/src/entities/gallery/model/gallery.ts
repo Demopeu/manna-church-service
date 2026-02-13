@@ -16,6 +16,10 @@ export interface GalleryImage {
   createdAt: string;
 }
 
+export interface GalleryListItem extends Gallery {
+  imagesCount: number;
+}
+
 export interface GalleryWithImages extends Gallery {
   images: GalleryImage[];
 }

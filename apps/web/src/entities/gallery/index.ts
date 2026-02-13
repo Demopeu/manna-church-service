@@ -4,4 +4,9 @@ export {
   getRecentGalleryShortIds,
   getRecentGalleries,
 } from './api/queries';
-export type { Gallery, GalleryImage, GalleryWithImages } from './model/gallery';
+export type {
+  Gallery,
+  GalleryImage,
+  GalleryListItem,
+  GalleryWithImages,
+} from './model/gallery';

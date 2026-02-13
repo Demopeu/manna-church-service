@@ -1,10 +1,8 @@
-'use cache';
-
 import { cache } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicClient } from '@repo/database/client';
-import type { GalleryWithImages } from '../model/gallery';
-import { mapGallery, mapGalleryImage } from './mapper';
+import type { GalleryListItem, GalleryWithImages } from '../model/gallery';
+import { mapGallery, mapGalleryImage, mapGalleryWithCount } from './mapper';
 
 interface GetGalleriesParams {
   query?: string;
@@ -13,7 +11,7 @@ interface GetGalleriesParams {
 }
 
 interface GetGalleriesResult {
-  galleries: GalleryWithImages[];
+  galleries: GalleryListItem[];
   totalPages: number;
   totalCount: number;
 }
@@ -24,14 +22,15 @@ export const getGalleries = cache(
     page = 1,
     limit = 9,
   }: GetGalleriesParams = {}): Promise<GetGalleriesResult> => {
-    cacheTag('gallery-list');
-    cacheLife('hours');
+    // 'use cache';
+    // cacheTag('gallery-list');
+    // cacheLife('hours');
 
     const supabase = createPublicClient();
 
     let queryBuilder = supabase
-      .from('galleries')
-      .select('*, gallery_images(*)', { count: 'exact' })
+      .from('galleries_with_count')
+      .select('*', { count: 'exact' })
       .order('event_date', { ascending: false });
 
     if (query) {
@@ -50,13 +49,7 @@ export const getGalleries = cache(
 
     const validCount = count ?? 0;
 
-    const galleries: GalleryWithImages[] = (data || []).map((gallery) => {
-      const images = (gallery.gallery_images || []).map(mapGalleryImage);
-      return {
-        ...mapGallery(gallery),
-        images,
-      };
-    });
+    const galleries: GalleryListItem[] = (data || []).map(mapGalleryWithCount);
 
     return {
       galleries,
@@ -68,6 +61,7 @@ export const getGalleries = cache(
 
 export const getGalleryByShortId = cache(
   async (shortId: string): Promise<GalleryWithImages | null> => {
+    'use cache';
     cacheTag(`gallery-${shortId}`);
     cacheLife('days');
 
@@ -105,6 +99,7 @@ export const getGalleryByShortId = cache(
 
 export const getRecentGalleryShortIds = cache(
   async (limit: number = 10): Promise<{ id: string }[]> => {
+    'use cache';
     cacheTag('gallery-slugs');
     cacheLife('hours');
 
@@ -134,6 +129,7 @@ export const getRecentGalleryShortIds = cache(
 
 export const getRecentGalleries = cache(
   async (): Promise<GalleryWithImages[]> => {
+    'use cache';
     cacheTag('gallery-recent');
     cacheLife('hours');
     const supabase = createPublicClient();

@@ -1,5 +1,3 @@
-'use cache';
-
 import { cache } from 'react';
 import { cacheLife, cacheTag } from 'next/cache';
 import { createPublicClient } from '@repo/database/client';
@@ -24,8 +22,8 @@ export const getEvents = cache(
     page = 1,
     limit = 10,
   }: GetEventsParams = {}): Promise<GetEventsResult> => {
-    cacheTag('event-list');
-    cacheLife('hours');
+    // cacheTag('event-list');
+    // cacheLife('hours');
 
     const supabase = createPublicClient();
 
@@ -62,6 +60,7 @@ export const getEvents = cache(
 
 export const getEventByShortId = cache(
   async (shortId: string): Promise<Event | null> => {
+    'use cache';
     cacheTag(`event-${shortId}`);
     cacheLife('days');
 
@@ -93,6 +92,7 @@ export const getEventByShortId = cache(
 
 export const getRecentEventShortIds = cache(
   async (limit: number = 20): Promise<{ id: string }[]> => {
+    'use cache';
     cacheTag('event-slugs');
     cacheLife('hours');
 
@@ -121,6 +121,7 @@ export const getRecentEventShortIds = cache(
 );
 
 export const getRecentEvents = cache(async (): Promise<Event[]> => {
+  'use cache';
   cacheTag('event-recent');
   cacheLife('hours');
 
