@@ -8,7 +8,7 @@ export const churchData = {
     '부산 사하구 다대동(낫개역)에 위치한 대한예수교장로회(고신) 만나교회입니다. 통합예배와 새벽/저녁 기도회, 다음세대 교육과 어르신 섬김에 힘쓰며 말씀과 기도, 선교사 후원 및 구제 사역에 힘쓰며 하나님과 이웃을 섬깁니다.',
   url: BASE_URL,
   foundingDate: '2013-01-31',
-  googleVerification: '5PzDD_s_h8WGy33J4',
+  googleVerification: '5PzDD_s_h8WGy33J4z9dmBDUnTVgO0CDK-O68nMoBco',
   naverVerification: '0ed81e9bb64ca133b2ac5bba4c4ac3fc42810c4e',
   keywords: [
     '부산교회',
