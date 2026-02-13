@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import DEFAULT_BULLETIN from '@/app/asset/default/DEFAULT_BULLETIN.png';
 import { getBulletins } from '@/entities/bulletin';
 import { formatKoreanDate } from '@/shared/lib';
 import { withAsyncBoundary } from '@/shared/ui';
@@ -39,9 +40,7 @@ async function List({ filterParams }: Props) {
             >
               <div className="group relative aspect-210/297 overflow-hidden bg-transparent transition-all group-hover:scale-105">
                 <Image
-                  src={
-                    bulletin.coverImageUrl || '/default/DEFAULT_BULLETIN.png'
-                  }
+                  src={bulletin.coverImageUrl || DEFAULT_BULLETIN}
                   alt={`${formatKoreanDate(bulletin.publishedAt)} 주보 표지`}
                   fill
                   className="object-contain duration-300"

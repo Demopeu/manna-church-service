@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import GALLERY_BANNER from '@/app/asset/hero-banner/gallery.webp';
 import { GalleryList, galleryData } from '@/widgets/gallery-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -26,7 +27,7 @@ export default async function GalleryPage({
   }));
 
   return (
-    <MainWrapper heroBannerData={galleryData}>
+    <MainWrapper heroBannerImage={GALLERY_BANNER} heroBannerData={galleryData}>
       <GalleryList filterParams={filterParams} />
     </MainWrapper>
   );

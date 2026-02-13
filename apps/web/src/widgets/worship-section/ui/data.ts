@@ -16,7 +16,6 @@ export const worshipData = {
     { label: '교회 소개', href: '/about/intro' },
     { label: '예배 안내', href: '/about/worship' },
   ],
-  backgroundImage: '/hero-banner/worship.webp',
 };
 
 export interface WorshipCategory {

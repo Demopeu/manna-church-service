@@ -8,7 +8,6 @@ export const locationData = {
     { label: '교회 소개', href: '/about/intro' },
     { label: '오시는 길', href: '/about/location' },
   ],
-  backgroundImage: '/hero-banner/location.webp',
 };
 
 export type TransportType = 'subway' | 'bus' | 'car';

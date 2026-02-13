@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import SERVANTS_BANNER from '@/app/asset/hero-banner/servants.webp';
 import { ServantsContent, servantsData } from '@/widgets/servants-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -18,7 +19,10 @@ export const metadata: Metadata = {
 
 export default function ServantsPage() {
   return (
-    <MainWrapper heroBannerData={servantsData}>
+    <MainWrapper
+      heroBannerImage={SERVANTS_BANNER}
+      heroBannerData={servantsData}
+    >
       <ServantsContent />
     </MainWrapper>
   );

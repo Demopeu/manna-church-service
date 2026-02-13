@@ -5,7 +5,6 @@ export const servantsData = {
     { label: '교회 소개', href: '/about/intro' },
     { label: '섬기는 사람들', href: '/about/servants' },
   ],
-  backgroundImage: '/hero-banner/servants.webp',
 };
 
 export const LeaderPastor = {

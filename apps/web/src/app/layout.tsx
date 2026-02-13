@@ -16,6 +16,12 @@ export const metadata: Metadata = {
     template: `%s | ${churchData.name}`,
   },
   description: churchData.description,
+  verification: {
+    google: churchData.googleVerification,
+    other: {
+      'naver-site-verification': churchData.naverVerification,
+    },
+  },
   keywords: churchData.keywords,
   generator: 'demopeu',
   alternates: {

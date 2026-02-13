@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import leadPastor from '@/app/asset/about/LEADPASTOR.webp';
+import signature from '@/app/asset/about/signature.png';
 import { pastorData } from './data';
 
 export function PastorGreetingIntroSection() {
@@ -10,7 +12,7 @@ export function PastorGreetingIntroSection() {
         <div className="w-full shrink-0 sm:w-48 md:w-56 lg:w-64">
           <div className="bg-manna-dark-blue/20 relative mx-16 aspect-4/5 overflow-hidden rounded-2xl shadow-lg sm:mx-0">
             <Image
-              src={profile.image}
+              src={leadPastor}
               alt={`${profile.role} ${profile.name} 프로필 사진`}
               fill
               className="object-cover object-top"
@@ -40,17 +42,15 @@ export function PastorGreetingIntroSection() {
 
           <div className="border-border mt-8 flex items-center justify-end gap-2 border-t pt-6">
             <p className="text-manna-dark-blue font-semibold">{profile.role}</p>
-            {profile.signature ? (
-              <div className="relative h-12 w-32 md:h-14 md:w-40">
-                <Image
-                  src={profile.signature}
-                  alt={`${profile.name} 서명`}
-                  fill
-                  className="object-contain object-right"
-                  sizes="(max-width: 768px) 128px, 160px"
-                />
-              </div>
-            ) : null}
+            <div className="relative h-12 w-32 md:h-14 md:w-40">
+              <Image
+                src={signature}
+                alt={`${profile.name} 서명`}
+                fill
+                className="object-contain object-right"
+                sizes="(max-width: 768px) 128px, 160px"
+              />
+            </div>
           </div>
         </div>
       </div>

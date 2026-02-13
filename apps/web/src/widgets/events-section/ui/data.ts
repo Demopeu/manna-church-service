@@ -5,5 +5,4 @@ export const eventsData = {
     { label: '홈', href: '/' },
     { label: '이벤트', href: '/news/events' },
   ],
-  backgroundImage: '/hero-banner/events.webp',
 };

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import EVENTS_BANNER from '@/app/asset/hero-banner/events.webp';
 import { EventList, eventsData } from '@/widgets/events-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -26,7 +27,7 @@ export default async function EventsPage({
   }));
 
   return (
-    <MainWrapper heroBannerData={eventsData}>
+    <MainWrapper heroBannerImage={EVENTS_BANNER} heroBannerData={eventsData}>
       <EventList filterParams={filterParams} />
     </MainWrapper>
   );

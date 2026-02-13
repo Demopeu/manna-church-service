@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import HeroBannerImage from '@/app/asset/hero-banner/bulletins.webp';
 import { BulletinList, bulletinsData } from '@/widgets/bulletins-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -25,7 +26,10 @@ export default async function BulletinsPage({
     page: sp.page ? Number(sp.page) : 1,
   }));
   return (
-    <MainWrapper heroBannerData={bulletinsData}>
+    <MainWrapper
+      heroBannerData={bulletinsData}
+      heroBannerImage={HeroBannerImage}
+    >
       <BulletinList filterParams={filterParams} />
     </MainWrapper>
   );

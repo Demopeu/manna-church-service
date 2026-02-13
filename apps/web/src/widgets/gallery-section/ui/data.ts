@@ -5,5 +5,4 @@ export const galleryData = {
     { label: '홈', href: '/' },
     { label: '갤러리', href: '/news/gallery' },
   ],
-  backgroundImage: '/hero-banner/gallery.webp',
 };

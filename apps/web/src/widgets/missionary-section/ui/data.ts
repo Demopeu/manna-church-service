@@ -5,5 +5,4 @@ export const missionaryData = {
     { label: '교회 소개', href: '/about/intro' },
     { label: '선교사 소개', href: '/about/missionary' },
   ],
-  backgroundImage: '/hero-banner/missionary.webp',
 };

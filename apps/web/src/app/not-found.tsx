@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Home } from 'lucide-react';
+import NotImage from '@/app/asset/not-found.webp';
 import { BackButton, Button } from '@/shared/ui';
 
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export default function NotFound() {
     <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center bg-[#FFFBF5] px-4 text-center">
       <div className="relative mb-8 flex h-64 w-64 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-gray-300 bg-white/50 text-gray-400">
         <Image
-          src="/not-found.webp"
+          src={NotImage}
           alt="페이지를 찾을 수 없습니다 안내 이미지"
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

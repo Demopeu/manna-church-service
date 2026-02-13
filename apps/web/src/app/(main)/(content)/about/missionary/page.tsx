@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import MISSIONARY_BANNER from '@/app/asset/hero-banner/missionary.webp';
 import {
   MissionarySection,
   missionaryData,
@@ -21,7 +22,10 @@ export const metadata: Metadata = {
 
 export default function MissionaryPage() {
   return (
-    <MainWrapper heroBannerData={missionaryData}>
+    <MainWrapper
+      heroBannerImage={MISSIONARY_BANNER}
+      heroBannerData={missionaryData}
+    >
       <MissionarySection />
     </MainWrapper>
   );

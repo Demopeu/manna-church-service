@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import INTRO_BANNER from '@/app/asset/hero-banner/intro.webp';
 import { PastorGreetingIntroSection, introData } from '@/widgets/intro-section';
 import { MainWrapper } from '@/shared/ui';
 
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 
 export default function IntroPage() {
   return (
-    <MainWrapper heroBannerData={introData}>
+    <MainWrapper heroBannerImage={INTRO_BANNER} heroBannerData={introData}>
       <PastorGreetingIntroSection />
     </MainWrapper>
   );
