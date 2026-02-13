@@ -1,13 +1,11 @@
-import Image from 'next/image';
-import Link from 'next/link';
 import { getEvents } from '@/entities/event';
-import { formatKoreanDate } from '@/shared/lib';
 import {
   ContentWrapper,
   ListError,
   ListSkeleton,
   withAsyncBoundary,
 } from '@/shared/ui';
+import { EventItem } from './Item';
 
 interface Props {
   filterParams: Promise<{ query: string; page: number }>;
@@ -31,31 +29,7 @@ async function List({ filterParams }: Props) {
       {events.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-6">
           {events.map((event) => (
-            <Link
-              key={event.id}
-              href={`/news/events/${event.title}-${event.shortId}`}
-              className="group focus-visible:ring-manna rounded-xl text-left focus:outline-none focus-visible:ring-2"
-              aria-label={`이벤트: ${event.title} 상세 보기`}
-            >
-              <div className="group relative aspect-210/297 overflow-hidden bg-transparent transition-all group-hover:scale-105">
-                <Image
-                  src={event.photoUrl}
-                  alt={`${event.title} 이벤트 포스터`}
-                  fill
-                  className="object-contain duration-300"
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
-              </div>
-
-              <div className="mt-3 space-y-1">
-                <h3 className="text-manna-dark-blue line-clamp-2 font-bold group-hover:underline">
-                  {event.title}
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  {formatKoreanDate(event.startDate)}
-                </p>
-              </div>
-            </Link>
+            <EventItem key={event.id} event={event} />
           ))}
         </div>
       ) : (

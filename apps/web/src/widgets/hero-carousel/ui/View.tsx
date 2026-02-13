@@ -32,7 +32,7 @@ export function HeroCarouselView({ banners }: Props) {
         <CarouselContent>
           {displayBanners.map((banner, index) => (
             <CarouselItem key={banner.id}>
-              <div className="sm-[300px] relative mx-auto h-[200px] w-full md:h-[400px] lg:h-[700px]">
+              <div className="relative mx-auto aspect-21/11 w-full lg:aspect-5/2">
                 <Image
                   src={banner.imageUrl}
                   alt={`만나교회 배너 - ${banner.title}`}

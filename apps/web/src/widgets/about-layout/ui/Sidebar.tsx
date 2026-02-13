@@ -8,12 +8,12 @@ export function AboutSidebar() {
   return (
     <aside className="hidden w-64 shrink-0 lg:block">
       <nav className="sticky top-8">
-        <div className="bg-card border-border/50 space-y-6 rounded-2xl border p-5 shadow-lg">
+        <div className="bg-card border-border space-y-6 rounded-2xl border p-5 shadow-lg">
           {groups.map(([category, items], groupIndex) => (
             <div key={category}>
-              <h3 className="text-muted-foreground/60 mb-3 px-3 text-xs font-medium tracking-wider uppercase">
+              <p className="text-muted-foreground mb-3 px-3 text-xs font-medium tracking-wider uppercase">
                 {category}
-              </h3>
+              </p>
 
               <div className="space-y-1">
                 <Suspense
@@ -37,7 +37,7 @@ export function AboutSidebar() {
               </div>
 
               {groupIndex < groups.length - 1 && (
-                <div className="border-border/50 mt-5 border-t" />
+                <div className="border-border mt-5 border-t" />
               )}
             </div>
           ))}

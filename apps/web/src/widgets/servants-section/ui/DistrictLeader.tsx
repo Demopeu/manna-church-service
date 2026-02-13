@@ -30,9 +30,9 @@ export function DistrictLeaderList({ leaders }: Props) {
             </div>
 
             <p className="text-manna mb-1 text-xs font-medium">{leader.role}</p>
-            <h4 className="text-foreground text-sm font-semibold md:text-base">
+            <h3 className="text-foreground text-sm font-semibold md:text-base">
               {leader.name}
-            </h4>
+            </h3>
             {leader.introduction && (
               <p className="text-muted-foreground mt-1 line-clamp-1 text-xs">
                 {leader.introduction}

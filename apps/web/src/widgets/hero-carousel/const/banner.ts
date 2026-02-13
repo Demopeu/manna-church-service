@@ -6,11 +6,4 @@ export const DEFAULT_BANNER = [
     sortOrder: 1,
     createdAt: new Date().toISOString(),
   },
-  {
-    id: 'default2',
-    title: '기본 배너2',
-    imageUrl: '/default/DEFAULT_BANNER2.webp',
-    sortOrder: 2,
-    createdAt: new Date().toISOString(),
-  },
 ];

@@ -39,8 +39,9 @@ export function PaginationBar({
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
         className="h-9 w-9"
+        aria-label="이전 페이지"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-4 w-4" aria-hidden="true" />
       </Button>
 
       {getVisiblePages().map((p) => (
@@ -65,8 +66,9 @@ export function PaginationBar({
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
         className="h-9 w-9"
+        aria-label="다음 페이지"
       >
-        <ChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-4 w-4" aria-hidden="true" />
       </Button>
     </div>
   );

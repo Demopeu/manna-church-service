@@ -40,12 +40,12 @@ export function MainFooter() {
           </address>
 
           <div className="flex flex-col items-center gap-1">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               ©{copyright}. ALL RIGHTS RESERVED.
             </p>
             <div className="flex items-center gap-3">
               <PolicyDialog />
-              <span className="text-slate-600">|</span>
+              <span className="text-slate-400">|</span>
               <PrivacyDialog />
             </div>
           </div>

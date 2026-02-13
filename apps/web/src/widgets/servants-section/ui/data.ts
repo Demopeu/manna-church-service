@@ -1,6 +1,6 @@
 export const servantsData = {
   title: '섬기는 사람들',
-  subtitle: '만나교회와 함께하는 사역자들을 소개합니다',
+  subtitle: '만나교회를 함께 섬기는 사역자들 입니다',
   breadcrumbs: [
     { label: '교회 소개', href: '/about/intro' },
     { label: '섬기는 사람들', href: '/about/servants' },

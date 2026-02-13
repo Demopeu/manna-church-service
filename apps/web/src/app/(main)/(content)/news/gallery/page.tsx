@@ -22,7 +22,7 @@ export default async function GalleryPage({
 }) {
   const filterParams = searchParams.then((sp) => ({
     query: sp.query || '',
-    page: sp.page ? Number(sp.page) : 1,
+    page: sp.page || '1',
   }));
 
   return (

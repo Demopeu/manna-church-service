@@ -94,9 +94,9 @@ export function AnnouncementsSection() {
   return (
     <div className="flex w-full flex-col lg:aspect-video">
       <div className="mx-4 mb-4 flex shrink-0 items-center justify-between">
-        <h3 className="text-foreground text-xl font-bold md:text-2xl">
+        <h2 className="text-foreground text-xl font-bold md:text-2xl">
           공지사항
-        </h3>
+        </h2>
         <ReadMoreButton
           href="/news/announcements"
           variant="transparent"

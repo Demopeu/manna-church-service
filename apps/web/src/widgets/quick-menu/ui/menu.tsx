@@ -29,7 +29,7 @@ export function QuickMenu() {
                 >
                   <Image
                     src={item.icon}
-                    alt={item.label}
+                    alt=""
                     fill
                     className="object-contain p-4 xl:p-6"
                     sizes="80vw"
