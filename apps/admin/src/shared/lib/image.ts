@@ -65,6 +65,7 @@ export async function imageConverter<T extends FieldValues>({
 
   const selectedConverter = CONVERTER_MAP[type];
   if (!selectedConverter) {
+    captureException(new Error(`Unsupported image converter type: ${type}`));
     console.error(`❌ 지원하지 않는 변환 타입입니다: ${type}`);
     setError('root', {
       type: 'client',

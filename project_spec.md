@@ -1,61 +1,46 @@
 # Project Specification: Manna Church Service Platform
 
-## 1. 프로젝트 개요 (Project Overview)
+## 1. 프로젝트 개요
 
-- **Project Name:** `manna-church-service`
-- **Client:** 만나교회 (Manna Church)
-- **Architecture:** Turborepo Monorepo (User Web + Admin CMS)
-- **Mission:**
+- **프로젝트명:** `manna-church-service`
+- **클라이언트:** 만나교회 (부산 사하구 다대동)
+- **아키텍처:** Turborepo 모노레포 (사용자 웹 + 관리자 CMS)
+- **미션:**
   > "디지털 소외 계층인 고령의 성도들이 **가장 쉽고 빠르게** 교회 소식에 접근할 수 있게 하고, 기술을 모르는 목사님이 **스트레스 없이** 운영할 수 있는 시스템을 구축한다."
 
-### 🔑 핵심 가치 (Core Values)
+### 핵심 가치
 
-1.  **Extreme Accessibility (초-접근성):**
-    - 예쁘기만 한 디자인보다 **"보이는"** 디자인이 우선이다. (고대비, 큰 글씨)
-    - 화려한 인터랙션보다 **"직관적인"** UX가 우선이다. (멀미 방지, 명확한 버튼)
-2.  **Performance on Low-End (저사양 최적화):**
-    - 최신 아이폰이 아닌, **보급형 갤럭시 A 시리즈**에서 60fps가 나와야 한다.
-    - 초기 로딩(FCP)을 늦추는 무거운 라이브러리는 가차 없이 제거한다.
-3.  **Zero-Ops Automation (운영 자동화):**
-    - "개발자한테 전화해야 해결되는 일"을 만들지 않는다.
-    - 목사님이 실수를 해도 시스템이 알아서 방어하고 보정한다. (이미지 자동 압축 등)
+1. **초-접근성:** 예쁘기만 한 디자인보다 **"보이는"** 디자인 우선. (고대비, 큰 글씨, 직관적 UX)
+2. **저사양 최적화:** **보급형 갤럭시 A 시리즈**에서 60fps 보장. 무거운 라이브러리 사용 금지.
+3. **운영 자동화:** "개발자한테 전화해야 해결되는 일"을 만들지 않는다. 이미지 자동 압축 등 시스템 방어.
 
 ---
 
-## 2. 사용자 페르소나 및 제약 사항 (Target Audience & Constraints)
+## 2. 사용자 페르소나 및 제약 사항
 
-> 🤖 **AI Instruction:** 코드를 작성할 때 항상 아래 두 페르소나(김권사님, 이목사님)가 사용한다고 상상하고 구현하라.
+> 🤖 **AI Instruction:** 코드를 작성할 때 항상 아래 두 페르소나를 상상하고 구현하라.
 
 ### A. 성도: "70대 김권사님" (End User)
 
-- **Environment (환경):**
-  - **Device:** 3년 지난 갤럭시 A32, 폰트 크기 '크게' 설정 사용 중.
-  - **Network:** 교회 지하 식당의 느리고 끊기는 Wi-Fi.
-- **Pain Points (불편함):**
-  - "글씨가 깨알 같아서 안 보여. 돋보기 어디 갔지?"
-  - "화면이 휙휙 넘어가니까 어지러워. (전정 기관 예민/멀미)"
-  - "메뉴가 영어로 되어 있어서 뭔지 모르겠어."
-- **Requirements (요구사항):**
-  - **Zero-Lag:** 터치했을 때 즉각 반응해야 한다 (SSR/SSG 필수).
-  - **Readability:** 기본 폰트는 커야 하며, 더 크게 조절할 수 있어야 한다.
-  - **Simplicity:** 메인 화면에서 '설교'와 '주보'를 한 번에 찾을 수 있어야 한다.
+- **환경:** 3년 지난 갤럭시 A32, 폰트 크기 '크게', 교회 지하 식당 Wi-Fi.
+- **불편함:** 깨알 같은 글씨, 빠르게 넘어가는 화면, 영어 메뉴.
+- **요구사항:**
+  - **Zero-Lag:** 터치 시 즉각 반응 (SSG + `'use cache'` 필수).
+  - **Readability:** 기본 폰트가 커야 한다.
+  - **Simplicity:** 메인 화면에서 주요 콘텐츠를 한 번에 찾을 수 있어야 한다.
 
 ### B. 관리자: "60대 김목사님" (Admin)
 
-- **Tech Level (기술 수준):**
-  - 한글/워드 작업은 가능하지만, '이미지 리사이징', 'HTML', 'URL 복사' 개념이 낯설음.
-  - 복잡한 대시보드 화면을 보면 겁을 먹음.
-- **Behavior (행동 패턴):**
-  - DSLR로 찍은 15MB짜리 원본 사진을 그대로 업로드함.
-  - 주보를 이미지로 변환할 줄 몰라 PDF 파일을 그대로 올림.
-- **Requirements (요구사항):**
-  - **Blog-like UX:** 네이버 블로그 글쓰기처럼 단순하고 직관적인 에디터.
-  - **Auto-Processing:** 원본을 올려도 알아서 웹용으로 변환되어야 함.
-  - **Fail-Safe:** 잘못된 파일을 올려도 서버가 죽지 않고 친절하게 안내해야 함.
+- **기술 수준:** 한글/워드 가능, '이미지 리사이징' 등 개념 낯설음.
+- **행동 패턴:** DSLR 원본(15MB) 그대로 업로드, PDF 파일을 그대로 올림.
+- **요구사항:**
+  - **Blog-like UX:** 네이버 블로그처럼 단순하고 직관적인 에디터.
+  - **Auto-Processing:** 원본을 올려도 알아서 웹용으로 변환.
+  - **Fail-Safe:** 잘못된 파일을 올려도 서버가 죽지 않고 친절하게 안내.
 
 ---
 
-## 3. 기술 스택 및 버전 전략 (Tech Stack Strategy)
+## 3. 기술 스택
 
 ### Core Framework
 
@@ -63,44 +48,53 @@
 - **Package Manager:** pnpm 10.25.0
 - **Monorepo:** Turborepo 2.7.2 (`pnpm` workspace)
 - **Framework:** **Next.js 16.1.1 (Stable)**
-  - _Strategy:_ Admin은 `force-dynamic` + Server Actions 위주, Web은 SSG/ISR 위주.
+  - _Strategy:_ Admin은 `force-dynamic` + Server Actions, Web은 `'use cache'` + SSG.
 - **Library:** **React 19.2.3 (Stable)**
-  - _Strategy:_ React Compiler(`babel-plugin-react-compiler`)를 통한 자동 렌더링 최적화, `useActionState` + `useEffectEvent` 등 React 19 훅 활용, Server Actions를 통한 API 개발 생산성 증대.
+  - React Compiler (`babel-plugin-react-compiler` 1.0.0)를 통한 자동 렌더링 최적화.
+  - `cacheComponents: true` — 컴포넌트 수준 캐싱 활성화.
 - **TypeScript:** 5.9.3 (Strict Mode)
 
 ### Infrastructure & Database
 
 - **BaaS:** Supabase (PostgreSQL, Auth, Storage)
 - **Monitoring:** Sentry (`@sentry/nextjs` 10.36.0)
+  - `instrumentation.ts`에서 서버/엣지 런타임별 Sentry 초기화.
+  - `onRequestError = Sentry.captureRequestError`로 요청 에러 자동 캡처.
 - **Deployment:** Vercel (Production)
 
 ### State Management & Data Fetching
 
-- **Client State:** 전역 상태 관리 라이브러리 미사용. 컴포넌트 로컬 `useState` + `useActionState`로 충분.
-  - _(참고: 초기 계획의 Zustand는 `apps/web`에서만 사용 예정 — Work in Progress)_
+- **Client State:** 전역 상태 관리 라이브러리 미사용. 컴포넌트 로컬 `useState`로 충분.
+- **Data Fetching Strategy (Web):** **`'use cache'` + `React.cache()` + `cacheLife` / `cacheTag`**
+  - 모든 Entity 쿼리 파일에 `'use cache'` 디렉티브 적용.
+  - `cacheLife('hours')` (리스트/최근), `cacheLife('days')` (상세/정적) 단위로 캐시 수명 관리.
+  - `cacheTag`로 태그 기반 캐시 무효화 지원 (예: `cacheTag('announcement-list')`).
+  - `createPublicClient()`로 Supabase Public Client 생성 (인증 불필요).
 - **Data Fetching Strategy (Admin):** **Supabase Client (`@repo/database/client`) + `React.cache()`**
-  - **Read Strategy:**
-    - Server Component에서 `createClient()`로 Supabase 클라이언트 생성, `React.cache()`로 요청 단위 메모이제이션.
-    - Admin은 `export const dynamic = 'force-dynamic'`으로 항상 최신 데이터를 보장한다.
-  - **Write Strategy (On-Demand Revalidation):**
-    - Server Actions 성공 시, `revalidatePath()`를 호출하여 즉시 캐시를 무효화하고 최신 데이터를 반영한다.
-    - _Goal:_ "목사님이 올리면 바로 뜬다"는 UX 보장.
+  - `force-dynamic`으로 항상 최신 데이터를 보장.
+  - Server Actions 성공 시 `revalidatePath()` 호출하여 즉시 캐시 무효화.
 
 ### Styling
 
-- **CSS:** Tailwind CSS v4 (Mobile First)
-  - _Config:_ `packages/tailwind-config`를 통해 웹과 어드민이 동일한 디자인 토큰(Color, Font) 공유.
+- **CSS:** Tailwind CSS v4.1.18 (Mobile First)
+  - _Config:_ `packages/tailwind-config`를 통해 웹과 어드민이 동일한 디자인 토큰 공유.
 - **Components:** Shadcn/UI (Radix UI 기반 Headless)
-  - _Location:_ **`packages/ui`**에 설치하여 모든 앱에서 import하여 사용 (`@repo/ui`).
-- **Icons:** Lucide React
+  - _Location:_ **`packages/ui`**에 설치, `@repo/ui`로 import.
+- **Icons:** Lucide React 0.546.0
+
+### Web 전용 의존성
+
+| 패키지                    | 버전  | 용도                        |
+| :------------------------ | :---- | :-------------------------- |
+| `date-fns`                | 4.1.0 | 날짜 포맷팅 (한국어 locale) |
+| `embla-carousel-autoplay` | 8.6.0 | Hero Carousel 자동 재생     |
+| `react-naver-maps`        | 0.1.4 | 오시는 길 네이버 지도       |
 
 ---
 
-## 4. 아키텍처 및 폴더 구조 (Architecture Rules)
+## 4. 모노레포 구조
 
-### Monorepo Structure
-
-- `apps/web`: 사용자용 서비스 (Next.js App Router, SSG/ISR 위주, 고령층 최적화). _(Work in Progress)_
+- `apps/web`: 사용자용 서비스 (Next.js App Router, `'use cache'` + SSG, 고령층 최적화). ✅ **구현 완료**
 - `apps/admin`: 관리자용 CMS (Next.js 16.1.1 App Router, `force-dynamic` + Server Actions, 비전문가 친화 UI). ✅ **구현 완료**
 - `packages/ui` (`@repo/ui`): 공통 디자인 시스템 (Shadcn/UI + Radix UI 기반).
   - Exports: `./shadcn`, `./lib`, `./components`, `./hooks`, `./styles.css`
@@ -112,7 +106,6 @@
 - `packages/eslint-config` (`@repo/eslint-config`): ESLint Flat Config (`base`, `next-js`, `react-internal`).
 - `packages/database` (`@repo/database`): Supabase Generated Types + Client Factory.
   - Exports: `./client` (Server Component용), `./auth` (Auth 헬퍼), `./middleware` (미들웨어용), `./types`
-  - _Why:_ `any` 타입 사용 방지, 앱 간 DB 스키마 동기화 보장.
 - ~~`packages/utils`~~: **미구현.** 유틸리티 함수는 각 앱의 `src/shared/lib/`에 위치.
 
 ## 5. 아키텍처 및 폴더 구조 (Clean FSD + CQRS Pattern)
@@ -121,11 +114,11 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 ### Layer Rules (엄격 준수)
 
-#### 1. App Layer (`apps/*/app/`) - "Routing & Page Composition"
+#### 1. App Layer (`apps/*/app/`) — "Routing & Page Composition"
 
 - **역할:** 기존 FSD의 `pages` 레이어를 흡수.
 - **규칙:**
-  - 비즈니스 로직 작성 금지.
+- 비즈니스 로직 작성 금지.
   - `Widgets` 레이어의 컴포넌트를 import하여 배치(Layout)하는 역할만 수행.
   - Next.js의 `page.tsx`, `layout.tsx`, `loading.tsx`등 16버전 기준 사용할 수 있는 것만 존재.
 
@@ -167,56 +160,145 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 ### Dependency Rule (의존성 규칙)
 
-`App` -> `Widgets` -> `Features` -> `Entities` -> `Shared` (Wrapper) -> `@repo/ui`
+`App` → `Widgets` → `Features` → `Entities` → `Shared` (Wrapper) → `@repo/ui`
 (상위 레이어는 하위 레이어를 import 할 수 있지만, 역은 성립하지 않는다.)
 
 ---
 
-## 6. 주요 기능 명세 (Feature Specifications)
+## 6. 주요 기능 명세
 
-### A. 공통 / UX (Common UX & Error Handling)
+### A. 공통 / UX
 
 - **Motion Reduction (Vestibular Disorder):**
   - **No GIF/Animation:** 어지러움 방지를 위해 UI 애니메이션은 CSS `transition`만 허용하며, 콘텐츠의 GIF도 정지 이미지로 변환하여 보여준다.
   - **No Modals:** 갑자기 튀어나오는 팝업(Modal)은 고령층에게 혼란을 주므로, 페이지 내 삽입(Inline) 방식이나 바텀 시트(Bottom Sheet)를 우선한다.
 - **Loading & Error Strategy:**
-  - **Loading UI:** `Spinner` 대신 **`Skeleton UI`**를 사용하여 화면 덜컹거림(CLS)을 방지하고 로딩 체감 속도를 줄인다.
-  - **Image Fallback:** 이미지 로딩 실패 시 '엑박' 대신 미리 준비된 `fallback_logo.png`를 보여준다.
-  - **Toast Notification:**
-    - 에러 및 성공 메시지는 디자인 일관성을 위해 **Toast UI**를 사용한다.
-    - **Accessibility Rule:** 노인분들이 읽을 시간을 확보하기 위해 Toast 지속 시간(`duration`)을 **최소 4초(4000ms) 이상**으로 설정한다.
+  - `Spinner` 대신 **Skeleton UI** 사용 (CLS 방지).
+  - **`withAsyncBoundary` HOC:** `Suspense` + 서버 에러 처리를 하나의 패턴으로 통합.
+    - `loadingFallback`: Skeleton 컴포넌트.
+    - `errorFallback`: 에러 안내 UI.
+    - Next.js 내부 에러(`NEXT_` digest)는 리스로우, 그 외는 `Sentry.captureException()` 후 폴백 표시.
+  - **Image Fallback:** 이미지 로딩 실패 시 기본 이미지(`DEFAULT_BANNER`, `DEFAULT_BULLETIN` 등) 표시.
+- **Global Error Page (`global-error.tsx`):**
+  - Sentry 에러 로깅, 재시도/홈 이동/전화 걸기 버튼 제공.
+- **404 Page (`not-found.tsx`):**
+  - 사용자 친화적 메시지, 이전 페이지/홈 이동 버튼.
 
-### B. 사용자 웹 (`apps/web`)
+### B. 사용자 웹 (`apps/web`) ✅ 구현 완료
 
-- **Dynamic Font Scale (Web Only):**
-  - **Feature:** `Zustand`로 폰트 크기 상태 관리 (Default/Large/X-Large).
-  - **Implementation:** Tailwind `rem` 단위를 기반으로 `root` 폰트 사이즈를 조절하여 전체 UI 스케일링.
-- **Main Page & Navigation:**
-  - **Urgent Notice (긴급 공지 Logic):**
-    - `is_urgent: true`인 공지사항은 일반 공지보다 **우선순위(Priority)**를 높여 노출한다.
-    - **Visual:** 구체적인 디자인(배너, 색상 등)은 자유롭게 구현하되, 일반 게시글과 시각적으로 구분되어야 한다.
-  - 가장 중요한 '예배 시간', '오시는 길', '최신 설교'를 최상단 배치.
-- **Sermon Player:** `@next/third-parties`의 `<YouTubeEmbed>` 사용.
-- **Gallery Viewer:** `virtua` (가상 스크롤) + `yet-another-react-lightbox` (핀치 줌).
-- **SEO & Open Graph:**
-  - **Dynamic Metadata:** 설교/공지 상세 페이지 접근 시 `generateMetadata`를 통해 `og:title`, `og:image` 동적 생성.
-  - **Kakao Preview:** 카카오톡 공유 시 썸네일이 정상적으로 뜨도록 메타태그 최적화.
-  - **Sitemap/Robots:** `next-sitemap`을 사용하여 빌드 시 자동 생성.
-- **No Search Feature:**
-  - 본 프로젝트는 복잡도를 낮추기 위해 **검색 기능을 구현하지 않는다.**
-  - 모든 리스트는 최신순 정렬 및 **페이지네이션(Pagination)만** 제공한다.
-- **Pagination Strategy (Standard):**
-  - **Per Page:** 기본 페이지당 항목 수는 **12개**로 설정한다.
-    - _Reason:_ `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` 레이아웃에서 모든 화면 크기에 깔끔하게 나누어떨어짐.
-  - **Implementation:**
-    - URL 쿼리 파라미터 방식: `/sermons?page=2`
-    - Server Component에서 `searchParams`를 통해 현재 페이지 번호를 받아 데이터 fetch.
-  - **UI Components:**
-    - Shadcn의 `Pagination` 컴포넌트를 `src/shared/ui`에 래핑하여 사용.
-    - **Mobile-Friendly:** 모바일에서는 `[이전] [1] ... [5] [다음]` 형태로 단순화.
-  - **Database Query:**
-    - PostgreSQL `LIMIT` & `OFFSET` 사용.
-    - 총 페이지 수 계산을 위해 `COUNT(*)` 쿼리 별도 실행.
+#### B-1. 메인 페이지 (`/`)
+
+- **Hero Carousel:** `embla-carousel-autoplay`로 자동 재생(5초 간격), 루프, 이전/다음 화살표, 도트 인디케이터.
+  - 서버에서 `getBanners()` 호출 → `banners` 테이블 데이터 표시.
+  - 배너 없을 시 기본 이미지(`DEFAULT_BANNER1.webp`) 표시.
+- **Quick Menu:** 8개 아이콘 바로가기 (교회소개, 예배안내, 오시는길, 공지사항, 이벤트, 갤러리, 주보, YouTube).
+- **YouTube 이미지 박스:** YouTube 채널 바로가기 (썸네일 이미지 + 오버레이 링크).
+- **공지사항 섹션:** 최근 5건 공지 표시 (`getRecentAnnouncements()`), 긴급 배지, 더보기 버튼.
+- **이벤트 마키:** CSS 마키 애니메이션 이벤트 카드 슬라이더 (`getRecentEvents()`), 호버 시 상세 보기 버튼.
+- **갤러리 섹션:** 최근 4건 갤러리 카드 그리드 (`getRecentGalleries()`), 호버 시 오버레이 효과.
+
+#### B-2. 교회 소개 (`/about/*`)
+
+| 경로                      | 위젯                         | 설명                                                                                |
+| :------------------------ | :--------------------------- | :---------------------------------------------------------------------------------- |
+| `/about`                  | —                            | `/about/intro`로 리다이렉트                                                         |
+| `/about/intro`            | `PastorGreetingIntroSection` | 담임목사 인사말, 프로필 사진/서명                                                   |
+| `/about/worship`          | `WorshipContent`             | 예배 시간표 (주일/주중/다음세대, 카드 UI)                                           |
+| `/about/location`         | `LocationContent`            | 네이버 지도 (`react-naver-maps`), 주소, 교통편, 외부 지도 링크 (네이버/카카오/구글) |
+| `/about/servants`         | `ServantsContent`            | 담임목사/부교역자/구역장 섹션별 표시 (`getAllServants()`)                           |
+| `/about/missionary`       | `MissionarySection`          | 선교사 폴라로이드 카드 그리드 (`getAllMissionaries()`)                              |
+| `/about/bulletins`        | `BulletinList`               | 주보 목록 (연/월 필터 + 페이지네이션, 페이지당 8개)                                 |
+| `/about/bulletins/[date]` | `BulletinDetail`             | 특정 날짜 주보 상세 (표지 + 내지 이미지 목록)                                       |
+
+#### B-3. 소식 (`/news/*`)
+
+| 경로                       | 위젯                 | 설명                                                          |
+| :------------------------- | :------------------- | :------------------------------------------------------------ |
+| `/news`                    | —                    | `/news/announcements`로 리다이렉트                            |
+| `/news/announcements`      | `AnnouncementList`   | 공지사항 목록 (검색 + 페이지네이션, 페이지당 10개)            |
+| `/news/announcements/[id]` | `AnnouncementDetail` | 공지 상세 (긴급 배지, 본문, 뒤로가기)                         |
+| `/news/events`             | `EventList`          | 이벤트 목록 (검색 + 페이지네이션, 페이지당 10개, 카드 그리드) |
+| `/news/events/[id]`        | `EventDetail`        | 이벤트 상세 (포스터 이미지, 날짜, 설명)                       |
+| `/news/gallery`            | `GalleryList`        | 갤러리 목록 (검색 + 페이지네이션, 페이지당 9개, 3열 그리드)   |
+| `/news/gallery/[id]`       | `GalleryDetail`      | 갤러리 상세 (전체 이미지 세로 나열, 이미지 장수 표시)         |
+
+#### B-4. 검색 & 페이지네이션
+
+- **검색 기능 구현 완료:** 공지사항/이벤트/갤러리 목록에 `ContentWrapper` 통합 검색 UI 제공.
+  - URL 쿼리 파라미터 방식: `?query=검색어&page=1`
+  - Supabase `ilike` 연산자로 서버 사이드 검색.
+- **주보:** 연/월 Select 필터 (`BulletinContentWrapper`), 검색 없음.
+- **페이지당 항목 수:** 공지사항 10개, 이벤트 10개, 갤러리 9개, 주보 8개.
+- **PaginationBar:** 5페이지 윈도우, 이전/다음 버튼, 1페이지일 때 자동 숨김.
+- **Database Query:** Supabase `select('*', { count: 'exact' })` + `.range(from, to)`.
+
+#### B-5. SEO & Open Graph
+
+- **Root Metadata:** `layout.tsx`에서 `churchData` 기반 메타데이터 일괄 설정.
+  - `title`, `description`, `keywords`, `openGraph`, `twitter`, `robots`, `verification` (naver, google).
+- **JSON-LD:** `Church` 타입 구조화 데이터 (이름, 주소, 전화, URL, 로고, SNS 등).
+- **Dynamic Metadata:** 상세 페이지별 `generateMetadata`를 통해 `og:title`, `og:image`, `og:description` 동적 생성.
+- **Sitemap:** `sitemap.ts`에서 정적 + 동적 경로 자동 생성 (공지/주보/이벤트/갤러리).
+  - 우선순위: 홈(1.0) > 교회소개(0.8) > 리스트(0.7) > 상세(0.6).
+- **Robots:** `robots.ts`에서 `/api/` 경로 disallow, 나머지 허용.
+- **`generateStaticParams`:** 공지/이벤트/갤러리/주보 상세 페이지에서 빌드 시 정적 경로 생성.
+
+#### B-6. 레이아웃 구조
+
+- **Root Layout:** Noto Sans KR 폰트, Tailwind CSS, Sentry 통합, JSON-LD.
+- **Main Layout (`(main)/`):** `MainHeader` + `children` + `MainFooter` + `ScrollFAB`.
+  - **Header:** 로고, NavigationMenu (데스크탑), 소셜 아이콘 (YouTube/Instagram), MobileMenu (Sheet).
+  - **Footer:** 교회 정보, 저작권, 개인정보처리방침/이용약관 다이얼로그.
+  - **ScrollFAB:** 맨 위/아래 이동 FAB (스크롤 300px 이후 상단 버튼 표시).
+- **Content Layout (`(main)/(content)/`):** `AboutSidebar` + `children`.
+  - **AboutSidebar:** 데스크탑 좌측 고정 사이드바, `menuData` 기반 네비게이션 (lg 이상에서만 표시).
+
+#### B-7. URL 슬러그 패턴
+
+- 공지/이벤트/갤러리: `/{title}-{shortId}` (예: `/news/events/부활절-abc123`)
+  - `short_id` 컬럼으로 고유 식별, `title`은 SEO용 접두사.
+- 주보: `/about/bulletins/{yyyy-MM-dd}` (예: `/about/bulletins/2025-01-05`)
+
+#### B-8. `apps/web` FSD 구현 상세
+
+**Entities Layer (`src/entities/`):**
+
+- `announcement/` — `Announcement` 타입, `getAnnouncements`, `getAnnouncementByShortId`, `getRecentAnnouncements`, `getRecentAnnouncementShortIds`
+- `banner/` — `Banner` 타입, `getBanners`
+- `bulletin/` — `Bulletin` 타입, `getBulletins`, `getBulletinByDate`, `getRecentBulletinDates`
+- `event/` — `Event` 타입, `getEvents`, `getEventByShortId`, `getRecentEventShortIds`, `getRecentEvents`
+- `gallery/` — `Gallery`, `GalleryImage`, `GalleryListItem`, `GalleryWithImages` 타입, `getGalleries`, `getGalleryByShortId`, `getRecentGalleryShortIds`, `getRecentGalleries`
+  - `galleries_with_count` DB 뷰를 사용하여 리스트 조회 시 이미지 수 포함.
+- `missionary/` — `Missionary` 타입, `getAllMissionaries`
+- `servant/` — `Servant` 타입, `getAllServants`, `ROLES` 상수 (`담임목사`, `목사`, `구역장`)
+- 구조: `model/` (타입), `api/queries.ts` (`'use cache'` + `React.cache()` + Supabase), `api/mapper.ts` (Row→Domain), `index.ts` (배럴)
+
+**Widgets Layer (`src/widgets/`):**
+
+- `hero-carousel/` — Hero 배너 캐러셀 (Embla Carousel + Autoplay, `useCarousel` 커스텀 훅)
+- `quick-menu/` — 퀵 메뉴 아이콘 그리드 + YouTube 이미지 박스
+- `announcements-section/` — 홈 공지사항 섹션, 공지 리스트, 공지 상세
+- `events-section/` — 홈 이벤트 마키, 이벤트 리스트, 이벤트 상세, `EventItem` (Client)
+- `gallery-section/` — 홈 갤러리 섹션, 갤러리 리스트, 갤러리 상세, `GalleryItem` (Client)
+- `bulletins-section/` — 주보 리스트 (연/월 필터 `BulletinContentWrapper`), 주보 상세, 커스텀 Skeleton/Error
+- `intro-section/` — 담임목사 인사말 (`PastorGreetingIntroSection`)
+- `worship-section/` — 예배 시간표 (`WorshipContent`, 카드 기반 UI, `WORSHIP_DATA` 상수)
+- `location-section/` — 오시는 길 (네이버 지도, 주소, 교통편, 외부 지도 링크)
+- `servants-section/` — 섬기는 사람들 (`LeadPastorSection`, `AssociatePastorList`, `DistrictLeaderList`)
+- `missionary-section/` — 선교사 소개 (`HangingPolaroid` 카드)
+- `about-layout/` — 콘텐츠 사이드바 (`AboutSidebar`, `NavLink`)
+- `main-layout/` — 헤더/푸터/모바일메뉴/로고/아이콘/네비게이션/스크롤FAB/개인정보·이용약관 다이얼로그
+
+**Shared Layer (`src/shared/`):**
+
+- `config/` — `metadata.ts` (churchData, BASE_URL, DEFAULT_OG_IMAGE), `route.ts` (menuData, Items)
+- `lib/` — `date.ts` (formatKoreanDate: date-fns + ko locale)
+- `icon/` — Google, Naver, Kakao 커스텀 SVG 아이콘
+- `ui/base/` — @repo/ui 래핑 (NavigationMenu, Sheet, Carousel, Button, Card, Badge, Select, Dialog, Input, AspectRatio)
+- `ui/components/` — PaginationBar, HeroBanner, NotImage, ReadMoreButton, ListError, ListSkeleton, BackButton
+- `ui/utils/` — withAsyncBoundary (Suspense + 서버 에러 바운더리 합성)
+- `ui/` (root) — ContentWrapper (검색+페이지네이션 통합), MainWrapper, SectionWrapper
+- `ui/index.ts` — 모든 UI 컴포넌트 배럴 파일
 
 ### C. 관리자 CMS (`apps/admin`) ✅ 구현 완료
 
@@ -369,10 +451,12 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 - **Columns:**
   - `id`: UUID (PK)
+  - `short_id`: TEXT (NOT NULL, UNIQUE, URL 슬러그용 짧은 ID)
   - `title`: TEXT (NOT NULL)
   - `event_date`: DATE (NOT NULL)
   - `thumbnail_url`: TEXT (Nullable)
   - `created_at`: TIMESTAMPTZ
+- **View:** `galleries_with_count` — `galleries` + 이미지 수(`images_count`) 조인 뷰 (리스트 조회용)
 
 #### 3. `gallery_images` (앨범 상세 이미지)
 
@@ -402,6 +486,7 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 - **Columns:**
   - `id`: UUID (PK)
+  - `short_id`: TEXT (NOT NULL, UNIQUE, URL 슬러그용 짧은 ID)
   - `title`: TEXT (NOT NULL)
   - `content`: TEXT (NOT NULL)
   - `is_urgent`: BOOLEAN (Default: false)
@@ -411,6 +496,7 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 
 - **Columns:**
   - `id`: UUID (PK)
+  - `short_id`: TEXT (NOT NULL, UNIQUE, URL 슬러그용 짧은 ID)
   - `title`: TEXT (NOT NULL)
   - `description`: TEXT (Nullable, 설명)
   - `photo_url`: TEXT (NOT NULL, 행사 포스터/사진)
@@ -422,21 +508,31 @@ Next.js App Router의 특성과 CQRS(명령과 조회의 분리) 패턴을 적�
 - **Columns:**
   - `id`: UUID (PK)
   - `name`: TEXT (NOT NULL)
-  - `role`: TEXT (NOT NULL, 직분 - 예: 담임목사, 장로)
-  - `photo_url`: TEXT (Nullable, 사진)
+  - `role`: TEXT (NOT NULL, 직분 — `담임목사` | `목사` | `구역장`)
+  - `photo_file`: TEXT (Nullable, Storage 파일 경로)
   - `contact`: TEXT (Nullable, 연락처)
   - `introduction`: TEXT (Nullable, 소개글)
   - `is_public`: BOOLEAN (Default: true, 인터넷 노출 여부)
-  - `sort_order`: INTEGER (Default: 0, 목사님을 맨 위로 올리기 위한 정렬 순서)
+  - `sort_order`: INTEGER (Default: 0, 정렬 순서)
   - `created_at`: TIMESTAMPTZ
 
-#### 8. `banners` (배너) — 초기 계획에 없던 추가 테이블
+#### 8. `banners` (메인 배너)
 
 - **Columns:**
   - `id`: UUID (PK)
   - `title`: TEXT (NOT NULL)
   - `image_url`: TEXT (NOT NULL)
   - `sort_order`: INTEGER (Nullable, 정렬 순서)
+  - `created_at`: TIMESTAMPTZ
+
+#### 9. `missionaries` (선교사)
+
+- **Columns:**
+  - `id`: UUID (PK)
+  - `name`: TEXT (NOT NULL)
+  - `country`: TEXT (NOT NULL, 선교 국가)
+  - `image_url`: TEXT (Nullable, 선교사 사진)
+  - `description`: TEXT (NOT NULL, 소개)
   - `created_at`: TIMESTAMPTZ
 
 ---
@@ -498,6 +594,9 @@ SENTRY_AUTH_TOKEN="your-sentry-auth-token"
 
 # [Web Only] 메타데이터 및 SEO 설정
 NEXT_PUBLIC_SITE_URL="https://manna-church.com"
+
+# [Web Only] 네이버 지도 API
+NEXT_PUBLIC_NAVER_MAP_CLIENT_ID="your-naver-map-client-id"
 ```
 
 ### B. Supabase Storage Buckets

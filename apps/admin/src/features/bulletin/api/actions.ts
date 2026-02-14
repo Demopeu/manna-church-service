@@ -1,5 +1,6 @@
 'use server';
 
+import { captureException } from '@sentry/nextjs';
 import { tryCatchAction, tryCatchVoid } from '@/shared/api';
 import { requireAuth } from '@/shared/lib';
 import { ActionState } from '@/shared/model';
@@ -30,6 +31,10 @@ export async function createBulletinAction(
   const validatedFields = createBulletinActionSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
+    captureException(
+      new Error('Bulletin create: server-side validation failed'),
+      { extra: { fieldErrors: validatedFields.error.flatten().fieldErrors } },
+    );
     return {
       success: false,
       message: '입력 내용을 확인해주세요.',
@@ -69,6 +74,10 @@ export async function updateBulletinAction(
   const validatedFields = updateBulletinSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
+    captureException(
+      new Error('Bulletin update: server-side validation failed'),
+      { extra: { fieldErrors: validatedFields.error.flatten().fieldErrors } },
+    );
     return {
       success: false,
       message: '입력 내용을 확인해주세요.',
