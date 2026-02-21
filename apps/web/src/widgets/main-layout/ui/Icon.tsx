@@ -19,6 +19,7 @@ export function Icon() {
           alt="만나교회 Band 아이콘"
           width={28}
           height={28}
+          unoptimized
         />
         <span className="sr-only">Band</span>
       </Link>
@@ -34,6 +35,7 @@ export function Icon() {
           alt="만나교회 Instagram 아이콘"
           width={28}
           height={28}
+          unoptimized
         />
         <span className="sr-only">Instagram</span>
       </Link>

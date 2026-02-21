@@ -34,6 +34,7 @@ async function GalleryCard() {
                 fill
                 className="rounded object-cover"
                 sizes="(max-width: 768px) 33vw, (max-width: 1024px) 25vw, 200px"
+                unoptimized
               />
             </div>
           ))}

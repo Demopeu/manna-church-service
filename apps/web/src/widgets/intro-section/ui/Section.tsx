@@ -17,6 +17,7 @@ export function PastorGreetingIntroSection() {
               fill
               className="object-cover object-top"
               priority
+              unoptimized
               sizes="100vw"
             />
           </div>
@@ -49,6 +50,7 @@ export function PastorGreetingIntroSection() {
                 fill
                 className="object-contain object-right"
                 sizes="(max-width: 768px) 128px, 160px"
+                unoptimized
               />
             </div>
           </div>

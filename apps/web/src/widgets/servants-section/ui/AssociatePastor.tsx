@@ -26,6 +26,7 @@ export function AssociatePastorList({ pastors }: Props) {
                 width={112}
                 height={112}
                 className="h-full w-full object-cover"
+                unoptimized
               />
             </div>
 

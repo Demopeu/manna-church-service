@@ -101,6 +101,7 @@ export function MultiImageDialog({ images, children, title }: Props) {
                 sizes="100vw"
                 priority
                 onError={() => setIsError(true)}
+                unoptimized
               />
             )}
           </div>

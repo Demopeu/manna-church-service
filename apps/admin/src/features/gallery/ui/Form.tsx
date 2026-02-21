@@ -123,6 +123,7 @@ export function GalleryForm({
                             : 'border-transparent',
                         )}
                         sizes="(max-width: 640px) 33vw, (max-width: 768px) 25vw, 16vw"
+                        unoptimized
                       />
                     </div>
                     <Button

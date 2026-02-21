@@ -110,6 +110,7 @@ export function EventForm({
                   fill
                   className="rounded-lg object-cover"
                   sizes="160px"
+                  unoptimized
                 />
               </div>
               <div className="w-0 flex-1">

@@ -20,6 +20,7 @@ export function LeadPastorSection({ data }: Props) {
             width={208}
             height={208}
             className="h-full w-full object-cover"
+            unoptimized
           />
         </div>
 
