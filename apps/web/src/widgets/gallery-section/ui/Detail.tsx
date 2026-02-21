@@ -66,7 +66,6 @@ async function GalleryDetailBase({ shortId }: { shortId: string }) {
               sizes="100vw"
               className="h-auto w-full"
               priority={index < 2}
-              unoptimized
             />
           </div>
         ))}

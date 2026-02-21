@@ -33,7 +33,6 @@ export function QuickMenu() {
                     fill
                     className="object-contain p-4 xl:p-6"
                     sizes="80vw"
-                    unoptimized
                   />
                 </div>
                 <span className="text-foreground text-korean-pretty text-center text-xs font-extrabold md:text-base">

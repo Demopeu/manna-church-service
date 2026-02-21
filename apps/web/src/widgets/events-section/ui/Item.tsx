@@ -23,7 +23,6 @@ export function EventItem({ event }: Props) {
           fill
           className="object-contain duration-300"
           sizes="(max-width: 768px) 50vw, 25vw"
-          unoptimized
         />
       </div>
 

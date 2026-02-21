@@ -91,7 +91,6 @@ export function ServantForm({
                   fill
                   className="object-cover"
                   sizes="96px"
-                  unoptimized
                 />
               </div>
               <div className="w-0 flex-1">

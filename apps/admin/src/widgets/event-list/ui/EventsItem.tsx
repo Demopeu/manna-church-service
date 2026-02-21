@@ -26,7 +26,6 @@ export function EventsItem({ event }: Props) {
                 fill
                 className="rounded-lg object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                unoptimized
               />
             </Button>
           </ImageDialog>

@@ -49,7 +49,6 @@ export function HangingPolaroid({
               fill
               className="object-cover"
               sizes="(max-width: 768px) 40vw, (max-width: 1024px) 28vw, 20vw"
-              unoptimized
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-slate-100 to-slate-200">

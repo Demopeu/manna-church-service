@@ -38,7 +38,6 @@ async function EventsMarqueeBase() {
                   className="object-cover object-top transition-transform duration-500 hover:scale-105"
                   sizes="(max-width: 768px) 240px, 240px"
                   priority={index < 5}
-                  unoptimized
                 />
 
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/60 p-4 text-center opacity-0 transition-opacity duration-300 hover:opacity-100">

@@ -24,7 +24,6 @@ export function GalleryItem({ gallery }: Props) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 33vw"
-            unoptimized
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-gray-100 to-gray-200">

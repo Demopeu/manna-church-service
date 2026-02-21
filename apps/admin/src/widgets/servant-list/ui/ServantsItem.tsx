@@ -22,7 +22,6 @@ export function ServantsItem({ servant }: Props) {
             fill
             className="object-cover"
             sizes="48px"
-            unoptimized
           />
         </div>
       </TableCell>

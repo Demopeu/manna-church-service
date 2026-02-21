@@ -154,7 +154,6 @@ export function BulletinForm({
                   fill
                   className="rounded-lg object-cover"
                   sizes="96px"
-                  unoptimized
                 />
               </div>
               <div className="w-0 flex-1">

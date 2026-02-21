@@ -36,7 +36,6 @@ export function GalleriesImage({ images, thumbnailUrl, galleryTitle }: Props) {
                   fill
                   className={`rounded-lg border-2 object-cover ${index === 0 ? 'border-primary' : 'border-transparent'}`}
                   sizes="(max-width: 640px) 25vw, (max-width: 768px) 20vw, 150px"
-                  unoptimized
                 />
               </div>
               {index === 0 && (

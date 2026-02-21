@@ -17,7 +17,6 @@ export function PastorGreetingIntroSection() {
               fill
               className="object-cover object-top"
               priority
-              unoptimized
               sizes="100vw"
             />
           </div>

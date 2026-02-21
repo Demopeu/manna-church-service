@@ -52,7 +52,6 @@ export function ImageDialog({ src, alt, children }: ImageDialogProps) {
             className="object-contain"
             sizes="100vw"
             priority
-            unoptimized
           />
         </div>
       </DialogContent>
