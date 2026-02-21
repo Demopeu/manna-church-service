@@ -1,12 +1,11 @@
-import BibleIcon from '@/app/asset/icons/bible.png';
-import BulletinIcon from '@/app/asset/icons/bulletin.png';
-import CalendarIcon from '@/app/asset/icons/calendar.png';
-import ChurchIcon from '@/app/asset/icons/church.png';
-import CommunityIcon from '@/app/asset/icons/community.png';
-import MapIcon from '@/app/asset/icons/map.png';
-import MissionaryIcon from '@/app/asset/icons/missionary.png';
-import SermonIcon from '@/app/asset/icons/sermon.png';
-import { churchData } from './metadata';
+import BibleIcon from '@/app/asset/icons/bible.webp';
+import BulletinIcon from '@/app/asset/icons/bulletin.webp';
+import CalendarIcon from '@/app/asset/icons/calendar.webp';
+import ChurchIcon from '@/app/asset/icons/church.webp';
+import CommunityIcon from '@/app/asset/icons/community.webp';
+import MapIcon from '@/app/asset/icons/map.webp';
+import MissionaryIcon from '@/app/asset/icons/missionary.webp';
+import SermonIcon from '@/app/asset/icons/sermon.webp';
 
 export const menuData = {
   교회소개: [
@@ -15,7 +14,7 @@ export const menuData = {
     { title: '주보', href: '/about/bulletins', icon: 'BookOpen' },
     { title: '예배 안내', href: '/about/worship', icon: 'Calendar' },
     { title: '섬기는 사람들', href: '/about/servants', icon: 'Users' },
-    { title: '1분 메세지', href: churchData.social.youtube, icon: 'Video' },
+    { title: '1분 메세지', href: '/about/sermons', icon: 'Video' },
     { title: '선교사 후원', href: '/about/missionary', icon: 'Plane' },
   ],
   만나소식: [
@@ -34,7 +33,7 @@ export const Items = [
   {
     icon: SermonIcon,
     label: '1분 메세지',
-    href: churchData.social.youtube,
+    href: '/about/sermons',
   },
   {
     icon: BulletinIcon,
