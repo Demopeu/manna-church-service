@@ -4,6 +4,7 @@ import {
   Images,
   LayoutDashboard,
   Megaphone,
+  Settings,
   Users,
   Video,
 } from 'lucide-react';
@@ -16,4 +17,5 @@ export const ADMIN_ROUTES = [
   { href: '/events', label: '이벤트', icon: CalendarDays },
   { href: '/announcements', label: '공지', icon: Megaphone },
   { href: '/servants', label: '섬기는 사람들', icon: Users },
+  { href: '/setting', label: '설정', icon: Settings },
 ];
