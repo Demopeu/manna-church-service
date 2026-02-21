@@ -1,26 +1,26 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import BandIcon from '@/app/asset/icons/band.webp';
 import InstagramIcon from '@/app/asset/icons/instagram.webp';
-import YoutubeIcon from '@/app/asset/icons/youtube.webp';
 import { churchData } from '@/shared/config';
 
 export function Icon() {
   return (
     <div className="flex items-center gap-1">
       <Link
-        href={churchData.social.youtube}
+        href={churchData.social.band}
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-full transition-colors hover:bg-gray-100"
-        aria-label="만나교회 YouTube 채널 바로가기"
+        aria-label="만나교회 Band 바로가기"
       >
         <Image
-          src={YoutubeIcon}
-          alt="만나교회 YouTube 채널 아이콘"
+          src={BandIcon}
+          alt="만나교회 Band 아이콘"
           width={28}
           height={28}
         />
-        <span className="sr-only">YouTube</span>
+        <span className="sr-only">Band</span>
       </Link>
       <Link
         href={churchData.social.instagram}

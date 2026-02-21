@@ -61,6 +61,7 @@ export const churchData = {
   social: {
     youtube: 'https://www.youtube.com/@mannachurch9186',
     instagram: 'https://www.instagram.com/mannachurch9186',
+    band: 'https://band.us/band/52449797',
   },
   copyright: 'Demopeu',
   leader: {
