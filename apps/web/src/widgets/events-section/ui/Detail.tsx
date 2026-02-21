@@ -73,6 +73,7 @@ async function EventDetailBase({ shortId }: { shortId: string }) {
               sizes="100vw"
               className="h-auto w-full"
               priority
+              unoptimized
             />
           </div>
         )}

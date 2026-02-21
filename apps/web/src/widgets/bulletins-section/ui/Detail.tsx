@@ -34,6 +34,7 @@ async function BulletinDetailBase({ date }: { date: string }) {
               sizes="100vw"
               className="h-auto w-full"
               priority
+              unoptimized
             />
           </div>
         )}
@@ -48,6 +49,7 @@ async function BulletinDetailBase({ date }: { date: string }) {
               sizes="100vw"
               className="h-auto w-full"
               priority={!bulletin.coverImageUrl && index === 0}
+              unoptimized
             />
           </div>
         ))}

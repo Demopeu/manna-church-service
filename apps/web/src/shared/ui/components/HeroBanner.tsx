@@ -27,6 +27,7 @@ export function HeroBanner({
           className="object-cover"
           priority
           sizes="70vw"
+          unoptimized
         />
       ) : (
         <NotImage />

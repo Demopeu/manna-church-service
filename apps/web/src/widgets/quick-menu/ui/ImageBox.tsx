@@ -12,6 +12,7 @@ export function YoutubeImageBox() {
         className="object-cover transition-transform duration-500 group-hover:scale-105"
         priority
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        unoptimized
       />
 
       <div className="absolute inset-0 bg-black/30 transition-colors duration-300 group-hover:bg-black/40" />
