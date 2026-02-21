@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import leadPastor from '@/app/asset/about/LEADPASTOR.webp';
-import signature from '@/app/asset/about/signature.png';
+import signature from '@/app/asset/about/signature.webp';
 import { pastorData } from './data';
 
 export function PastorGreetingIntroSection() {

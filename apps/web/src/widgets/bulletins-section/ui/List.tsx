@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import DEFAULT_BULLETIN from '@/app/asset/default/DEFAULT_BULLETIN.png';
+import DEFAULT_BULLETIN from '@/app/asset/default/DEFAULT_BULLETIN.webp';
 import { getBulletins } from '@/entities/bulletin';
 import { formatKoreanDate } from '@/shared/lib';
 import { withAsyncBoundary } from '@/shared/ui';

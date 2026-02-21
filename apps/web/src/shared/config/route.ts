@@ -1,11 +1,11 @@
-import BibleIcon from '@/app/asset/icons/bible.png';
-import BulletinIcon from '@/app/asset/icons/bulletin.png';
-import CalendarIcon from '@/app/asset/icons/calendar.png';
-import ChurchIcon from '@/app/asset/icons/church.png';
-import CommunityIcon from '@/app/asset/icons/community.png';
-import MapIcon from '@/app/asset/icons/map.png';
-import MissionaryIcon from '@/app/asset/icons/missionary.png';
-import SermonIcon from '@/app/asset/icons/sermon.png';
+import BibleIcon from '@/app/asset/icons/bible.webp';
+import BulletinIcon from '@/app/asset/icons/bulletin.webp';
+import CalendarIcon from '@/app/asset/icons/calendar.webp';
+import ChurchIcon from '@/app/asset/icons/church.webp';
+import CommunityIcon from '@/app/asset/icons/community.webp';
+import MapIcon from '@/app/asset/icons/map.webp';
+import MissionaryIcon from '@/app/asset/icons/missionary.webp';
+import SermonIcon from '@/app/asset/icons/sermon.webp';
 
 export const menuData = {
   교회소개: [

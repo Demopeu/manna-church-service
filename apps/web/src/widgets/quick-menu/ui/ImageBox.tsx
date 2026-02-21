@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import bgImage from '@/app/asset/default/youtube_imageUrl.png';
+import bgImage from '@/app/asset/default/youtube_imageUrl.webp';
 import { SermonOverlay } from './OverLay';
 
 export function YoutubeImageBox() {
