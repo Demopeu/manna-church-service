@@ -2,13 +2,18 @@
 
 > 기술을 모르는 목사님이 교회 콘텐츠를 관리할 수 있는 원클릭 관리자 시스템.
 
+|                                          1. 대시보드                                          |                               2. 콘텐츠 등록 폼                                |
+| :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------: |
+|                    ![대시보드 메인](docs/screenshots/admin-dashboard.png)                     |           ![주보 등록 폼](docs/screenshots/admin-bulletin-form.png)            |
+| 여러 도메인의 요약 정보를 위젯 형태로 제공하며, 부분 실패(Partial Failure)를 허용하도록 설계. | Zod 기반의 실시간 유효성 검증과 직관적인 드래그 앤 드롭 파일 업로드 UX를 제공. |
+
 ---
 
 ## 1. 개발 환경
 
 | 항목                | 내용                                       |
 | :------------------ | :----------------------------------------- |
-| **Node.js**         | 루트 기준 >= 25.0.0                        |
+| **Node.js**         | 루트 기준 >= 24.0.0                        |
 | **Package Manager** | pnpm (루트 `packageManager: pnpm@10.25.0`) |
 | **Dev Server Port** | `3001`                                     |
 
@@ -75,12 +80,13 @@
 | `/events`        | 이벤트        | 교회 행사 등록/관리, 이미지 첨부                |
 | `/announcements` | 공지          | 교회 공지사항 등록/관리                         |
 | `/servants`      | 섬기는 사람들 | 역할별(담임/협동/구역장) 필터, 공개/비공개 토글 |
+| `/settings`      | 설정          | 배너 및 추가 정보 수정                          |
 
 ---
 
 ## 3. 아키텍처
 
-### Clean FSD + CQRS 구조
+### 3-1. Clean FSD + CQRS 구조
 
 ```
 src/
@@ -106,6 +112,7 @@ src/
 │   ├── event/        #   이벤트 CRUD
 │   ├── gallery/      #   갤러리 CRUD + 다중 이미지 관리
 │   ├── sermon/       #   설교 CRUD + YouTube ID 추출
+│   ├── banner/       #   배너 CRUD
 │   └── servant/      #   섬기는 사람들 CRUD
 ├── entities/         # Entities Layer — Read 전용 (쿼리 + 도메인 모델)
 │   ├── announcement/ #   model/ + api/ (dto, mapper, queries)
@@ -114,6 +121,7 @@ src/
 │   ├── gallery/
 │   ├── sermon/
 │   ├── servant/
+│   ├── banner/
 │   └── user/         #   현재 로그인 사용자 정보
 └── shared/           # Shared Layer — 순수 유틸리티 & UI
     ├── api/          #   tryCatchAction, tryCatchVoid (에러 래퍼)
@@ -123,7 +131,7 @@ src/
     └── ui/           #   base/ (Shadcn 래퍼), components/ (DataTable, Pagination 등)
 ```
 
-### 의존성 규칙
+### 3-2. 의존성 규칙
 
 ```
 App → Widgets → Features → Entities → Shared → @repo/ui
@@ -131,13 +139,13 @@ App → Widgets → Features → Entities → Shared → @repo/ui
 
 상위 레이어는 하위 레이어를 import 할 수 있지만, **역방향은 금지**입니다.
 
-### 렌더링 전략
+### 3-3. 렌더링 전략
 
 - **`force-dynamic`**: 모든 인증된 라우트에 적용. 관리자 페이지는 항상 최신 데이터를 표시해야 하므로 캐싱하지 않음.
 - **Server Actions**: 모든 쓰기 작업은 `'use server'` Server Actions으로 처리. `revalidatePath()`로 캐시 무효화.
 - **`requireAuth()` 가드**: 모든 Server Action 진입부에서 세션 검증. 미인증 시 에러 반환 또는 throw.
 
-### 인증 흐름
+### 3-4. 인증 흐름
 
 ```
 [브라우저 요청]
@@ -152,7 +160,7 @@ App → Widgets → Features → Entities → Shared → @repo/ui
 [Server Action 호출] ── requireAuth() 가드 → Supabase Auth 세션 검증
 ```
 
-### 핵심 패턴
+### 3-5. 핵심 패턴
 
 #### 1. 클라이언트 이미지 압축
 
@@ -185,11 +193,33 @@ App → Widgets → Features → Entities → Shared → @repo/ui
   → ActionState 반환  // { success, message, fieldErrors? }
 ```
 
+#### 4. Server Actions 에러 핸들링 자동화 (Boilerplate)
+
+모든 Server Action은 Sentry 로깅과 예외 처리가 중앙화된 `tryCatchAction` 래퍼 함수를 통과합니다. 이를 통해 비즈니스 로직 내부에서 중복되는 `try-catch`를 제거하고, 클라이언트에게 항상 일관된 규격의 상태(`ActionState`)를 반환합니다.
+
+```typescript
+// 비즈니스 로직은 순수하게 성공 케이스만 작성
+export const createBulletin = async (data: any) => {
+  return tryCatchAction(async () => {
+    // DB 인서트 로직...
+    return { success: true, message: '주보가 등록되었습니다.' };
+  });
+};
+```
+
+#### 5. RSC 전용 Async Error Boundary (부분 실패 허용 설계)
+
+Next.js App Router의 비동기 Server Component(RSC) 특성에 맞춰, **RSC 전용 HOC(`withAsyncBoundary`)** 를 직접 구현하여 적용했습니다.
+
+- **문제:** React 표준 `<ErrorBoundary>`는 서버 컴포넌트 내부의 비동기(`await`) 데이터 패칭 과정에서 발생하는 에러를 잡아내지 못함.
+- **해결:** 비동기 서버 컴포넌트 자체를 `try-catch`로 감싸는 고차 컴포넌트(HOC) 래퍼 함수와 `Suspense`를 결합하여 독자적인 에러 바운더리 구축.
+- **효과:** 대시보드처럼 여러 위젯이 동시에 렌더링되는 화면에서 특정 도메인(예: 주보 API)에 장애가 발생하더라도, **페이지 전체가 다운되지 않고 해당 위젯만 Error Fallback UI를 렌더링하는 '부분 실패(Partial Failure)'를 허용**하여 전체 시스템의 안정성과 UX를 극대화함.
+
 ---
 
 ## 4. 트러블슈팅
 
-### 4-1. `pdfjs-dist` DOMMatrix SSR 에러
+### 4-1. `pdfjs-dist` DOMMatrix SSR 에러 및 초기 번들 최적화
 
 > 상세: `docs/errors/0001-dommatrix-defined.md`
 
@@ -199,13 +229,15 @@ App → Widgets → Features → Entities → Shared → @repo/ui
 
 **해결:** Static Import → **Dynamic Import** (`await import('pdfjs-dist')`)로 변경. 타입은 `import type`으로만 가져와 런타임 영향 없이 타입 안전성 유지.
 
+**최적화:** **수 MB에 달하는 무거운 PDF 파싱 라이브러리가 초기 번들(Initial Bundle)에 포함되는 것을 막아 관리자 페이지의 초기 로딩 속도(TTV)를 대폭 개선**하는 성능 최적화 달성.
+
 ### 4-2. Tailwind CSS 미디어쿼리 우선순위 깨짐
 
 > 상세: `docs/errors/0003-tailwind-css-cascade-order.md`
 
 **문제:** 모노레포 환경에서 `hidden lg:flex` 등 반응형 유틸리티가 작동하지 않음. `display: none`이 미디어쿼리를 덮어씀.
 
-**원인:** `@repo/ui/styles.css`와 `globals.css` 모두에서 Tailwind를 import하면서 `.hidden` 규칙이 미디어쿼리보다 나중에 재선언됨 (CSS Cascade Order 문제).
+**원인:** 단일 앱 환경과 달리 모노레포 구조에서는 외부 패키지(`@repo/ui/styles.css`)와 메인 앱(`globals.css`)의 CSS가 개별적으로 컴파일되어 로드. 이 과정에서 병합 순서가 꼬이면서 메인 앱의 기본 `.hidden` 클래스가 UI 패키지의 반응형 미디어쿼리 규칙보다 나중에 선언되어 우선순위(CSS Cascade Specificity)를 덮어쓰는 아키텍처 결함 발생.
 
 **해결:** Turborepo 공식 패턴 적용. `layout.tsx`에서 `@repo/ui/styles.css`를 먼저 import한 뒤 `globals.css`를 import하여 로드 순서 보장.
 

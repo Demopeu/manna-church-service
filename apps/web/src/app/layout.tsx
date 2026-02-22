@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '@repo/ui/styles.css';
 import { churchData } from '@/shared/config';
+import { SerwistProvider } from './provider/serwist';
 import './styles/globals.css';
 
 const notoSansKR = Noto_Sans_KR({
@@ -92,7 +93,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {children}
+        <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -6,6 +6,13 @@ import * as Sentry from '@sentry/nextjs';
 Sentry.init({
   dsn: 'https://d2e112e5ce2c3fc2f41f3d4709a0ab61@o4510780424192000.ingest.us.sentry.io/4510780424388608',
 
+  ignoreErrors: [
+    'Failed to fetch',
+    'NetworkError when attempting to fetch resource.',
+    'This Suspense boundary received an update before it finished hydrating',
+  ],
+
+  denyUrls: [/vercel\/insights/i, /vercel\/speed-insights/i],
   // Add optional integrations for additional features
   integrations: [Sentry.replayIntegration()],
 
