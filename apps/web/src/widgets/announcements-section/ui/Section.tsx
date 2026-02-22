@@ -16,7 +16,7 @@ async function AnnouncementsSectionBase() {
         <li key={item.id}>
           <Link
             href={`/news/announcements/${item.title}-${item.shortId}`}
-            className="hover:bg-muted/50 flex items-center justify-between gap-4 px-6 py-4 transition-colors"
+            className="hover:bg-muted/50 flex items-center justify-between gap-4 px-6 py-4 transition-colors lg:py-3 xl:py-4"
             aria-label={`공지사항: ${item.title} 상세 보기`}
           >
             <div className="flex flex-1 items-center gap-2 overflow-hidden">

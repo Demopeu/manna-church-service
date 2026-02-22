@@ -14,7 +14,7 @@
 ### 프로젝트 설명
 
 만나교회의 디지털 전환을 위한 **모노레포 기반 풀스택 웹 서비스**입니다.
-60대 이상 고령 성도를 위한 **접근성 사용자 웹**과, 비전문가 목사님을 위한 **원클릭 관리자 CMS** 두 개의 앱으로 구성됩니다.
+60대 이상 고령 성도를 위한 **접근성 사용자 웹**과, 비전문가 목사님을 위한 **관리자 CMS** 두 개의 앱으로 구성됩니다.
 
 - **사용자 웹 (`apps/web`):** Next.js 16 `'use cache'` + SSG 기반 정적 최적화, Skeleton UI, 모바일 퍼스트 반응형.
 - **관리자 CMS (`apps/admin`):** Server Actions + React Hook Form + 자동 이미지 압축/PDF 변환, 직관적 UX.
@@ -25,44 +25,19 @@
 | :---------------------------------------------------------: | :------------------------------------------------------------: |
 | ![사용자 웹 스크린샷](docs/screenshots/web-placeholder.png) | ![관리자 CMS 스크린샷](docs/screenshots/admin-placeholder.png) |
 
+> 💡 **각 앱의 상세 화면 및 주요 기능 설명은 아래 링크에서 확인하실 수 있습니다.**
+> 👉 [apps/web 상세 README 바로가기](./apps/web/README.md)
+> 👉 [apps/admin 상세 README 바로가기](./apps/admin/README.md)
+
 ### 아키텍처
 
 #### 시스템 아키텍처
 
-```
-[ Client (Browser) ]
-        │
-        ▼
-[ Vercel Edge Network ]
-   ┌────┴────┐
-   ▼         ▼
-[Web App]  [Admin App]     ← Next.js 16.1.1
-   │         │
-   ▼         ▼
-[ Supabase (PostgreSQL + Auth + Storage) ]
-   │
-   ▼
-[ Sentry (Error Monitoring) ]
-```
+> 📐 아키텍처 다이어그램: `docs/architecture/system-architecture.png`
 
-> 📐 아키텍처 다이어그램: `docs/architecture/system-architecture.png` (예정)
+#### 모노레포 의존성 구조
 
-#### CI/CD 파이프라인
-
-```
-[Feature Branch] → [pre-commit: lint + type-check]
-       │
-       ▼
-[Commit] → [commitlint: Conventional Commits 검증]
-       │
-       ▼
-[pre-push: turbo build (전체 빌드 검증)]
-       │
-       ▼
-[Push to main] → [Vercel Auto Deploy (Preview/Production)]
-```
-
-> 📐 CI/CD 다이어그램: `docs/architecture/cicd-pipeline.png` (예정)
+> 📐 모노레포 의존성 다이어그램: `docs/architecture/cicd-pipeline.png`
 
 ---
 
@@ -109,73 +84,41 @@
 | `@commitlint/config-conventional`       | 20.3.0 | Conventional Commits 규칙    |
 | `cross-env`                             | 10.1.0 | 크로스 플랫폼 환경 변수      |
 
----
-
-## 3. 개발 방법론: Spec-Driven Development (SDD)
-
-### 개요
-
-본 프로젝트는 **Spec-Driven Development (SDD)** 를 핵심 개발 방법론으로 채택했습니다.
-
-전통적인 개발 프로세스에서는 요구사항 문서와 실제 코드가 점차 괴리되는 문제가 발생합니다.
-SDD는 **하나의 명세서(`project_spec.md`)를 Single Source of Truth**로 유지하며, 이 명세서가 설계 문서이자 개발 가이드이자 AI 컨텍스트 소스 역할을 동시에 수행하도록 설계된 방법론입니다.
-
-### `project_spec.md`의 역할
-
-```
-project_spec.md (Living Specification)
-    │
-    ├── 📋 설계 문서 ─── 프로젝트 개요, 기술 스택, 아키텍처, DB 스키마
-    ├── 🤖 AI 컨텍스트 ─ AI 개발 도구에 주입되는 정확한 프로젝트 맥락
-    ├── 📐 코딩 규칙 ─── FSD 레이어 규칙, 의존성 방향, 네이밍 컨벤션
-    └── ✅ 감사 기준 ─── 구현 완료 여부 추적, Gap Analysis 기반 동기화
-```
-
-**`project_spec.md`가 관리하는 범위:**
-
-1. **사용자 페르소나** — "70대 김권사님", "60대 김목사님"의 구체적 시나리오를 정의하여 모든 UI/UX 결정의 기준점 제공
-2. **기술 스택 & 버전 전략** — 정확한 패키지 버전과 채택 이유를 명시
-3. **Clean FSD + CQRS 아키텍처** — 레이어별 책임, 의존성 규칙, 예시 코드 패턴
-4. **전체 기능 명세** — 모든 라우트, 위젯, Entity, API 쿼리 함수를 코드 레벨까지 기술
-5. **DB 스키마 & Storage 정책** — 테이블/컬럼 명세, RLS 정책, Storage Bucket 정책
-6. **환경 변수 & 보안 전략** — 화이트리스트 인증, RLS 정책
-
-### Context Prompting 전략
-
-AI 기반 개발 도구(Windsurf Cascade 등)를 활용할 때, **일관된 코드 품질을 보장**하기 위해 `project_spec.md`를 컨텍스트로 주입하는 전략을 사용했습니다.
-
-```
-┌─────────────────────────────────────────────┐
-│            Context Prompting Flow           │
-├─────────────────────────────────────────────┤
-│                                             │
-│  [project_spec.md] ──주입──▶ [AI 도구]      │
-│         │                       │           │
-│         │                       ▼           │
-│         │               [코드 생성/수정]    │
-│         │                       │           │
-│         │                       ▼           │
-│         │               [코드 리뷰/검증]    │
-│         │                       │           │
-│         ◀───동기화 업데이트─────┘           │
-│                                             │
-└─────────────────────────────────────────────┘
-```
-
-**핵심 원칙:**
-
-- **단일 진실 공급원:** 아키텍처 결정, 네이밍 컨벤션, 레이어 규칙이 모두 `project_spec.md`에 정의되어 있으므로 AI가 기존 코드베이스와 일관된 코드를 생성
-- **양방향 동기화:** 코드가 변경되면 `project_spec.md`도 함께 업데이트하여 명세-코드 간 괴리를 방지
-- **AI Instruction 내장:** 스펙 내부에 `> 🤖 AI Instruction` 블록을 삽입하여, AI가 코드를 작성할 때 지켜야 할 행동 규칙을 직접 명시
-
-**효과:**
-
-- 레이어 의존성 위반 방지 (App → Widgets → Entities → Shared 순서 엄수)
-- `@repo/ui` 직접 import 대신 `src/shared/ui` 래퍼 사용 규칙 자동 준수
-- Entity 쿼리에 `'use cache'` + `cacheLife` + `cacheTag` 패턴 일관 적용
-- 새로운 기능 추가 시 기존 FSD 구조와 동일한 파일/폴더 패턴 자동 생성
+> 💡 **앱별 세부 기술 스택 및 디렉토리 구조는 각 앱의 README를 참조해 주세요.**
+> 👉 [apps/web 기술 스택 및 구조 보기](./apps/web/README.md#2-기술-스택)
+> 👉 [apps/admin 기술 스택 및 구조 보기](./apps/admin/README.md#2-기술-스택)
 
 ---
+
+## 3. 개발 방법론 및 아키텍처
+
+본 프로젝트는 AI 개발 도구(Windsurf)를 적극적으로 활용하되, AI가 생성하는 코드의 품질과 일관성을 통제하기 위해 다음과 같은 체계적인 규칙과 아키텍처를 도입했습니다.
+
+### 🤖 3-1. AI-Assisted Development: 프롬프트 엔지니어링과 컨텍스트 통제
+
+단순히 AI에게 코드를 짜달라고 요청하는 것을 넘어, 프로젝트의 품질을 유지하기 위한 시스템을 구축했습니다.
+
+- **Rule 기반 AI 통제 (`.windsurf`):** \* 프로젝트 루트에 `.windsurf` 설정(Rules)을 구성하고, 그 안에 `vercel-react-best-practices` 및 Next.js 16/React 19 최신 권장 사항을 주입했습니다.
+  - 이를 통해 AI가 구버전 코드를 생성하거나 안티 패턴을 작성하는 것을 방지하고, 항상 프로젝트 컨벤션에 맞는 코드를 출력하도록 강제했습니다.
+- **Living Specification (`project_spec.md`):** \* 요구사항, DB 스키마, 컴포넌트 구조를 담은 `project_spec.md`를 작성하고 개발 과정 내내 지속적으로 업데이트했습니다.
+  - AI에게 새로운 기능을 요청할 때마다 이 명세서를 최우선 컨텍스트로 읽게 하여, 전체 시스템 아키텍처에서 벗어나지 않는 코드를 작성하도록 유도했습니다.
+
+### 🏗️ 3-2. 아키텍처: CQRS를 접목한 Custom Clean-FSD
+
+기존 FSD(Feature-Sliced Design)가 가진 "비즈니스 로직을 Entities와 Features 중 어디에 두어야 하는가?"에 대한 모호함을 해결하고, Next.js App Router와의 결합도를 높이기 위해 **CQRS(명령/조회 책임 분리) 개념을 도입한 Custom Clean-FSD** 아키텍처를 설계했습니다.
+
+- **`app` Layer (Pages 통합):** Next.js App Router의 특성에 맞춰 FSD의 `app`과 `pages` 레이어를 하나로 통합하여 라우팅과 페이지 엔트리를 담당합니다.
+- **`widgets` Layer:** 여러 Feature와 Entity를 조합하여 독립적으로 동작하는 복합 UI 블록을 구성합니다.
+- **`features` Layer (CUD 담당 - Command):**
+  - 데이터의 **생성(Create), 수정(Update), 삭제(Delete)** 와 관련된 비즈니스 로직과 UI만을 격리했습니다.
+  - 주로 Form 제출, Server Actions 호출, 사용자 상호작용에 의한 Mutation 로직이 이곳에 응집됩니다.
+- **`entities` Layer (Read 담당 - Query):**
+  - 데이터의 **조회(Read)** 와 도메인 타입 등 읽기 전용 로직만을 담당합니다.
+  - Next.js의 Server Component 데이터 페칭 및 캐싱 로직이 위치하여, 상태 변경 없이 순수하게 도메인 데이터를 렌더링하는 데 집중합니다.
+- **`shared` Layer:** 프로젝트 전반에서 사용되는 순수 UI 컴포넌트(Design System)와 유틸리티 함수를 배치했습니다.
+
+**도입 효과:**
+Read 로직(Entities)과 Mutation 로직(Features)의 경계가 명확해지면서 컴포넌트의 책임이 단일화되었고, AI 도구(Windsurf)에게 코드를 위임할 때도 "Feature 레이어에 CUD 로직을 작성해"라는 명확한 프롬프팅이 가능해져 일관된 코드 품질을 유지할 수 있었습니다.
 
 ## 4. 모노레포 구조
 
@@ -190,7 +133,7 @@ manna-church-service/
 │   ├── tailwind-config/   # @repo/tailwind-config — Tailwind v4 공통 스타일
 │   ├── typescript-config/ # @repo/typescript-config — TypeScript 공통 설정
 │   └── eslint-config/     # @repo/eslint-config — ESLint Flat Config
-├── project_spec.md   # Living Specification (SDD 핵심 문서)
+├── project_spec.md   # Living Specification (AI 통제 및 아키텍처 명세서)
 ├── turbo.json        # Turborepo 태스크 설정
 ├── pnpm-workspace.yaml
 └── package.json
@@ -274,7 +217,10 @@ manna-church-service/
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**효과:** 린트/타입 에러가 있는 코드가 `main` 브랜치에 병합되는 것을 원천 차단합니다.
+**효과 및 최적화 포인트**:
+
+- **원천 차단**: 린트/타입 에러가 있는 코드가 원격 저장소에 Push되는 것을 사전에 방지합니다.
+- **Turborepo 캐시 활용 (Fast pre-push)**: pre-push 단계에서 전체 빌드를 검증하지만, Turborepo의 캐싱 메커니즘 덕분에 변경사항이 없는 패키지는 빌드를 건너뛰어(Cache Hit) 개발자의 푸시 대기 시간을 최소화하면서도 안정성을 극대화했습니다.
 
 ---
 
@@ -358,35 +304,30 @@ design: 메인 페이지 배너 스타일 수정
 
 ## 7. 트러블슈팅
 
-### 7-1. 내부 패키지 JIT vs. Build 전략 전환
+### 내부 패키지 JIT vs. Build 전략 전환
 
-**문제:** 모노레포 초기에 `@repo/ui`, `@repo/database` 등 내부 패키지를 JIT(소스 직접 import) 방식으로 사용.
-Next.js의 `transpilePackages`를 통해 앱 빌드 시 매번 트랜스파일하는 구조.
+**문제:**
+모노레포 초기에 `@repo/ui`, `@repo/database` 등 내부 패키지를 별도의 사전 빌드 과정 없이 JIT(소스 직접 import) 방식으로 사용했습니다. Next.js의 `transpilePackages` 옵션을 통해 앱 빌드 시 내부 패키지를 함께 트랜스파일하는 구조였습니다.
 
-**증상:**
+**증상 및 한계:**
 
-- 앱 빌드 시간이 내부 패키지 규모에 비례하여 증가
-- `@repo/ui`에 Radix 컴포넌트 20개 이상 추가 후 빌드 시간 병목 발생
-- Turborepo 캐시가 소스 변경에 민감하게 무효화
+- **Turborepo 캐시 히트 실패 및 빌드 병목:** 앱과 패키지가 하나의 빌드 파이프라인으로 묶이면서 내부 패키지가 독립적으로 캐싱되지 않았고, `@repo/ui`에 컴포넌트가 추가될수록 앱의 전체 빌드 시간이 기하급수적으로 증가했습니다.
+- **경로 꼬임 및 강결합(Tight Coupling) 발생:** 내부 패키지의 CSS 등을 절대 경로로 가져올 때 간헐적인 앱 빌드 에러가 발생했습니다. 이를 회피하기 위해 `../../packages/ui/...` 와 같은 상대 경로를 사용해야 했는데, 이는 앱이 내부 패키지의 물리적 위치에 직접 의존하게 만들어 모노레포 패키지 간의 독립성을 심각하게 해치는 아키텍처 결함이라고 판단했습니다.
 
-**해결:**
+**해결 (사전 빌드 전략 도입):**
 
-- 모든 내부 패키지에 `tsc` 사전 빌드 스크립트 추가 → `dist/` 디렉토리로 출력
-- `package.json`의 `exports` 필드에 `dist/` 경로 명시
-- `turbo.json`의 `build.dependsOn: ["^build"]`로 패키지 빌드 순서 보장
-- 앱은 사전 컴파일된 JS/DTS만 import → 빌드 시간 대폭 단축
+- **`tsc` 빌드 파이프라인 분리:** 모든 내부 패키지에 `tsc` 사전 빌드 스크립트를 추가하여 `dist/` 디렉토리로 출력물을 생성하도록 변경했습니다.
+- **`exports` 필드 설정:** `package.json`의 진입점을 소스 코드가 아닌 `dist/` 내의 컴파일된 JS/DTS 및 CSS 파일로 명시했습니다.
+- **빌드 오케스트레이션:** `turbo.json`에 `"dependsOn": ["^build"]` 설정을 추가하여, 패키지가 선행 빌드된 후 앱이 빌드되도록 순서를 강력하게 보장했습니다.
 
-### 7-2. 의존성 버전 통합 (Caret 제거 전략)
+**효과:**
 
-**문제:** `package.json`에서 `^` (caret) 범위를 사용할 경우, `pnpm install` 시점에 따라 서로 다른 마이너 버전이 설치되어 빌드 재현성이 깨짐.
+- **의존성 분리 및 독립성 확보:** 억지스러운 상대 경로를 제거하고 패키지 본연의 방식대로 깔끔하게 import 할 수 있게 되어, 모노레포 도입 목적에 맞는 완벽한 **느슨한 결합(Loose Coupling)**을 달성했습니다.
+- **캐시 효율 극대화:** `dist/` 출력물이 변경되지 않으면 Turborepo가 내부 패키지 재빌드를 완전히 스킵(Cache Hit)하므로, 앱 재빌드 시간이 대폭 단축되었습니다.
 
-**해결:**
-
-- 모든 `dependencies` / `devDependencies`에서 `^` 접두사를 제거하고 **정확한 버전(exact version)** 을 고정
-- 예: `"react": "^19.0.0"` → `"react": "19.2.3"`
-- `pnpm-lock.yaml`과 함께 결정론적(deterministic) 빌드 환경 보장
-
-**예외:** `@repo/database`의 Supabase 패키지 등 빈번한 패치가 필요한 일부 의존성은 `^` 유지.
+> 💡 **Web / Admin 각 앱에서 발생한 상세 트러블슈팅은 아래 링크를 참고해 주세요.**
+> 👉 [apps/web 상세 트러블슈팅 바로가기](./apps/web/README.md#트러블슈팅)
+> 👉 [apps/admin 상세 트러블슈팅 바로가기](./apps/admin/README.md#트러블슈팅)
 
 ---
 
@@ -394,7 +335,7 @@ Next.js의 `transpilePackages`를 통해 앱 빌드 시 매번 트랜스파일�
 
 ### 사전 요구사항
 
-- Node.js >= 25.0.0
+- Node.js >= 24.0.0
 - pnpm >= 10.25.0
 
 ### 설치 및 실행

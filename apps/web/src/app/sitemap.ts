@@ -46,6 +46,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Priority 0.7 — 소식 섹션 리스트
     {
+      url: `${baseUrl}/about/sermons`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
       url: `${baseUrl}/news/announcements`,
       lastModified: new Date(),
       changeFrequency: 'daily',

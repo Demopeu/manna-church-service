@@ -1,4 +1,4 @@
-import { BannerManagement } from '@/widgets/banner-management';
+import { BannerManagement } from '@/widgets/banner-list';
 
 export default function SettingPage() {
   return (
