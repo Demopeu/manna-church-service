@@ -10,7 +10,7 @@
 
 | 항목                | 내용                                       |
 | :------------------ | :----------------------------------------- |
-| **Node.js**         | 루트 기준 >= 25.0.0                        |
+| **Node.js**         | 루트 기준 >= 24.0.0                        |
 | **Package Manager** | pnpm (루트 `packageManager: pnpm@10.25.0`) |
 | **Dev Server Port** | `3000`                                     |
 
@@ -58,22 +58,23 @@
 
 #### 페이지 구성
 
-| 라우트                     | 페이지        | 주요 기능                                              |
-| :------------------------- | :------------ | :----------------------------------------------------- |
-| `/`                        | 메인 홈       | 히어로 캐러셀, 퀵 메뉴, 최근 공지, 이벤트 마퀴, 갤러리 |
-| `/about/intro`             | 만나교회 소개 | 담임목사 인사말, 교회 비전                             |
-| `/about/worship`           | 예배 안내     | 예배 시간표, 모임 안내                                 |
-| `/about/servants`          | 섬기는 사람들 | 담임/협동목사, 구역장 소개                             |
-| `/about/location`          | 오시는 길     | 네이버 지도, 주소, 교통편 안내                         |
-| `/about/bulletins`         | 주보          | 연/월 필터 + 페이지네이션                              |
-| `/about/bulletins/[date]`  | 주보 상세     | 주보 이미지 목록                                       |
-| `/about/missionary`        | 선교사 후원   | 선교사 소개                                            |
-| `/news/announcements`      | 공지사항      | 검색 + 페이지네이션                                    |
-| `/news/announcements/[id]` | 공지사항 상세 | 본문, 이미지, 뒤로가기                                 |
-| `/news/events`             | 이벤트        | 검색 + 페이지네이션                                    |
-| `/news/events/[id]`        | 이벤트 상세   | 본문, 이미지, 뒤로가기                                 |
-| `/news/gallery`            | 갤러리        | 검색 + 페이지네이션 (썸네일 그리드)                    |
-| `/news/gallery/[id]`       | 갤러리 상세   | 이미지 목록, 뒤로가기                                  |
+| 라우트                     | 페이지        | 주요 기능                                         |
+| :------------------------- | :------------ | :------------------------------------------------ |
+| `/`                        | 메인 홈       | 히어로 캐러셀, 퀵 메뉴, 최근 공지, 이벤트, 갤러리 |
+| `/about/intro`             | 만나교회 소개 | 담임목사 인사말, 교회 비전                        |
+| `/about/worship`           | 예배 안내     | 예배 시간표, 모임 안내                            |
+| `/about/servants`          | 섬기는 사람들 | 담임/협동목사, 구역장 소개                        |
+| `/about/sermons`           | 1분 메세지    | 설교를 요약한 1분 메세지 목록                     |
+| `/about/location`          | 오시는 길     | 네이버 지도, 주소, 교통편 안내                    |
+| `/about/bulletins`         | 주보          | 연/월 필터 + 페이지네이션                         |
+| `/about/bulletins/[date]`  | 주보 상세     | 주보 이미지 목록                                  |
+| `/about/missionary`        | 선교사 후원   | 선교사 소개                                       |
+| `/news/announcements`      | 공지사항      | 검색 + 페이지네이션                               |
+| `/news/announcements/[id]` | 공지사항 상세 | 본문, 이미지, 뒤로가기                            |
+| `/news/events`             | 이벤트        | 검색 + 페이지네이션                               |
+| `/news/events/[id]`        | 이벤트 상세   | 본문, 이미지, 뒤로가기                            |
+| `/news/gallery`            | 갤러리        | 검색 + 페이지네이션 (썸네일 그리드)               |
+| `/news/gallery/[id]`       | 갤러리 상세   | 이미지 목록, 뒤로가기                             |
 
 ---
 
@@ -104,6 +105,7 @@ src/
 │   ├── servants-section/      #   섬기는 사람들
 │   ├── missionary-section/    #   선교사 후원
 │   ├── location-section/      #   네이버 지도 + 주소 + 교통편
+│   ├── sermons-section/       #   1분 메세지
 │   ├── about-layout/          #   콘텐츠 사이드바 네비게이션
 │   └── main-layout/           #   Header + Footer + MobileMenu + ScrollFAB
 ├── entities/                  # Entities Layer — Read 전용 (쿼리 + 도메인 모델)
