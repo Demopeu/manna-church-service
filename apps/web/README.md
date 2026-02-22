@@ -52,6 +52,14 @@
 | :--------- | :---- | :---------- |
 | `date-fns` | 4.1.0 | 날짜 포맷팅 |
 
+#### PWA (Progressive Web App)
+
+| 패키지               | 버전   | 역할                                      |
+| :------------------- | :----- | :---------------------------------------- |
+| `serwist`            | 9.5.6  | Service Worker 라이브러리 (오프라인 지원) |
+| `@serwist/turbopack` | 9.5.6  | Turbopack 기반 Serwist 통합 (빌드 최적화) |
+| `esbuild`            | 0.27.3 | Service Worker 번들링 (고속 빌드)         |
+
 ### 기능 개요
 
 만나교회 사용자 웹사이트는 **교회 정보 열람 전용** 사이트입니다. 관리자 CMS(`apps/admin`)에서 등록한 콘텐츠를 성도님들이 조회합니다.
@@ -90,7 +98,11 @@ src/
 │   │   └── (content)/         #   콘텐츠 레이아웃 (AboutSidebar + children)
 │   │       ├── about/         #     교회소개 섹션 (intro, worship, servants, location, bulletins, missionary)
 │   │       └── news/          #     만나소식 섹션 (announcements, events, gallery)
+│   ├── provider/              # Client Provider 레이어
+│   │   └── serwist.ts         #   SerwistProvider ('use client' wrapper)
 │   ├── layout.tsx             # RootLayout (폰트, SEO 메타데이터, JSON-LD 스키마)
+│   ├── manifest.json          # PWA Manifest (앱 이름, 아이콘, 테마 색상)
+│   ├── sw.ts                  # Service Worker (Serwist 기반 오프라인 캐싱)
 │   ├── sitemap.ts             # 동적 Sitemap 생성 (정적 + DB 기반 동적 경로)
 │   └── robots.ts              # robots.txt
 ├── widgets/                   # Widgets Layer — 페이지 구획별 조합 컴포넌트
@@ -182,6 +194,23 @@ App → Widgets → Entities → Shared → @repo/ui
 #### 3. 네이버 지도 통합
 
 `react-naver-maps`를 사용하여 `'use client'` 컴포넌트에서 네이버 지도를 렌더링합니다. `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` 환경 변수가 필요합니다.
+
+#### 4. PWA (Progressive Web App)
+
+**Serwist + Turbopack** 기반으로 PWA를 구현하여 오프라인 지원 및 앱 설치 기능을 제공합니다.
+
+| 파일                  | 역할                                                     |
+| :-------------------- | :------------------------------------------------------- |
+| `manifest.json`       | PWA 메타데이터 (앱 이름, 아이콘, 테마 색상, 표시 모드)   |
+| `sw.ts`               | Service Worker (precache + runtime cache + offline 폴백) |
+| `provider/serwist.ts` | `SerwistProvider` client wrapper (자동 SW 등록)          |
+
+**핵심 기능:**
+
+- **precacheEntries:** 빌드 시 정적 자산 자동 캐싱 (`__SW_MANIFEST`)
+- **runtimeCaching:** 네트워크 요청 동적 캐싱 (`defaultCache` 전략)
+- **offline fallback:** `/~offline` 페이지로 오프라인 폴백
+- **skipWaiting + clientsClaim:** 즉시 활성화 (새 버전 배포 시)
 
 ---
 
