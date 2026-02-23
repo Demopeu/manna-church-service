@@ -72,7 +72,7 @@
 | `/about/intro`             | 만나교회 소개 | 담임목사 인사말, 교회 비전                        |
 | `/about/worship`           | 예배 안내     | 예배 시간표, 모임 안내                            |
 | `/about/servants`          | 섬기는 사람들 | 담임/협동목사, 구역장 소개                        |
-| `/about/sermons`           | 1분 메세지    | 설교를 요약한 1분 메세지 목록                     |
+| `/about/sermons`           | 1분 메시지    | 설교를 요약한 1분 메시지 목록                     |
 | `/about/location`          | 오시는 길     | 네이버 지도, 주소, 교통편 안내                    |
 | `/about/bulletins`         | 주보          | 연/월 필터 + 페이지네이션                         |
 | `/about/bulletins/[date]`  | 주보 상세     | 주보 이미지 목록                                  |
@@ -117,7 +117,7 @@ src/
 │   ├── servants-section/      #   섬기는 사람들
 │   ├── missionary-section/    #   선교사 후원
 │   ├── location-section/      #   네이버 지도 + 주소 + 교통편
-│   ├── sermons-section/       #   1분 메세지
+│   ├── sermons-section/       #   1분 메시지
 │   ├── about-layout/          #   콘텐츠 사이드바 네비게이션
 │   └── main-layout/           #   Header + Footer + MobileMenu + ScrollFAB
 ├── entities/                  # Entities Layer — Read 전용 (쿼리 + 도메인 모델)

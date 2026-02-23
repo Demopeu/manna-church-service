@@ -3,6 +3,7 @@ import { Noto_Sans_KR } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import '@repo/ui/styles.css';
+import { PWAInstallPrompt } from '@/widgets/pwa';
 import { churchData } from '@/shared/config';
 import { SerwistProvider } from './provider/serwist';
 import './styles/globals.css';
@@ -94,6 +95,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+        <PWAInstallPrompt />
         <Analytics />
         <SpeedInsights />
       </body>
