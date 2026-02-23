@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -15,56 +16,75 @@ function isBeforeInstallPromptEvent(e: Event): e is BeforeInstallPromptEvent {
   return 'prompt' in e && 'userChoice' in e;
 }
 
+const COOLDOWN_DAYS = 7;
+const COOLDOWN_IN_MS = COOLDOWN_DAYS * 24 * 60 * 60 * 1000;
+const MIN_PAGE_VIEWS = 3;
+
+const checkShouldShowPrompt = (currentViews: number) => {
+  const userAgent = navigator.userAgent;
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      userAgent,
+    ) ||
+    (/Macintosh/i.test(userAgent) && navigator.maxTouchPoints > 1);
+
+  const hiddenUntil = parseInt(
+    localStorage.getItem('pwaPromptHiddenUntil') || '0',
+    10,
+  );
+  const isCoolingDown = Date.now() < hiddenUntil;
+
+  if (hiddenUntil && !isCoolingDown) {
+    localStorage.removeItem('pwaPromptHiddenUntil');
+  }
+
+  return isMobile && !isCoolingDown && currentViews >= MIN_PAGE_VIEWS;
+};
+
 export function usePWA() {
+  const pathname = usePathname();
+
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+
+  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
-    const checkIsMobile = () => {
-      if (typeof window === 'undefined') return false;
-
-      const userAgent = navigator.userAgent;
-      const isMobileRegex =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          userAgent,
-        );
-
-      const isMacWithTouch =
-        /Macintosh/i.test(userAgent) && navigator.maxTouchPoints > 1;
-
-      return isMobileRegex || isMacWithTouch;
-    };
-
-    const mobileDetected = checkIsMobile();
-
-    const handleBeforeInstallPrompt = (e: Event) => {
+    const handlePrompt = (e: Event) => {
       if (isBeforeInstallPromptEvent(e)) {
         e.preventDefault();
         setDeferredPrompt(e);
-
-        if (mobileDetected) {
-          setIsInstallable(true);
-        }
-      } else {
-        console.debug('알 수 없는 beforeinstallprompt 이벤트 무시됨');
       }
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    window.addEventListener('appinstalled', () => {
-      setIsInstallable(false);
-      setDeferredPrompt(null);
-    });
-
-    return () => {
-      window.removeEventListener(
-        'beforeinstallprompt',
-        handleBeforeInstallPrompt,
-      );
-    };
+    window.addEventListener('beforeinstallprompt', handlePrompt);
+    return () =>
+      window.removeEventListener('beforeinstallprompt', handlePrompt);
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const prevViews = parseInt(
+      sessionStorage.getItem('pwaPageViews') || '0',
+      10,
+    );
+    const currentViews = pathname !== '/' ? prevViews + 1 : prevViews;
+
+    if (pathname !== '/') {
+      sessionStorage.setItem('pwaPageViews', currentViews.toString());
+    }
+  }, [pathname]);
+
+  let isInstallable = false;
+
+  if (typeof window !== 'undefined' && deferredPrompt && !isDismissed) {
+    const currentViews = parseInt(
+      sessionStorage.getItem('pwaPageViews') || '0',
+      10,
+    );
+    isInstallable = checkShouldShowPrompt(currentViews);
+  }
 
   const installApp = async () => {
     if (!deferredPrompt) return;
@@ -73,12 +93,21 @@ export function usePWA() {
     const { outcome } = await deferredPrompt.userChoice;
 
     if (outcome === 'accepted') {
-      setIsInstallable(false);
+      setIsDismissed(true);
     }
     setDeferredPrompt(null);
   };
 
-  const closePrompt = () => setIsInstallable(false);
+  const closePrompt = () => {
+    setIsDismissed(true);
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(
+        'pwaPromptHiddenUntil',
+        (Date.now() + COOLDOWN_IN_MS).toString(),
+      );
+    }
+  };
 
   return { isInstallable, installApp, closePrompt };
 }

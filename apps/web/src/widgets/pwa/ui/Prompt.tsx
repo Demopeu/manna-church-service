@@ -2,10 +2,15 @@
 
 import Image from 'next/image';
 import { Button } from '@/shared/ui';
+import { useDrag } from '../lib/useDrag';
 import { usePWA } from '../model/usePWA';
 
 export function PWAInstallPrompt() {
   const { isInstallable, installApp, closePrompt } = usePWA();
+  const { dragY, handlers } = useDrag({
+    onDismiss: closePrompt,
+    threshold: 100,
+  });
 
   if (!isInstallable) return null;
 
@@ -17,7 +22,18 @@ export function PWAInstallPrompt() {
         aria-hidden="true"
       />
 
-      <div className="animate-in slide-in-from-bottom-full fixed right-0 bottom-0 left-0 z-50 mx-auto w-full max-w-md transform overflow-hidden rounded-t-2xl bg-white p-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] transition-all duration-300 md:bottom-4 md:rounded-2xl">
+      <div
+        {...handlers}
+        style={{
+          transform: `translateY(${dragY}px)`,
+          ...handlers.style,
+        }}
+        className={`fixed right-0 bottom-0 left-0 z-50 mx-auto w-full max-w-md transform overflow-hidden rounded-t-2xl bg-white p-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:bottom-4 md:rounded-2xl ${
+          dragY === 0
+            ? 'animate-in slide-in-from-bottom-full transition-all duration-300'
+            : 'transition-none'
+        }`}
+      >
         <div className="mx-auto mb-5 h-1.5 w-12 shrink-0 rounded-full bg-gray-300" />
 
         <div className="mb-6 flex items-start justify-between gap-6">
