@@ -14,7 +14,7 @@ export const menuData = {
     { title: '주보', href: '/about/bulletins', icon: 'BookOpen' },
     { title: '예배 안내', href: '/about/worship', icon: 'Calendar' },
     { title: '섬기는 사람들', href: '/about/servants', icon: 'Users' },
-    { title: '1분 메세지', href: '/about/sermons', icon: 'Video' },
+    { title: '1분 메시지', href: '/about/sermons', icon: 'Video' },
     { title: '선교사 후원', href: '/about/missionary', icon: 'Plane' },
   ],
   만나소식: [
@@ -32,7 +32,7 @@ export const Items = [
   },
   {
     icon: SermonIcon,
-    label: '1분 메세지',
+    label: '1분 메시지',
     href: '/about/sermons',
   },
   {

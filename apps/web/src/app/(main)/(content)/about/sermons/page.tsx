@@ -4,16 +4,16 @@ import { SermonList, sermonsData } from '@/widgets/sermons-section';
 import { MainWrapper } from '@/shared/ui';
 
 export const metadata: Metadata = {
-  title: '1분 메세지',
+  title: '1분 메시지',
   description:
-    '만나교회 설교 영상을 압축한 1분 메세지입니다. 말씀을 통해 은혜와 감동을 나눕니다.',
+    '만나교회 설교 영상을 압축한 1분 메시지입니다. 말씀을 통해 은혜와 감동을 나눕니다.',
   alternates: {
     canonical: '/about/sermons',
   },
   openGraph: {
-    title: '1분 메세지',
+    title: '1분 메시지',
     description:
-      '만나교회 설교 영상을 압축한 1분 메세지입니다. 말씀을 통해 은혜와 감동을 나눕니다.',
+      '만나교회 설교 영상을 압축한 1분 메시지입니다. 말씀을 통해 은혜와 감동을 나눕니다.',
   },
 };
 
