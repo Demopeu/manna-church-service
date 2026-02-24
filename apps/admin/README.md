@@ -1,6 +1,6 @@
 # 만나교회 관리자 CMS (`apps/admin`)
 
-> 기술을 모르는 목사님이 교회 콘텐츠를 관리할 수 있는 원클릭 관리자 시스템.
+> 기술을 모르는 목사님이 교회 콘텐츠를 **원클릭**으로 관리할 수 있는 직관적 관리자 시스템.
 
 |                                          1. 대시보드                                          |                               2. 콘텐츠 등록 폼                                |
 | :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------: |
@@ -50,11 +50,11 @@
 
 #### 인프라 & 모니터링
 
-| 패키지           | 버전      | 역할                                   |
-| :--------------- | :-------- | :------------------------------------- |
-| `@sentry/nextjs` | 10.36.0   | 에러 추적 (서버/클라이언트/엣지)       |
-| `@repo/database` | workspace | Supabase Client + Auth + Types         |
-| `@repo/ui`       | workspace | 공통 디자인 시스템 (Shadcn/UI + Radix) |
+| 패키지           | 버전      | 역할                                        |
+| :--------------- | :-------- | :------------------------------------------ |
+| `@sentry/nextjs` | 10.36.0   | 에러 추적 (서버/클라이언트/엣지)            |
+| `@repo/database` | workspace | Supabase Client + Auth + Middleware + Types |
+| `@repo/ui`       | workspace | 공통 디자인 시스템 (Shadcn/UI + Radix)      |
 
 #### 유틸리티
 
@@ -69,18 +69,19 @@
 
 관리자 CMS는 교회 콘텐츠의 **CRUD(생성/조회/수정/삭제)** 를 담당합니다.
 
-#### 관리 대상 콘텐츠 (7개 도메인)
+#### 관리 대상 콘텐츠 (9개 라우트)
 
-| 라우트           | 도메인        | 주요 기능                                       |
-| :--------------- | :------------ | :---------------------------------------------- |
-| `/`              | 대시보드      | 최근 콘텐츠 현황, 주보 미등록 알림              |
-| `/sermons`       | 설교          | YouTube/Instagram URL 등록, 썸네일 자동 추출    |
-| `/bulletins`     | 주보          | PDF 업로드 → WebP 자동 변환, 연/월 필터         |
-| `/gallery`       | 갤러리        | 다중 이미지 드래그&드롭, 썸네일 선택, 최대 10장 |
-| `/events`        | 이벤트        | 교회 행사 등록/관리, 이미지 첨부                |
-| `/announcements` | 공지          | 교회 공지사항 등록/관리                         |
-| `/servants`      | 섬기는 사람들 | 역할별(담임/협동/구역장) 필터, 공개/비공개 토글 |
-| `/settings`      | 설정          | 배너 및 추가 정보 수정                          |
+| 라우트           | 도메인        | 주요 기능                                              |
+| :--------------- | :------------ | :----------------------------------------------------- |
+| `/`              | 대시보드      | 최근 콘텐츠 현황 위젯, 부분 실패(Partial Failure) 허용 |
+| `/sermons`       | 설교          | YouTube/Instagram URL 등록, 썸네일 자동 추출           |
+| `/bulletins`     | 주보          | PDF 업로드 → WebP 자동 변환, 연/월 필터                |
+| `/gallery`       | 갤러리        | 다중 이미지 드래그&드롭, 썸네일 선택, 최대 10장        |
+| `/events`        | 이벤트        | 교회 행사 등록/관리, 이미지 첨부                       |
+| `/announcements` | 공지          | 교회 공지사항 등록/관리                                |
+| `/servants`      | 섬기는 사람들 | 역할별(담임/협동/구역장) 필터, 공개/비공개 토글        |
+| `/missionaries`  | 선교사        | 선교사 등록/관리, 이미지 첨부                          |
+| `/setting`       | 설정          | 히어로 배너 관리                                       |
 
 ---
 
@@ -90,60 +91,95 @@
 
 ```
 src/
-├── app/              # App Layer — 라우팅 전용 (page.tsx, layout.tsx)
-│   ├── (admin)/      # 인증 필요 라우트 그룹
-│   │   ├── (main)/   #   └── 대시보드 (/)
-│   │   ├── sermons/
-│   │   ├── bulletins/
-│   │   ├── gallery/
-│   │   ├── events/
-│   │   ├── announcements/
-│   │   └── servants/
-│   └── login/        # 비인증 라우트
-├── widgets/          # Widgets Layer — 페이지 구획별 조합 컴포넌트
-│   ├── dashboard/    #   대시보드 카드 (최근 주보/설교/공지/이벤트/갤러리)
-│   ├── main-layout/  #   Sidebar + Header + SidebarProvider
-│   ├── login-card/   #   로그인 카드
-│   └── *-list/       #   각 도메인별 목록 위젯 (DataTable + 검색 + 페이지네이션)
-├── features/         # Features Layer — CUD 로직 (Server Actions + 폼)
-│   ├── auth/         #   로그인/로그아웃 (Supabase Auth)
-│   ├── announcement/ #   공지 CRUD
-│   ├── bulletin/     #   주보 CRUD + PDF→WebP 변환
-│   ├── event/        #   이벤트 CRUD
-│   ├── gallery/      #   갤러리 CRUD + 다중 이미지 관리
-│   ├── sermon/       #   설교 CRUD + YouTube ID 추출
-│   ├── banner/       #   배너 CRUD
-│   └── servant/      #   섬기는 사람들 CRUD
-├── entities/         # Entities Layer — Read 전용 (쿼리 + 도메인 모델)
-│   ├── announcement/ #   model/ + api/ (dto, mapper, queries)
-│   ├── bulletin/
-│   ├── event/
-│   ├── gallery/
-│   ├── sermon/
-│   ├── servant/
-│   ├── banner/
-│   └── user/         #   현재 로그인 사용자 정보
-└── shared/           # Shared Layer — 순수 유틸리티 & UI
-    ├── api/          #   tryCatchAction, tryCatchVoid (에러 래퍼)
-    ├── config/       #   ADMIN_ROUTES (사이드바 네비게이션 설정)
-    ├── lib/          #   imageConverter, pdfToWebpConverter, requireAuth, useDialog 등
-    ├── model/        #   ActionState 타입 정의
-    └── ui/           #   base/ (Shadcn 래퍼), components/ (DataTable, Pagination 등)
+├── app/                         # App Layer — 라우팅 전용
+│   ├── (admin)/                 # 인증 필요 라우트 그룹 (force-dynamic)
+│   │   ├── (main)/              #   대시보드 (/)
+│   │   ├── sermons/             #   설교 관리
+│   │   ├── bulletins/           #   주보 관리
+│   │   ├── gallery/             #   갤러리 관리
+│   │   ├── events/              #   이벤트 관리
+│   │   ├── announcements/       #   공지 관리
+│   │   ├── servants/            #   섬기는 사람들 관리
+│   │   ├── missionaries/        #   선교사 관리
+│   │   ├── setting/             #   설정 (배너)
+│   │   └── layout.tsx           #   Sidebar + Header + SidebarProvider
+│   ├── login/                   # 비인증 라우트 (로그인 페이지)
+│   ├── styles/                  # globals.css (Tailwind v4 엔트리)
+│   ├── layout.tsx               # RootLayout (폰트, Toaster)
+│   ├── error.tsx                # 에러 바운더리
+│   ├── global-error.tsx         # 전역 에러 바운더리 (Sentry 캡처)
+│   └── not-found.tsx            # 404 페이지
+├── widgets/                     # Widgets Layer — 페이지 구획별 조합 컴포넌트 (11개)
+│   ├── dashboard/               #   대시보드 카드 위젯 (5개 도메인 최근 데이터)
+│   │   └── ui/                  #     Date, RecentBulletinCard, RecentAnnouncementCard,
+│   │                            #     RecentEventCard, RecentSermonCard, RecentGalleryCard
+│   ├── main-layout/             #   Sidebar + MainHeader + SidebarProvider (Context)
+│   ├── login-card/              #   로그인 카드
+│   ├── bulletin-list/           #   주보 목록 (DataTable + 연/월 필터 + 페이지네이션)
+│   ├── sermon-list/             #   설교 목록
+│   ├── gallery-list/            #   갤러리 목록
+│   ├── event-list/              #   이벤트 목록
+│   ├── announcement-list/       #   공지 목록
+│   ├── servant-list/            #   섬기는 사람들 목록 (역할 필터)
+│   ├── missionary-list/         #   선교사 목록
+│   └── banner-list/             #   배너 목록
+├── features/                    # Features Layer — CUD 로직 (9개 도메인)
+│   ├── auth/                    #   로그인/로그아웃 (Supabase Auth)
+│   │   ├── api/                 #     Server Actions (login, logout)
+│   │   ├── model/               #     login-schema.ts (Zod), useAuth hook
+│   │   └── ui/                  #     LoginForm, LogoutDropdownItem
+│   ├── bulletin/                #   주보 CRUD + PDF→WebP 변환
+│   │   ├── api/                 #     Server Actions (create, update, delete, storage)
+│   │   ├── lib/                 #     PDF 변환 유틸리티
+│   │   ├── model/               #     Zod 스키마, useForm hooks
+│   │   └── ui/                  #     CreateButton, EditButton, DeleteButton + Form
+│   ├── gallery/                 #   갤러리 CRUD + 다중 이미지 관리
+│   ├── sermon/                  #   설교 CRUD + YouTube ID 추출
+│   ├── event/                   #   이벤트 CRUD + EventForm
+│   ├── announcement/            #   공지 CRUD
+│   ├── servant/                 #   섬기는 사람들 CRUD + ServantForm
+│   ├── missionary/              #   선교사 CRUD
+│   └── banner/                  #   배너 CRUD
+├── entities/                    # Entities Layer — Read 전용 (9개 도메인)
+│   ├── announcement/            #   model/ + api/ (dto, mapper, queries)
+│   ├── bulletin/                #   주보 데이터
+│   ├── event/                   #   이벤트 데이터
+│   ├── gallery/                 #   갤러리 + 중첩 이미지 데이터
+│   ├── sermon/                  #   설교 데이터
+│   ├── servant/                 #   섬기는 사람들 데이터 + config/positions
+│   ├── banner/                  #   히어로 배너 데이터
+│   ├── missionary/              #   선교사 데이터
+│   └── user/                    #   현재 로그인 사용자 정보
+├── shared/                      # Shared Layer — 순수 유틸리티 & UI
+│   ├── api/                     #   tryCatchAction, tryCatchVoid (에러 래퍼 + Sentry)
+│   ├── config/                  #   ADMIN_ROUTES (사이드바 네비게이션 설정)
+│   ├── lib/                     #   imageConverter, pdfToWebpConverter, requireAuth,
+│   │                            #   useDialog, useInput, useToastAndRefresh, date, guard
+│   ├── model/                   #   ActionState 타입 정의 (SuccessState | ErrorState)
+│   └── ui/                      #   base/ (Shadcn 래퍼 16개), components/ (SearchInput,
+│                                #   Pagination 등), DataTable, DeleteDialog, ImageDialog,
+│                                #   MultiImageDialog, FormTriggerButton, SectionCard, Toaster
+├── proxy.ts                     # Next.js Middleware (인증 라우트 가드)
+├── instrumentation.ts           # Sentry 서버 계측 (빌드 타임 초기화)
+└── instrumentation-client.ts    # Sentry 클라이언트 계측 (브라우저 초기화)
 ```
 
 ### 3-2. 의존성 규칙
 
 ```
-App → Widgets → Features → Entities → Shared → @repo/ui
+App → Widgets → Features → Entities → Shared → @repo/ui, @repo/database
 ```
 
 상위 레이어는 하위 레이어를 import 할 수 있지만, **역방향은 금지**입니다.
 
 ### 3-3. 렌더링 전략
 
-- **`force-dynamic`**: 모든 인증된 라우트에 적용. 관리자 페이지는 항상 최신 데이터를 표시해야 하므로 캐싱하지 않음.
-- **Server Actions**: 모든 쓰기 작업은 `'use server'` Server Actions으로 처리. `revalidatePath()`로 캐시 무효화.
-- **`requireAuth()` 가드**: 모든 Server Action 진입부에서 세션 검증. 미인증 시 에러 반환 또는 throw.
+| 전략                | 적용 범위          | 설명                                              |
+| :------------------ | :----------------- | :------------------------------------------------ |
+| **`force-dynamic`** | 모든 인증 라우트   | 항상 최신 데이터 표시, SSR 캐싱 비활성화          |
+| **Server Actions**  | 모든 CUD 작업      | `'use server'` + `revalidatePath()`로 캐시 무효화 |
+| **`requireAuth()`** | 모든 Server Action | 진입부 세션 검증, 미인증 시 에러 반환 또는 throw  |
+| **React Compiler**  | 전역               | `reactCompiler: true`로 자동 메모이제이션         |
 
 ### 3-4. 인증 흐름
 
@@ -151,13 +187,19 @@ App → Widgets → Features → Entities → Shared → @repo/ui
 [브라우저 요청]
       │
       ▼
-[Middleware (proxy.ts)] ── 미인증 → /login 리다이렉트
-      │                   ── 인증됨 + /login → / 리다이렉트
-      ▼
-[(admin) Layout] ── Sidebar + Header 렌더링
+[Middleware (proxy.ts)]
+      ├── 미인증 + /login 이외 경로 → /login 리다이렉트
+      ├── 인증됨 + /login 경로       → / 리다이렉트
+      └── 그 외                       → 통과
       │
       ▼
-[Server Action 호출] ── requireAuth() 가드 → Supabase Auth 세션 검증
+[(admin) Layout] ── Sidebar + MainHeader 렌더링 (SidebarProvider Context)
+      │
+      ▼
+[Server Action 호출]
+      ├── requireAuth() 가드 → @repo/database/auth verifySession()
+      ├── Zod schema.safeParse() → 유효성 검증
+      └── tryCatchAction() → 비즈니스 로직 + Sentry 캡처
 ```
 
 ### 3-5. 핵심 패턴
@@ -174,7 +216,7 @@ App → Widgets → Features → Entities → Shared → @repo/ui
 
 #### 2. PDF → WebP 변환 (주보)
 
-`pdfjs-dist`를 동적 import하여 브라우저에서 PDF를 페이지별 WebP 이미지로 변환합니다.
+`pdfjs-dist`를 **Dynamic Import**하여 브라우저에서 PDF를 페이지별 WebP 이미지로 변환합니다. SSR 환경에서의 `DOMMatrix` 에러를 방지하기 위해 반드시 Dynamic Import를 사용합니다.
 
 ```
 [PDF 파일] → pdfjs-dist (Dynamic Import)
@@ -183,37 +225,39 @@ App → Widgets → Features → Entities → Shared → @repo/ui
            → Supabase Storage 업로드
 ```
 
-#### 3. Server Action 에러 처리
+#### 3. Server Action 에러 처리 파이프라인
 
 ```
 [Server Action]
-  → requireAuth()     // 인증 검증
-  → schema.safeParse() // Zod 유효성 검증
-  → tryCatchAction()  // try-catch + Sentry 에러 캡처
-  → ActionState 반환  // { success, message, fieldErrors? }
+  → requireAuth()      // 인증 검증 (@repo/database/auth)
+  → schema.safeParse()  // Zod 유효성 검증 → fieldErrors 반환
+  → tryCatchAction()   // try-catch + Sentry captureException
+  → ActionState 반환   // { success: true } | { success: false, message, fieldErrors? }
 ```
 
-#### 4. Server Actions 에러 핸들링 자동화 (Boilerplate)
-
-모든 Server Action은 Sentry 로깅과 예외 처리가 중앙화된 `tryCatchAction` 래퍼 함수를 통과합니다. 이를 통해 비즈니스 로직 내부에서 중복되는 `try-catch`를 제거하고, 클라이언트에게 항상 일관된 규격의 상태(`ActionState`)를 반환합니다.
+`ActionState` 타입:
 
 ```typescript
-// 비즈니스 로직은 순수하게 성공 케이스만 작성
-export const createBulletin = async (data: any) => {
-  return tryCatchAction(async () => {
-    // DB 인서트 로직...
-    return { success: true, message: '주보가 등록되었습니다.' };
-  });
-};
+type ActionState =
+  | { success: true }
+  | { success: false; message: string; fieldErrors?: Record<string, string[]> };
 ```
 
-#### 5. RSC 전용 Async Error Boundary (부분 실패 허용 설계)
+#### 4. RSC 전용 Async Error Boundary (부분 실패 허용)
 
-Next.js App Router의 비동기 Server Component(RSC) 특성에 맞춰, **RSC 전용 HOC(`withAsyncBoundary`)** 를 직접 구현하여 적용했습니다.
+`withAsyncBoundary` HOC로 비동기 Server Component를 `Suspense` + `try-catch`로 감싸 독자적인 에러 바운더리를 구축합니다.
 
-- **문제:** React 표준 `<ErrorBoundary>`는 서버 컴포넌트 내부의 비동기(`await`) 데이터 패칭 과정에서 발생하는 에러를 잡아내지 못함.
-- **해결:** 비동기 서버 컴포넌트 자체를 `try-catch`로 감싸는 고차 컴포넌트(HOC) 래퍼 함수와 `Suspense`를 결합하여 독자적인 에러 바운더리 구축.
-- **효과:** 대시보드처럼 여러 위젯이 동시에 렌더링되는 화면에서 특정 도메인(예: 주보 API)에 장애가 발생하더라도, **페이지 전체가 다운되지 않고 해당 위젯만 Error Fallback UI를 렌더링하는 '부분 실패(Partial Failure)'를 허용**하여 전체 시스템의 안정성과 UX를 극대화함.
+**효과:** 대시보드처럼 여러 위젯이 동시에 렌더링되는 화면에서 특정 도메인(예: 주보 API)에 장애가 발생하더라도, **페이지 전체가 다운되지 않고 해당 위젯만 Error Fallback UI를 렌더링하는 '부분 실패(Partial Failure)'를 허용**합니다.
+
+#### 5. Sentry 에러 추적
+
+| 파일                        | 역할                                       |
+| :-------------------------- | :----------------------------------------- |
+| `instrumentation.ts`        | 서버 사이드 Sentry 초기화 (빌드 타임)      |
+| `instrumentation-client.ts` | 클라이언트 사이드 Sentry 초기화 (브라우저) |
+| `sentry.server.config.ts`   | 서버 런타임 Sentry 설정                    |
+| `sentry.edge.config.ts`     | Edge 런타임 Sentry 설정                    |
+| `app/global-error.tsx`      | 전역 에러 바운더리 (Sentry 자동 캡처 + UI) |
 
 ---
 
@@ -229,7 +273,7 @@ Next.js App Router의 비동기 Server Component(RSC) 특성에 맞춰, **RSC �
 
 **해결:** Static Import → **Dynamic Import** (`await import('pdfjs-dist')`)로 변경. 타입은 `import type`으로만 가져와 런타임 영향 없이 타입 안전성 유지.
 
-**최적화:** **수 MB에 달하는 무거운 PDF 파싱 라이브러리가 초기 번들(Initial Bundle)에 포함되는 것을 막아 관리자 페이지의 초기 로딩 속도(TTV)를 대폭 개선**하는 성능 최적화 달성.
+**최적화:** 수 MB에 달하는 무거운 PDF 파싱 라이브러리가 초기 번들(Initial Bundle)에 포함되는 것을 막아 관리자 페이지의 초기 로딩 속도(TTV)를 대폭 개선.
 
 ### 4-2. Tailwind CSS 미디어쿼리 우선순위 깨짐
 
@@ -253,13 +297,15 @@ Next.js App Router의 비동기 Server Component(RSC) 특성에 맞춰, **RSC �
 
 ---
 
-## 5. 포팅 & 실행 매뉴얼
+## 5. 실행 매뉴얼
 
 ### 사전 요구사항
 
-- Node.js >= 25.0.0
-- pnpm >= 10.25.0
-- **내부 패키지 빌드 완료** (`@repo/ui`, `@repo/database`의 `dist/` 필요)
+| 도구    | 최소 버전  | 비고                                        |
+| :------ | :--------- | :------------------------------------------ |
+| Node.js | >= 24.0.0  | 루트 `package.json` engines 기준            |
+| pnpm    | >= 10.25.0 | 루트 `packageManager` 기준                  |
+| 빌드    | —          | `@repo/ui`, `@repo/database`의 `dist/` 필요 |
 
 ### 설치
 
@@ -275,8 +321,13 @@ pnpm build
 
 `apps/admin/.env.local` 파일에 다음 환경 변수를 설정합니다:
 
+| 변수명                          | 필수 | 설명                   |
+| :------------------------------ | :--- | :--------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | O    | Supabase 프로젝트 URL  |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | O    | Supabase Anonymous Key |
+
 ```bash
-NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
+NEXT_PUBLIC_SUPABASE_URL="your-supabase-project-url"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
 
@@ -309,9 +360,17 @@ pnpm --filter admin start
 
 Vercel에서 모노레포 프로젝트로 설정 시:
 
-1. **Root Directory:** `/` (루트)
-2. **Build Command:** `cd ../.. && pnpm turbo build --filter=admin`
-3. **Output Directory:** `apps/admin/.next`
-4. **Install Command:** `pnpm install`
+| 설정             | 값                                            |
+| :--------------- | :-------------------------------------------- |
+| Root Directory   | `/` (루트)                                    |
+| Build Command    | `cd ../.. && pnpm turbo build --filter=admin` |
+| Output Directory | `apps/admin/.next`                            |
+| Install Command  | `pnpm install`                                |
 
-환경 변수는 Vercel 프로젝트 설정에서 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SENTRY_AUTH_TOKEN` 등을 등록합니다.
+**Vercel 환경 변수:**
+
+| 변수명                          | 필수 | 설명                      |
+| :------------------------------ | :--- | :------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | O    | Supabase 프로젝트 URL     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | O    | Supabase Anonymous Key    |
+| `SENTRY_AUTH_TOKEN`             | O    | Sentry 소스맵 업로드 토큰 |

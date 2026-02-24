@@ -4,6 +4,13 @@
 
 - **프로덕션 URL:** [https://mannachurch.or.kr](https://mannachurch.or.kr)
 
+### 📸 화면 미리보기 (Screenshot)
+
+|                                                   메인 홈 (Mobile First UX)                                                   |
+| :---------------------------------------------------------------------------------------------------------------------------: |
+|                                       ![사용자 웹 메인](docs/screenshots/web-main.png)                                        |
+| 돋보기가 필요 없는 직관적인 퀵 메뉴와 시원한 레이아웃을 적용하여, 스마트폰 조작이 서툰 고령층 유저의 접근성을 극대화했습니다. |
+
 ---
 
 ## 1. 개발 환경
@@ -32,11 +39,13 @@
 
 #### 데이터 & 인프라
 
-| 패키지           | 버전      | 역할                                        |
-| :--------------- | :-------- | :------------------------------------------ |
-| `@repo/database` | workspace | Supabase Client + 자동 생성 TypeScript 타입 |
-| `@repo/ui`       | workspace | 공통 디자인 시스템 (Shadcn/UI + Radix)      |
-| `@sentry/nextjs` | 10.36.0   | 에러 추적 (서버/클라이언트/엣지)            |
+| 패키지                   | 버전      | 역할                                        |
+| :----------------------- | :-------- | :------------------------------------------ |
+| `@repo/database`         | workspace | Supabase Client + 자동 생성 TypeScript 타입 |
+| `@repo/ui`               | workspace | 공통 디자인 시스템 (Shadcn/UI 21개 + Radix) |
+| `@sentry/nextjs`         | 10.36.0   | 에러 추적 (서버/클라이언트/엣지)            |
+| `@vercel/analytics`      | 1.6.1     | 페이지 조회 및 이벤트 분석                  |
+| `@vercel/speed-insights` | 1.3.1     | RUM(Real User Monitoring) 성능 지표 수집    |
 
 #### UI & 인터랙션
 
@@ -48,9 +57,9 @@
 
 #### 유틸리티
 
-| 패키지     | 버전  | 역할        |
-| :--------- | :---- | :---------- |
-| `date-fns` | 4.1.0 | 날짜 포맷팅 |
+| 패키지     | 버전  | 역할             |
+| :--------- | :---- | :--------------- |
+| `date-fns` | 4.1.0 | 날짜 포맷팅/계산 |
 
 #### PWA (Progressive Web App)
 
@@ -83,68 +92,87 @@
 | `/news/events/[id]`        | 이벤트 상세   | 본문, 이미지, 뒤로가기                            |
 | `/news/gallery`            | 갤러리        | 검색 + 페이지네이션 (썸네일 그리드)               |
 | `/news/gallery/[id]`       | 갤러리 상세   | 이미지 목록, 뒤로가기                             |
+| `/~offline`                | 오프라인      | PWA 오프라인 폴백 안내 페이지                     |
 
 ---
 
 ## 3. 아키텍처
 
-### Clean FSD (Feature-Sliced Design)
+### 3-1. Clean FSD (Feature-Sliced Design)
 
 ```
 src/
-├── app/                       # App Layer — 라우팅 전용
-│   ├── (main)/                # 메인 레이아웃 (Header + Footer + ScrollFAB)
-│   │   ├── page.tsx           #   홈 (HeroCarousel, QuickMenu, 공지, 이벤트, 갤러리)
-│   │   └── (content)/         #   콘텐츠 레이아웃 (AboutSidebar + children)
-│   │       ├── about/         #     교회소개 섹션 (intro, worship, servants, location, bulletins, missionary)
-│   │       └── news/          #     만나소식 섹션 (announcements, events, gallery)
-│   ├── provider/              # Client Provider 레이어
-│   │   └── serwist.ts         #   SerwistProvider ('use client' wrapper)
-│   ├── layout.tsx             # RootLayout (폰트, SEO 메타데이터, JSON-LD 스키마)
-│   ├── manifest.json          # PWA Manifest (앱 이름, 아이콘, 테마 색상)
-│   ├── sw.ts                  # Service Worker (Serwist 기반 오프라인 캐싱)
-│   ├── sitemap.ts             # 동적 Sitemap 생성 (정적 + DB 기반 동적 경로)
-│   └── robots.ts              # robots.txt
-├── widgets/                   # Widgets Layer — 페이지 구획별 조합 컴포넌트
-│   ├── hero-carousel/         #   Embla Carousel + Autoplay 기반 히어로 배너
-│   ├── quick-menu/            #   QuickMenu 그리드 + YouTube 섹션
-│   ├── announcements-section/ #   공지사항 홈 섹션 / 리스트 / 상세
-│   ├── events-section/        #   이벤트 마퀴 / 리스트 / 상세
-│   ├── gallery-section/       #   갤러리 홈 섹션 / 리스트 / 상세
-│   ├── bulletins-section/     #   주보 리스트 + 연/월 필터 / 상세
-│   ├── intro-section/         #   담임목사 인사말
-│   ├── worship-section/       #   예배 안내
-│   ├── servants-section/      #   섬기는 사람들
-│   ├── missionary-section/    #   선교사 후원
-│   ├── location-section/      #   네이버 지도 + 주소 + 교통편
-│   ├── sermons-section/       #   1분 메시지
-│   ├── about-layout/          #   콘텐츠 사이드바 네비게이션
-│   └── main-layout/           #   Header + Footer + MobileMenu + ScrollFAB
-├── entities/                  # Entities Layer — Read 전용 (쿼리 + 도메인 모델)
-│   ├── announcement/          #   model/ + api/ (dto, mapper, queries)
-│   ├── banner/                #   히어로 배너 데이터
-│   ├── bulletin/              #   주보 데이터
-│   ├── event/                 #   이벤트 데이터
-│   ├── gallery/               #   갤러리 + 중첩 이미지 데이터
-│   ├── missionary/            #   선교사 데이터
-│   ├── sermon/                #   설교 데이터
-│   └── servant/               #   섬기는 사람들 데이터
-└── shared/                    # Shared Layer — 순수 유틸리티 & UI
-    ├── config/                #   churchData (교회 정보), menuData, Items (퀵 메뉴)
-    ├── icon/                  #   소셜 아이콘 (Google, Kakao, Naver)
-    ├── lib/                   #   formatKoreanDate 등 날짜 유틸리티
-    └── ui/                    #   base/ (Shadcn 래퍼), components/ (PaginationBar, HeroBanner 등)
+├── app/                        # App Layer — 라우팅 전용
+│   ├── (main)/                 # 메인 레이아웃 (Header + Footer + ScrollFAB)
+│   │   ├── page.tsx            #   홈 (HeroCarousel, QuickMenu, 공지, 이벤트, 갤러리)
+│   │   └── (content)/          #   콘텐츠 레이아웃 (AboutSidebar + children)
+│   │       ├── about/          #     교회소개 섹션
+│   │       │   ├── intro/      #       만나교회 소개
+│   │       │   ├── worship/    #       예배 안내
+│   │       │   ├── servants/   #       섬기는 사람들
+│   │       │   ├── sermons/    #       1분 메시지
+│   │       │   ├── location/   #       오시는 길
+│   │       │   ├── bulletins/  #       주보 (리스트 + [date] 상세)
+│   │       │   └── missionary/ #       선교사 후원
+│   │       └── news/           #     만나소식 섹션
+│   │           ├── announcements/ #     공지사항 (리스트 + [id] 상세)
+│   │           ├── events/     #       이벤트 (리스트 + [id] 상세)
+│   │           └── gallery/    #       갤러리 (리스트 + [id] 상세)
+│   ├── asset/                  # 정적 이미지 자산 (아이콘, 배너 등)
+│   ├── provider/               # Client Provider 레이어
+│   │   └── serwist.ts          #   SerwistProvider ('use client' wrapper)
+│   ├── serwist/                # Serwist 빌드 출력 (sw.js)
+│   ├── styles/                 # globals.css (Tailwind v4 엔트리)
+│   ├── layout.tsx              # RootLayout (폰트, SEO, JSON-LD, Analytics, PWA)
+│   ├── global-error.tsx        # 전역 에러 바운더리 (Sentry 캡처)
+│   ├── not-found.tsx           # 404 페이지
+│   ├── manifest.json           # PWA Manifest (앱 이름, 아이콘, 테마 색상)
+│   ├── sw.ts                   # Service Worker (Serwist 기반 오프라인 캐싱)
+│   ├── sitemap.ts              # 동적 Sitemap (정적 + DB 기반 동적 경로)
+│   └── robots.ts               # robots.txt
+├── widgets/                    # Widgets Layer — 페이지 구획별 조합 컴포넌트 (15개)
+│   ├── hero-carousel/          #   Embla Carousel + Autoplay 기반 히어로 배너
+│   ├── quick-menu/             #   QuickMenu 그리드 + YouTube 섹션
+│   ├── announcements-section/  #   공지사항 홈 섹션 / 리스트 / 상세
+│   ├── events-section/         #   이벤트 마퀴 / 리스트 / 상세
+│   ├── gallery-section/        #   갤러리 홈 섹션 / 리스트 / 상세
+│   ├── bulletins-section/      #   주보 리스트 + 연/월 필터 / 상세
+│   ├── intro-section/          #   담임목사 인사말
+│   ├── worship-section/        #   예배 안내
+│   ├── servants-section/       #   섬기는 사람들 (역할별 그룹)
+│   ├── missionary-section/     #   선교사 후원
+│   ├── location-section/       #   네이버 지도 + 주소 + 교통편
+│   ├── sermons-section/        #   1분 메시지
+│   ├── about-layout/           #   콘텐츠 사이드바 네비게이션
+│   ├── main-layout/            #   Header + Footer + MobileMenu + ScrollFAB
+│   └── pwa/                    #   PWA 설치 프롬프트 + External Store
+├── entities/                   # Entities Layer — Read 전용 (쿼리 + 도메인 모델, 8개)
+│   ├── announcement/           #   model/ + api/ (dto, mapper, queries)
+│   ├── banner/                 #   히어로 배너 데이터
+│   ├── bulletin/               #   주보 데이터
+│   ├── event/                  #   이벤트 데이터
+│   ├── gallery/                #   갤러리 + 중첩 이미지 데이터 (gallery_images)
+│   ├── missionary/             #   선교사 데이터
+│   ├── sermon/                 #   설교 데이터
+│   └── servant/                #   섬기는 사람들 데이터 + config/positions
+├── shared/                     # Shared Layer — 순수 유틸리티 & UI
+│   ├── config/                 #   churchData (교회 메타정보), menuData, Items (퀵 메뉴)
+│   ├── icon/                   #   소셜 아이콘 SVG (Google, Kakao, Naver)
+│   ├── lib/                    #   formatKoreanDate 등 날짜 유틸리티
+│   └── ui/                     #   base/ (Shadcn 래퍼), components/ (PaginationBar 등), utils/
+├── instrumentation.ts          # Sentry 서버 계측 (빌드 타임 초기화)
+└── instrumentation-client.ts   # Sentry 클라이언트 계측 (브라우저 초기화)
 ```
 
-### 의존성 규칙
+### 3-2. 의존성 규칙
 
 ```
-App → Widgets → Entities → Shared → @repo/ui
+App → Widgets → Entities → Shared → @repo/ui,@repo/database
 ```
 
 `apps/web`에는 `features/` 레이어가 **없습니다**. 사용자 웹은 읽기 전용이므로 CUD 로직이 불필요합니다.
 
-### 렌더링 & 캐싱 전략
+### 3-3. 렌더링 & 캐싱 전략
 
 | 전략                        | 적용 범위             | 설명                                               |
 | :-------------------------- | :-------------------- | :------------------------------------------------- |
@@ -154,7 +182,7 @@ App → Widgets → Entities → Shared → @repo/ui
 | **`cacheComponents: true`** | `next.config.ts`      | PPR(Partial Prerendering) 활성화                   |
 | **React Compiler**          | 전역                  | `reactCompiler: true`로 자동 메모이제이션          |
 
-### SEO 최적화
+### 3-4. SEO 최적화
 
 | 항목              | 구현                                                           |
 | :---------------- | :------------------------------------------------------------- |
@@ -166,7 +194,7 @@ App → Widgets → Entities → Shared → @repo/ui
 | **OpenGraph**     | 전역 OG 이미지 + 페이지별 타이틀 템플릿                        |
 | **URL 슬러그**    | `제목-shortId` 형식 (SEO 친화적 + 고유성 보장)                 |
 
-### 핵심 패턴
+### 3-5. 핵심 패턴
 
 #### 1. `withAsyncBoundary` HOC
 
@@ -199,11 +227,13 @@ App → Widgets → Entities → Shared → @repo/ui
 
 **Serwist + Turbopack** 기반으로 PWA를 구현하여 오프라인 지원 및 앱 설치 기능을 제공합니다.
 
-| 파일                  | 역할                                                     |
-| :-------------------- | :------------------------------------------------------- |
-| `manifest.json`       | PWA 메타데이터 (앱 이름, 아이콘, 테마 색상, 표시 모드)   |
-| `sw.ts`               | Service Worker (precache + runtime cache + offline 폴백) |
-| `provider/serwist.ts` | `SerwistProvider` client wrapper (자동 SW 등록)          |
+| 파일                      | 역할                                                     |
+| :------------------------ | :------------------------------------------------------- |
+| `app/manifest.json`       | PWA 메타데이터 (앱 이름, 아이콘, 테마 색상, 표시 모드)   |
+| `app/sw.ts`               | Service Worker (precache + runtime cache + offline 폴백) |
+| `app/provider/serwist.ts` | `SerwistProvider` client wrapper (자동 SW 등록)          |
+| `widgets/pwa/model/`      | `pwaStore` — External Store (useSyncExternalStore)       |
+| `widgets/pwa/ui/`         | `PWAInstallPrompt` — A2HS 설치 프롬프트 UI               |
 
 **핵심 기능:**
 
@@ -212,21 +242,55 @@ App → Widgets → Entities → Shared → @repo/ui
 - **offline fallback:** `/~offline` 페이지로 오프라인 폴백
 - **skipWaiting + clientsClaim:** 즉시 활성화 (새 버전 배포 시)
 
+#### 5. Sentry 에러 추적
+
+| 파일                        | 역할                                       |
+| :-------------------------- | :----------------------------------------- |
+| `instrumentation.ts`        | 서버 사이드 Sentry 초기화 (빌드 타임)      |
+| `instrumentation-client.ts` | 클라이언트 사이드 Sentry 초기화 (브라우저) |
+| `sentry.server.config.ts`   | 서버 런타임 Sentry 설정                    |
+| `sentry.edge.config.ts`     | Edge 런타임 Sentry 설정                    |
+| `app/global-error.tsx`      | 전역 에러 바운더리 (Sentry 자동 캡처 + UI) |
+
 ---
 
-## 4. 트러블슈팅
+## 4. 사용자 경험(UX) 및 성능 최적화 전략
 
-### 4-1. Tailwind CSS 미디어쿼리 우선순위 깨짐
+이 프로젝트의 핵심 타겟 유저는 **스마트폰 조작에 익숙하지 않고, 구형 기기를 주로 사용하는 60대 이상의 고령층 성도**입니다. 이를 위해 모든 기술적 의사결정을 '어르신들의 사용성'에 맞췄습니다.
+
+### 4-1. PWA(Progressive Web App) 도입 배경
+
+- **문제 정의:** 고령층 유저에게 매번 브라우저를 열고 '만나교회'를 검색하거나 북마크를 찾아 들어가는 과정은 진입 장벽이 매우 높습니다.
+- **해결 전략:** **Serwist**를 활용해 PWA를 구축하고, 홈 화면 추가(A2HS) 기능을 구현했습니다. `useSyncExternalStore` 기반 External Store 패턴으로 스토리지 상태 동기화 시 이중 렌더링을 원천 차단합니다.
+- **결과:** 어르신들이 스마트폰 바탕화면에 생성된 '만나교회 앱' 아이콘만 누르면 즉시 사이트에 접속할 수 있어, 네이티브 앱과 동일한 접근성을 제공합니다. 오프라인 폴백(`/~offline`)으로 데이터 연결이 끊긴 환경에서도 안내 페이지를 표시합니다.
+
+### 4-2. 핵심 웹 바이탈(Core Web Vitals) 및 지표 방어
+
+사용자의 체감 성능과 UX를 극대화하기 위해 렌더링 파이프라인과 에셋 최적화에 집중한 결과, **Lighthouse 데스크탑 기준 98/100/100/100**이라는 압도적인 지표와 완벽한 **CLS(레이아웃 안정성) 0.00**을 달성했습니다.
+
+| 분류                 | 측정 지표                              |          결과          | 최적화 및 엔지니어링 의사결정                                                                                                                               |
+| :------------------- | :------------------------------------- | :--------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Core Web Vitals**  | **CLS** (누적 레이아웃 이동)           |        **0.00**        | 컴포넌트 로딩 시 덜컹거리는 현상을 100% 차단하여, 시력이 좋지 않은 어르신들이 글을 읽을 때 화면이 밀리는 불편함을 원천적으로 없앴습니다.                    |
+|                      | **TBT** (총 차단 시간)                 | **0ms (Mobile 180ms)** | React Compiler와 Next.js 16 `'use cache'`를 결합하여 메인 스레드 연산을 최소화, **느린 CPU를 가진 구형 폰에서도 터치 즉시 반응하는 빠릿함**을 확보했습니다. |
+| **Lighthouse Audit** | **Performance** (성능)                 |         **98**         | SSG/PPR 기반의 정적 렌더링을 통해 서버 응답 시간과 클라이언트 렌더링 부하를 최소화했습니다.                                                                 |
+|                      | **Accessibility, Best Practices, SEO** |        **100**         | 웹 접근성(명도 대비, ARIA), 보안 및 웹 표준 권장사항, 구조화된 데이터를 통한 SEO 지표 모두 100점 만점을 달성했습니다.                                       |
+| **RUM** (Real User)  | **Vercel Speed Insights**              |       **100점**        | 실험실 데이터(Lighthouse)를 넘어, **실제 배포 환경에 접속하는 유저들의 체감 로딩 속도(RUM)**에서도 만점을 기록하여 최적화의 실효성을 증명했습니다.          |
+
+---
+
+## 5. 트러블슈팅
+
+### 5-1. Tailwind CSS 미디어쿼리 우선순위 깨짐
 
 > 상세: `docs/errors/0003-tailwind-css-cascade-order.md`
 
 **문제:** 모노레포 환경에서 `hidden lg:flex` 등 반응형 유틸리티가 작동하지 않음. `display: none`이 미디어쿼리를 덮어씀.
 
-**원인:** `@repo/ui/styles.css`와 `globals.css`에서 Tailwind를 각각 import하면서 `.hidden` 규칙이 미디어쿼리보다 나중에 재선언됨 (CSS Cascade Order 문제).
+**원인:** 단일 앱 환경과 달리 모노레포 구조에서는 외부 패키지(`@repo/ui/styles.css`)와 메인 앱(`globals.css`)의 CSS가 개별적으로 컴파일되어 로드. 이 과정에서 병합 순서가 꼬이면서 메인 앱의 기본 `.hidden` 클래스가 UI 패키지의 반응형 미디어쿼리 규칙보다 나중에 선언되어 우선순위(CSS Cascade Specificity)를 덮어쓰는 아키텍처 결함 발생.
 
-**해결:** Turborepo 공식 패턴 적용. `layout.tsx`에서 `import '@repo/ui/styles.css'`를 **먼저** import한 뒤 `import './styles/globals.css'`를 import하여 로드 순서 보장. CSS 변경 후 `pnpm clean` 필수.
+**해결:** Turborepo 공식 패턴 적용. `layout.tsx`에서 `@repo/ui/styles.css`를 먼저 import한 뒤 `globals.css`를 import하여 로드 순서 보장.
 
-### 4-2. Gallery `'use cache'` Hydration Mismatch (#418)
+### 5-2. Gallery `'use cache'` Hydration Mismatch (#418)
 
 > 상세: `docs/errors/0005-gallery-use-cache-hydration-mismatch.md`
 
@@ -236,15 +300,28 @@ App → Widgets → Entities → Shared → @repo/ui
 
 **해결:** `Link`를 `'use client'` 컴포넌트(`Item.tsx`)로 분리하여 client component boundary 생성. `'use cache'`의 RSC payload 캐싱이 client component boundary에서 멈추므로, Link의 렌더된 HTML이 캐시에 포함되지 않음.
 
+### 5-3. PWA 스토리지 상태 동기화 시 이중 렌더링(Double Rendering) 발생
+
+> 상세: `docs/errors/0004-pwa-double-rendering-sync.md`
+
+**문제:** PWA 팝업 컴포넌트에서 sessionStorage와 localStorage 값을 읽어와 화면에 반영할 때, 초기 마운트 직후 의미 없는 이중 렌더링(Cascading Renders)이 발생함.
+
+**원인:** 컴포넌트 마운트 시 useState의 초기값으로 1차 렌더링을 진행한 후, 마운트가 완료되면 useEffect가 비로소 스토리지를 읽어와 setState를 호출하여 2차 렌더링을 유발함. 브라우저 API 의존성 때문에 렌더링 사이클과 비즈니스 로직(스토리지 읽기)의 타이밍이 어긋나서 발생하는 전형적인 상태 결합(Coupling) 문제.
+
+**해결:** useState + useEffect 조합을 완전히 제거하고, External Store 패턴을 도입.
+비즈니스 로직을 순수 바닐라 JS 기반의 외부 스토어(`pwaStore`)로 완전히 분리하고, React 코어 훅인 `useSyncExternalStore`를 사용해 연결함. 파생 상태 셀렉터(Selector)를 통해 최종 UI 결과값(boolean)만 구독하게 하여 불필요한 렌더링을 원천 차단(Bailout)함.
+
 ---
 
-## 5. 포팅 & 실행 매뉴얼
+## 6. 실행 매뉴얼
 
 ### 사전 요구사항
 
-- Node.js >= 25.0.0
-- pnpm >= 10.25.0
-- **내부 패키지 빌드 완료** (`@repo/ui`, `@repo/database`의 `dist/` 필요)
+| 도구    | 최소 버전  | 비고                                        |
+| :------ | :--------- | :------------------------------------------ |
+| Node.js | >= 24.0.0  | 루트 `package.json` engines 기준            |
+| pnpm    | >= 10.25.0 | 루트 `packageManager` 기준                  |
+| 빌드    | —          | `@repo/ui`, `@repo/database`의 `dist/` 필요 |
 
 ### 설치
 
@@ -260,8 +337,14 @@ pnpm build
 
 `apps/web/.env.local` 파일에 다음 환경 변수를 설정합니다:
 
+| 변수명                            | 필수 | 설명                      |
+| :-------------------------------- | :--- | :------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`        | O    | Supabase 프로젝트 URL     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | O    | Supabase Anonymous Key    |
+| `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` | O    | 네이버 지도 API Client ID |
+
 ```bash
-NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
+NEXT_PUBLIC_SUPABASE_URL="your-supabase-project-url"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 NEXT_PUBLIC_NAVER_MAP_CLIENT_ID="your-naver-map-client-id"
 ```
@@ -295,9 +378,18 @@ pnpm --filter web start
 
 Vercel에서 모노레포 프로젝트로 설정 시:
 
-1. **Root Directory:** `/` (루트)
-2. **Build Command:** `cd ../.. && pnpm turbo build --filter=web`
-3. **Output Directory:** `apps/web/.next`
-4. **Install Command:** `pnpm install`
+| 설정             | 값                                          |
+| :--------------- | :------------------------------------------ |
+| Root Directory   | `/` (루트)                                  |
+| Build Command    | `cd ../.. && pnpm turbo build --filter=web` |
+| Output Directory | `apps/web/.next`                            |
+| Install Command  | `pnpm install`                              |
 
-환경 변수는 Vercel 프로젝트 설정에서 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID`, `SENTRY_AUTH_TOKEN` 등을 등록합니다.
+**Vercel 환경 변수:**
+
+| 변수명                            | 필수 | 설명                      |
+| :-------------------------------- | :--- | :------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`        | O    | Supabase 프로젝트 URL     |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`   | O    | Supabase Anonymous Key    |
+| `NEXT_PUBLIC_NAVER_MAP_CLIENT_ID` | O    | 네이버 지도 API Client ID |
+| `SENTRY_AUTH_TOKEN`               | O    | Sentry 소스맵 업로드 토큰 |
