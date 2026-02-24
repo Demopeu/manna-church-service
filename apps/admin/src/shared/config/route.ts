@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   FileImage,
+  Globe,
   Images,
   LayoutDashboard,
   Megaphone,
@@ -17,5 +18,6 @@ export const ADMIN_ROUTES = [
   { href: '/events', label: '이벤트', icon: CalendarDays },
   { href: '/announcements', label: '공지', icon: Megaphone },
   { href: '/servants', label: '섬기는 사람들', icon: Users },
+  { href: '/missionaries', label: '선교사', icon: Globe },
   { href: '/setting', label: '설정', icon: Settings },
 ];
