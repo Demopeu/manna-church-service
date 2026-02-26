@@ -27,10 +27,7 @@
 
 |                          사용자 웹                          |                           관리자 CMS                           |
 | :---------------------------------------------------------: | :------------------------------------------------------------: |
-|<img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" />
-| <img width="400" height="600" alt="제목11없음" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" />
-
- |
+|<img width="400" height="600" alt="만나교회 홈페이지" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" />|<img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" /> |
 
 > **각 앱의 상세 화면, 기능, 트러블슈팅은 개별 README를 참조해 주세요.**
 >
@@ -41,7 +38,8 @@
 
 #### 모노레포 아키텍처
 
-![모노레포 아키텍처 다이어그램](docs/screenshots/architecture.png)
+<img width="2752" height="1536" alt="모노레포 아키텍쳐" src="https://github.com/user-attachments/assets/6420add7-a6e8-4d78-b412-9ed857a65240" />
+
 
 #### 모노레포 의존성 다이어그램
 
