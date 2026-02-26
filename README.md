@@ -27,7 +27,7 @@
 
 |                          사용자 웹                          |                           관리자 CMS                           |
 | :---------------------------------------------------------: | :------------------------------------------------------------: |
-|<img width="400" height="600" alt="만나교회 홈페이지" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" />|<img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" /> |
+|<img width="200" height="300" alt="만나교회 홈페이지" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" />|<img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" /> |
 
 > **각 앱의 상세 화면, 기능, 트러블슈팅은 개별 README를 참조해 주세요.**
 >
