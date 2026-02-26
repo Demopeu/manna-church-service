@@ -4,8 +4,7 @@
 
 |                                          1. 대시보드                                          |                               2. 콘텐츠 등록 폼                                |
 | :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------: |
-|                    <img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" />                    |           <img width="400" height="600" alt="주보등록 폼" src="https://github.com/user-attachments/assets/210f0fc7-d025-407c-8b0c-577322fa478b" />
-           |
+|                    <img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" />                    |           <img width="400" height="600" alt="주보등록 폼" src="https://github.com/user-attachments/assets/210f0fc7-d025-407c-8b0c-577322fa478b" /> |
 | 여러 도메인의 요약 정보를 위젯 형태로 제공하며, 부분 실패(Partial Failure)를 허용하도록 설계. | Zod 기반의 실시간 유효성 검증과 직관적인 드래그 앤 드롭 파일 업로드 UX를 제공. |
 
 ---
