@@ -349,7 +349,10 @@ design: 메인 페이지 배너 스타일 수정
 - **의존성 분리 및 독립성 확보:** 억지스러운 상대 경로를 제거하고 패키지 본연의 방식대로 깔끔하게 import 할 수 있게 되어, 모노레포 도입 목적에 맞는 완벽한 **느슨한 결합(Loose Coupling)**을 달성했습니다.
 - **캐시 효율 극대화:** `dist/` 출력물이 변경되지 않으면 Turborepo가 내부 패키지 재빌드를 완전히 스킵(Cache Hit)하므로, 앱 재빌드 시간이 대폭 단축되었습니다.
 
-> 앱별 상세 트러블슈팅: [apps/web](./apps/web/README.md#5-트러블슈팅) · [apps/admin](./apps/admin/README.md#4-트러블슈팅)
+> **각 앱의 트러블슈팅은 개별 README를 참조해 주세요.**
+>
+> - [apps/web](./apps/web/README.md#5-트러블슈팅)
+> - [apps/admin](./apps/admin/README.md#4-트러블슈팅)
 
 ---
 
