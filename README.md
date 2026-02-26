@@ -27,7 +27,9 @@
 
 |                          사용자 웹                          |                           관리자 CMS                           |
 | :---------------------------------------------------------: | :------------------------------------------------------------: |
-| <img width="200" height="500" alt="image" src="https://github.com/user-attachments/assets/0b75027e-c34e-4ec3-8e6b-df54e0cb71f4" /> | <img width="200" height="500" alt="제목11없음" src="https://github.com/user-attachments/assets/428bee3b-8a3d-451c-b70e-28301b318a5d" />
+|<img width="400" height="600" alt="image" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" />
+| <img width="400" height="600" alt="제목11없음" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" />
+
  |
 
 > **각 앱의 상세 화면, 기능, 트러블슈팅은 개별 README를 참조해 주세요.**
