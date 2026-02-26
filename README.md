@@ -1,6 +1,6 @@
 # Manna Church Service Platform
 
-> 디지털 소외 계층인 고령의 성도들이 **가장 쉽고 빠르게** 교회 소식에 접근할 수 있게 하고, 기술을 모르는 목사님이 **스트레스 없이** 운영할 수 있는 시스템.
+> 디지털 소외 계층인 고령의 성도들이 **쉽고 빠르게** 교회 소식에 접근할 수 있게 하고, 기술을 모르는 목사님이 **복잡함 없이** 운영할 수 있는 시스템.
 
 ---
 
@@ -27,7 +27,8 @@
 
 |                          사용자 웹                          |                           관리자 CMS                           |
 | :---------------------------------------------------------: | :------------------------------------------------------------: |
-| ![사용자 웹 스크린샷](docs/screenshots/web-placeholder.png) | ![관리자 CMS 스크린샷](docs/screenshots/admin-placeholder.png) |
+| <img width="200" height="500" alt="image" src="https://github.com/user-attachments/assets/0b75027e-c34e-4ec3-8e6b-df54e0cb71f4" /> | <img width="200" height="500" alt="제목11없음" src="https://github.com/user-attachments/assets/428bee3b-8a3d-451c-b70e-28301b318a5d" />
+ |
 
 > **각 앱의 상세 화면, 기능, 트러블슈팅은 개별 README를 참조해 주세요.**
 >
