@@ -42,7 +42,7 @@
 
 #### 모노레포 의존성 다이어그램
 
-![모노레포 의존성 다이어그램](docs/screenshots/dependencies.png)
+<img width="866" height="710" alt="모노레포 의존성 다이어그램" src="https://github.com/user-attachments/assets/91abb689-808c-4ecc-8c79-9db5045f359b" />
 
 ---
 
