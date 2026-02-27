@@ -11,7 +11,7 @@ export function AssociatePastorList({ pastors }: Props) {
   return (
     <section>
       <h2 className="text-foreground border-manna mb-6 border-b-2 pb-2 text-xl font-bold">
-        협동목사
+        협력목사
       </h2>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {pastors.map((pastor) => (

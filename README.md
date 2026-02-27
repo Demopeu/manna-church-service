@@ -25,9 +25,9 @@
 
 ### 스크린샷
 
-|                          사용자 웹                          |                           관리자 CMS                           |
-| :---------------------------------------------------------: | :------------------------------------------------------------: |
-|<img width="200" height="300" alt="만나교회 홈페이지" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" />|<img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" /> |
+|                                                                   사용자 웹                                                                    |                                                                  관리자 CMS                                                                  |
+| :--------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="200" height="300" alt="만나교회 홈페이지" src="https://github.com/user-attachments/assets/9a8f7fd0-e7a3-4d9e-9da9-994f4e3c83b5" /> | <img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" /> |
 
 > **각 앱의 상세 화면, 기능, 트러블슈팅은 개별 README를 참조해 주세요.**
 >
@@ -39,7 +39,6 @@
 #### 모노레포 아키텍처
 
 <img width="2752" height="1536" alt="모노레포 아키텍쳐" src="https://github.com/user-attachments/assets/6420add7-a6e8-4d78-b412-9ed857a65240" />
-
 
 #### 모노레포 의존성 다이어그램
 
@@ -416,7 +415,6 @@ pnpm --filter admin dev    # 관리자 CMS만
 | `pnpm lint`                | 전체 ESLint 실행                         |
 | `pnpm check-types`         | 전체 TypeScript 타입 체크                |
 | `pnpm check-before-commit` | 린트 + 타입 체크 (커밋 전 검증)          |
-| `pnpm test`                | Playwright 테스트 실행                   |
 | `pnpm clean`               | `dist/`, `.next/`, `.turbo/` 캐시 정리   |
 | `pnpm format`              | Prettier 코드 포매팅 (`ts`, `tsx`, `md`) |
 | `pnpm format`              | Prettier 코드 포매팅 (`ts`, `tsx`, `md`) |
