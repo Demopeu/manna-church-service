@@ -1,4 +1,6 @@
-# Manna Church Service Platform
+# Manna Church Service
+
+![만나교회 프로젝트 이미지](https://github.com/user-attachments/assets/2886858f-0caa-427b-9ad7-39c6154bd469)
 
 > 디지털 소외 계층인 고령의 성도들이 **쉽고 빠르게** 교회 소식에 접근할 수 있게 하고, 기술을 모르는 목사님이 **복잡함 없이** 운영할 수 있는 시스템.
 
