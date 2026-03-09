@@ -2,8 +2,9 @@
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
   "globalEnv": [
-    "NEXT_PUBLIC_*",
-    "NODE_ENV",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_NAVER_MAP_CLIENT_ID",
     "SENTRY_AUTH_TOKEN",
     "CI",
     "NEXT_RUNTIME"
@@ -11,7 +12,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {
