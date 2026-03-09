@@ -79,11 +79,6 @@ export const getBulletinByDate = cache(
 
     if (error) {
       if (error.code === 'PGRST116') {
-        if (process.env.NODE_ENV === 'development') {
-          console.warn(
-            `[getBulletinByDate] 해당 날짜의 주보가 없습니다: ${dateString}`,
-          );
-        }
         return null;
       }
 
