@@ -19,7 +19,7 @@ export function AnnouncementsItem({ announcement }: Props) {
         <div className="flex flex-wrap items-center gap-2">
           {announcement.isUrgent && (
             <span className="bg-destructive/10 text-destructive inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium">
-              긴급
+              중요
             </span>
           )}
           <span className="font-medium">{announcement.title}</span>
@@ -28,7 +28,7 @@ export function AnnouncementsItem({ announcement }: Props) {
       <TableCell className="text-muted-foreground">
         <span className="line-clamp-2">{announcement.content}</span>
       </TableCell>
-      <TableCell>{formatRelativeDate(announcement.createdAt)}</TableCell>
+      <TableCell>{formatRelativeDate(announcement.startDate)}</TableCell>
       <TableCell className="text-right">
         <div className="flex justify-end gap-2">
           <EditAnnouncementButton announcement={announcement} />
