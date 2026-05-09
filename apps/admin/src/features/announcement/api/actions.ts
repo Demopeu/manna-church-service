@@ -19,6 +19,7 @@ async function createAnnouncement(
     title: validatedFields.title,
     content: validatedFields.content,
     is_urgent: validatedFields.isUrgent,
+    start_date: new Date().toISOString(),
   });
 
   if (error) {
@@ -48,6 +49,7 @@ async function updateAnnouncement(
       title: validatedFields.title,
       content: validatedFields.content,
       is_urgent: validatedFields.isUrgent,
+      start_date: new Date().toISOString(),
     })
     .eq('id', id);
 
