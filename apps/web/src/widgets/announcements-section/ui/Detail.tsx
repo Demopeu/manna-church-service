@@ -56,16 +56,21 @@ async function AnnouncementDetailBase({ shortId }: { shortId: string }) {
               variant="destructive"
               className="px-2.5 py-1 text-xs font-semibold"
             >
-              긴급
+              중요
             </Badge>
           )}
         </div>
         <h1 className="text-foreground text-2xl font-bold md:text-3xl">
           {announcement.title}
         </h1>
-        <p className="text-muted-foreground">
-          {formatKoreanDate(announcement.createdAt)}
-        </p>
+        <div className="items-center gap-4 sm:flex">
+          <p className="text-muted-foreground">
+            작성일: {formatKoreanDate(announcement.createdAt)}
+          </p>
+          <p className="text-muted-foreground">
+            시작일: {formatKoreanDate(announcement.startDate)}
+          </p>
+        </div>
       </div>
 
       <hr className="border-border my-6" />

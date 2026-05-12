@@ -9,5 +9,6 @@ export function mapAnnouncement(dto: AnnouncementDto): Announcement {
     content: dto.content,
     isUrgent: dto.is_urgent,
     createdAt: dto.created_at,
+    startDate: dto.start_date,
   };
 }

@@ -73,6 +73,20 @@ export function AnnouncementForm({
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="startDate">시작 날짜 *</Label>
+        <Input
+          id="startDate"
+          type="date"
+          className="h-12 text-base"
+          disabled={isSubmitting}
+          {...form.register('startDate')}
+        />
+        {errors.startDate && (
+          <p className="text-sm text-red-500">{errors.startDate.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="content">내용 *</Label>
         <Textarea
           id="content"

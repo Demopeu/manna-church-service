@@ -43,14 +43,14 @@ async function List({ filterParams }: Props) {
                       variant="destructive"
                       className="px-2 py-0.5 text-xs font-semibold"
                     >
-                      긴급
+                      중요
                     </Badge>
                   )}
                 </div>
 
-                <span className="text-manna-dark-blue flex-1 truncate font-medium">
-                  {item.title}
-                </span>
+                <div className="text-manna-dark-blue flex-1 truncate font-medium">
+                  [{formatKoreanDate(item.startDate)}] {item.title}
+                </div>
 
                 <span className="text-muted-foreground shrink-0 text-sm">
                   {formatKoreanDate(item.createdAt)}

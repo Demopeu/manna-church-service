@@ -4,6 +4,11 @@ import { nextJsConfig } from '@repo/eslint-config/next-js';
 export default [
   ...nextJsConfig,
   {
-    ignores: ['public/**/*'],
+    ignores: [
+      'public/**/*',
+      'tests/**',
+      'playwright-report/**',
+      'test-results/**',
+    ],
   },
 ];

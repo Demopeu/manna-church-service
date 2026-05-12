@@ -25,11 +25,11 @@ async function AnnouncementsSectionBase() {
                   variant="destructive"
                   className="shrink-0 px-1.5 py-0 text-[10px]"
                 >
-                  긴급
+                  중요
                 </Badge>
               )}
               <span className="text-foreground truncate text-sm font-medium">
-                [{formatKoreanDate(item.createdAt)}] {item.title}
+                [{formatKoreanDate(item.startDate)}] {item.title}
               </span>
             </div>
             <Badge
