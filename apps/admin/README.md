@@ -2,10 +2,10 @@
 
 > 기술을 모르는 목사님이 교회 콘텐츠를 **원클릭**으로 관리할 수 있는 직관적 관리자 시스템.
 
-|                                          1. 대시보드                                          |                               2. 콘텐츠 등록 폼                                |
-| :-------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------: |
-|                    <img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" />                    |           <img width="400" height="600" alt="주보등록 폼" src="https://github.com/user-attachments/assets/210f0fc7-d025-407c-8b0c-577322fa478b" /> |
-| 여러 도메인의 요약 정보를 위젯 형태로 제공하며, 부분 실패(Partial Failure)를 허용하도록 설계. | Zod 기반의 실시간 유효성 검증과 직관적인 드래그 앤 드롭 파일 업로드 UX를 제공. |
+|                                                                 1. 대시보드                                                                  |                                                            2. 콘텐츠 등록 폼                                                             |
+| :------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------: |
+| <img width="400" height="600" alt="관리자 대쉬보드" src="https://github.com/user-attachments/assets/ecb61613-ee58-421e-8c8d-f777ea948947" /> | <img width="400" height="600" alt="주보등록 폼" src="https://github.com/user-attachments/assets/210f0fc7-d025-407c-8b0c-577322fa478b" /> |
+|                        여러 도메인의 요약 정보를 위젯 형태로 제공하며, 부분 실패(Partial Failure)를 허용하도록 설계.                         |                              Zod 기반의 실시간 유효성 검증과 직관적인 드래그 앤 드롭 파일 업로드 UX를 제공.                              |
 
 ---
 
@@ -30,6 +30,15 @@
 | **Language**   | TypeScript                  | 5.9.3  | Strict 모드                      |
 | **Styling**    | Tailwind CSS                | 4.1.18 | 유틸리티 퍼스트 CSS              |
 | **Compiler**   | babel-plugin-react-compiler | 1.0.0  | 자동 메모이제이션                |
+
+### 테스트 스택
+
+| 분류          | 기술                           | 역할                                                              |
+| :------------ | :----------------------------- | :---------------------------------------------------------------- |
+| **Unit/통합** | Vitest + React Testing Library | FSD `entities`/`features` 계층 컴포넌트·훅·비즈니스 로직 검증     |
+| **E2E**       | Playwright                     | 브라우저 환경에서 라우팅·인증·Supabase DB 포함 전체 시나리오 검증 |
+
+테스트 전략 도입 이유: [docs/adr/0005-test-env-stack.md](../../docs/adr/0005-test-env-stack.md)
 
 ### Dependencies 분석
 
@@ -355,6 +364,50 @@ pnpm --filter admin build
 # 프로덕션 서버 실행
 pnpm --filter admin start
 ```
+
+### 테스트 실행
+
+#### 환경 변수 추가 (테스트 전용)
+
+`apps/admin/.env.local`에 아래 변수를 추가합니다:
+
+| 변수명                | 필수 | 설명                                |
+| :-------------------- | :--- | :---------------------------------- |
+| `TEST_ADMIN_EMAIL`    | O    | E2E 로그인에 사용할 관리자 이메일   |
+| `TEST_ADMIN_PASSWORD` | O    | E2E 로그인에 사용할 관리자 패스워드 |
+
+#### Unit / 통합 테스트 (Vitest)
+
+```bash
+# 단위 테스트 실행
+pnpm --filter admin test
+
+# watch 모드 (TDD)
+pnpm --filter admin test:watch
+```
+
+FSD의 `entities`, `features` 계층에 위치한 `*.test.tsx` 파일을 대상으로 실행됩니다.
+
+#### E2E 테스트 (Playwright)
+
+```bash
+# 프로덕션 빌드 후 E2E 실행 (CI와 동일한 환경)
+pnpm --filter admin build && pnpm --filter admin test:e2e
+
+# UI 모드로 실행 (디버깅)
+pnpm --filter admin test:e2e --ui
+```
+
+E2E 테스트는 `tests/specs/` 디렉토리에 위치하며, 최초 실행 시 `tests/auth.setup.ts`가 먼저 실행되어 `playwright/.auth/user.json`에 세션을 저장합니다. 이후 모든 스펙은 저장된 세션을 재사용하므로 매번 로그인 과정을 거치지 않습니다.
+
+#### 테스트 파일 컨벤션
+
+| 위치                       | 종류         | 설명                               |
+| :------------------------- | :----------- | :--------------------------------- |
+| `src/**/*.test.tsx`        | Unit / 통합  | 컴포넌트·훅 옆에 함께 배치         |
+| `tests/specs/**/*.spec.ts` | E2E          | 페이지 단위 시나리오               |
+| `tests/auth.setup.ts`      | E2E Setup    | 최초 1회 로그인 → 세션 저장        |
+| `tests/utils/supabase.ts`  | E2E 유틸리티 | teardown용 Service Role 클라이언트 |
 
 ### 배포 (Vercel)
 
