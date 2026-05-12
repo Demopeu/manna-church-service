@@ -5,4 +5,5 @@ export interface Announcement {
   content: string;
   isUrgent: boolean;
   createdAt: string;
+  startDate: string;
 }

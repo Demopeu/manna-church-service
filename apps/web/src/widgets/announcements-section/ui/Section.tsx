@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getRecentAnnouncements } from '@/entities/announcement';
-// import { formatKoreanDate } from '@/shared/lib';
+import { formatKoreanDate } from '@/shared/lib';
 import { Badge, ReadMoreButton, withAsyncBoundary } from '@/shared/ui';
 
 async function AnnouncementsSectionBase() {
@@ -29,8 +29,7 @@ async function AnnouncementsSectionBase() {
                 </Badge>
               )}
               <span className="text-foreground truncate text-sm font-medium">
-                {/* [{formatKoreanDate(item.createdAt)}] {item.title} */}
-                {item.title}
+                [{formatKoreanDate(item.startDate)}] {item.title}
               </span>
             </div>
             <Badge
