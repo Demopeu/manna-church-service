@@ -61,3 +61,12 @@ export function getCurrentYearMonth(): { year: number; month: number } {
     month: getMonth(now) + 1,
   };
 }
+
+export function getTodayDateString(): string {
+  return format(new Date(), 'yyyy-MM-dd');
+}
+
+export function toFormDateString(dateString: string): string {
+  if (!dateString) return '';
+  return format(parseISO(dateString), 'yyyy-MM-dd');
+}

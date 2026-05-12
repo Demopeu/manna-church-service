@@ -19,7 +19,7 @@ async function createAnnouncement(
     title: validatedFields.title,
     content: validatedFields.content,
     is_urgent: validatedFields.isUrgent,
-    start_date: new Date().toISOString(),
+    start_date: validatedFields.startDate,
   });
 
   if (error) {
@@ -49,7 +49,7 @@ async function updateAnnouncement(
       title: validatedFields.title,
       content: validatedFields.content,
       is_urgent: validatedFields.isUrgent,
-      start_date: new Date().toISOString(),
+      start_date: validatedFields.startDate,
     })
     .eq('id', id);
 
@@ -90,14 +90,20 @@ export async function createAnnouncementAction(
     title: formData.get('title'),
     content: formData.get('content'),
     isUrgent: formData.get('isUrgent') === 'true',
+    startDate: formData.get('startDate'),
   };
 
   const validatedFields = createAnnouncementSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
+    const issues = validatedFields.error.issues;
+    const message =
+      issues.length > 2
+        ? '입력 내용에 오류가 있습니다. 확인해주세요.'
+        : issues[0]?.message || '입력 내용을 확인해주세요.';
     return {
       success: false,
-      message: '입력 내용을 확인해주세요.',
+      message,
       fieldErrors: validatedFields.error.flatten().fieldErrors,
     };
   }
@@ -118,14 +124,20 @@ export async function updateAnnouncementAction(
     title: formData.get('title'),
     content: formData.get('content'),
     isUrgent: formData.get('isUrgent') === 'true',
+    startDate: formData.get('startDate'),
   };
 
   const validatedFields = createAnnouncementSchema.safeParse(rawData);
 
   if (!validatedFields.success) {
+    const issues = validatedFields.error.issues;
+    const message =
+      issues.length > 2
+        ? '입력 내용에 오류가 있습니다. 확인해주세요.'
+        : issues[0]?.message || '입력 내용을 확인해주세요.';
     return {
       success: false,
-      message: '입력 내용을 확인해주세요.',
+      message,
       fieldErrors: validatedFields.error.flatten().fieldErrors,
     };
   }
