@@ -23,7 +23,7 @@ export function EditAnnouncementButton({ announcement }: Props) {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" aria-label="수정">
           <Pencil className="text-muted-foreground hover:text-primary h-4 w-4" />
         </Button>
       </AlertDialogTrigger>

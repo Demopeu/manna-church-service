@@ -18,7 +18,7 @@ export function DeleteAnnouncementButton({
 
   return (
     <>
-      <Button variant="ghost" size="icon" onClick={open}>
+      <Button variant="ghost" size="icon" onClick={open} aria-label="삭제">
         <Trash2 className="text-destructive h-4 w-4" />
       </Button>
 
