@@ -11,7 +11,7 @@
 | 항목                 | 내용                                                                               |
 | :------------------- | :--------------------------------------------------------------------------------- |
 | **클라이언트**       | 만나교회 (부산광역시 사하구 다대동)                                                |
-| **개발 기간**        | `2025.01.05 ~ 2025.02.13`                                                          |
+| **개발 기간**        | `2026.01.05 ~ 2026.02.13`                                                          |
 | **배포 URL (Web)**   | [https://www.mannachurch.or.kr](https://www.mannachurch.or.kr)                     |
 | **배포 URL (Admin)** | [https://manna-church-service.vercel.app](https://manna-church-service.vercel.app) |
 
